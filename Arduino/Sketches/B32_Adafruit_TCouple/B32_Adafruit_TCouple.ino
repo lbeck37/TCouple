@@ -1,5 +1,5 @@
-const char szSketchName[]  = "Beck_Adafruit_SerialTCouple.ino";
-const char szFileDate[]    = "10/3/23k";
+const char szSketchName[]  = "B32_Adafruit_TCouple.ino";
+const char szFileDate[]    = "10/4/23c";
 /***************************************************
   This is an example for the Adafruit Thermocouple Sensor w/MAX31855K
   Designed specifically to work with the Adafruit Thermocouple Sensor
@@ -42,6 +42,10 @@ Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
 // on SPI1 using specified CS pin.
 //#define MAXCS   10
 //Adafruit_MAX31855 thermocouple(MAXCS, SPI1);
+
+//Function prototypes
+void setup();
+void loop();
 
 void setup() {
   Serial.begin(115200);

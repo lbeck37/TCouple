@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_Adafruit_TCouple.ino";
-const char szFileDate[]    = "10/4/23c";
+const char szFileDate[]    = "10/5/23f";
 /***************************************************
   This is an example for the Adafruit Thermocouple Sensor w/MAX31855K
   Designed specifically to work with the Adafruit Thermocouple Sensor
@@ -25,13 +25,25 @@ const char szFileDate[]    = "10/4/23c";
   #define MAXCLK  5
 #endif
 
-//ESP8266 NodeMCU pins
-#define MAXDO   13
-#define MAXCS   14
-#define MAXCLK  15
+//TTGO T-Display ESP32 pins 13, 17, 25, 26, 27, 32 and 33 are OK to use
+//RandomNerdTutorials "ESP32 Pinout Reference: Which GPIO pins should you use?"
+
+#define MAXDO   15
+#define MAXCS   13
+#define MAXCLK  12
+
+/*
+const int wTCoupleSPIDataOut    = 15;
+const int wTCoupleSPIClk        = 12;
+const int wTCoupleCS[]          = {0, 13, 26, 27};	//Element 0 is an index dummy
+*/
+const int wTCoupleSPIDataOut    = 32;
+const int wTCoupleSPIClk        = 33;
+const int wTCoupleCS[]          = {0, 25, 26, 27};	//Element 0 is an index dummy
 
 // initialize the Thermocouple
-Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
+//Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
+Adafruit_MAX31855 thermocouple(wTCoupleSPIClk, wTCoupleCS[1], wTCoupleSPIDataOut);
 
 // Example creating a thermocouple instance with hardware SPI
 // on a given CS pin.

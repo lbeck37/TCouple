@@ -42,9 +42,6 @@
 
 #include <stdlib.h>
 
-//Default constructor
-//Adafruit_MAX31855::Adafruit_MAX31855() {}
-
 /**************************************************************************/
 /*!
     @brief  Instantiates a new Adafruit_MAX31855 class using software SPI.

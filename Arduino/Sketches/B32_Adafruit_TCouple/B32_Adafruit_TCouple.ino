@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_Adafruit_TCouple.ino";
-const char szFileDate[]    = "10/5/23h";
+const char szFileDate[]    = "10/7/23f";
 /***************************************************
   This is an example for the Adafruit Thermocouple Sensor w/MAX31855K
   Designed specifically to work with the Adafruit Thermocouple Sensor
@@ -13,6 +13,7 @@ const char szFileDate[]    = "10/5/23h";
 #include <Streaming.h>
 #include <SPI.h>
 #include "Adafruit_MAX31855.h"
+//#include "Adafruit_MAX31855_Beck.h"
 
 // Default connection is using software SPI, but comment and uncomment one of
 // the two examples below to switch between software SPI and hardware SPI:
@@ -25,13 +26,18 @@ const char szFileDate[]    = "10/5/23h";
 
 const int wTCoupleSPIDataOut    = 32;
 const int wTCoupleSPIClk        = 33;
-const int wTCoupleCS[]          = {0, 25, 26, 27};	//Element 0 is an index dummy
+const int wTCoupleCS[]          = {25, 26, 27};
 
+/*
 // initialize the Thermocouple
-Adafruit_MAX31855 TCouple1(wTCoupleSPIClk, wTCoupleCS[1], wTCoupleSPIDataOut);
-Adafruit_MAX31855 TCouple2(wTCoupleSPIClk, wTCoupleCS[2], wTCoupleSPIDataOut);
-Adafruit_MAX31855 TCouple3(wTCoupleSPIClk, wTCoupleCS[3], wTCoupleSPIDataOut);
+Adafruit_MAX31855 TCouple1(wTCoupleSPIClk, wTCoupleCS[0], wTCoupleSPIDataOut);
+Adafruit_MAX31855 TCouple2(wTCoupleSPIClk, wTCoupleCS[1], wTCoupleSPIDataOut);
+Adafruit_MAX31855 TCouple3(wTCoupleSPIClk, wTCoupleCS[2], wTCoupleSPIDataOut);
+*/
 
+Adafruit_MAX31855 TCouple[]= {Adafruit_MAX31855(wTCoupleSPIClk, wTCoupleCS[0], wTCoupleSPIDataOut),
+		                      Adafruit_MAX31855(wTCoupleSPIClk, wTCoupleCS[1], wTCoupleSPIDataOut),
+		                      Adafruit_MAX31855(wTCoupleSPIClk, wTCoupleCS[2], wTCoupleSPIDataOut)};
 // Example creating a thermocouple instance with hardware SPI
 // on a given CS pin.
 //#define MAXCS   10
@@ -57,7 +63,8 @@ void setup() {
   // wait for MAX chip to stabilize
   delay(500);
   Serial.print("setup(): Initializing sensor...");
-  if (!TCouple1.begin()) {
+  //if (!TCouple1.begin()) {
+  if (!TCouple[0].begin()) {
     Serial.println("setup(): ERROR.");
     while (1) delay(10);
   }
@@ -72,13 +79,16 @@ void setup() {
 void loop() {
   // basic readout test, just print the current temp
    Serial.print("\nloop(): Internal Temp = ");
-   Serial.println(TCouple1.readInternal());
+   //.println(TCouple1.readInternal());
+   Serial.println(TCouple[0].readInternal());
 
    //double c = thermocouple.readCelsius();
-   double c = TCouple1.readCelsius();
+   //double c = TCouple1.readCelsius();
+   double c = TCouple[0].readCelsius();
    if (isnan(c)) {
      Serial.println("loop(): Thermocouple fault(s) detected!");
-     uint8_t e = TCouple1.readError();
+     //uint8_t e = TCouple1.readError();
+     uint8_t e = TCouple[0].readError();
      if (e & MAX31855_FAULT_OPEN) Serial.println("loop(): FAULT: Thermocouple is open - no connections.");
      if (e & MAX31855_FAULT_SHORT_GND) Serial.println("loop(): FAULT: Thermocouple is short-circuited to GND.");
      if (e & MAX31855_FAULT_SHORT_VCC) Serial.println("loop(): FAULT: Thermocouple is short-circuited to VCC.");

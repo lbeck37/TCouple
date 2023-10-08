@@ -1,5 +1,5 @@
 /*!
- * @file Adafruit_MAX31855.cpp
+ * @file Adafruit_MAX31855_Beck.cpp
  *
  * @mainpage Adafruit MAX31855 Thermocouple Breakout Driver
  *
@@ -42,8 +42,8 @@
 
 #include <stdlib.h>
 
-//Default constructor
-//Adafruit_MAX31855::Adafruit_MAX31855() {}
+//Default constructor Beck 10/7/23
+Adafruit_MAX31855::Adafruit_MAX31855();
 
 /**************************************************************************/
 /*!

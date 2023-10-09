@@ -1,7 +1,10 @@
+//LBeck 10/9/23b
+// file= Adafruit_MAX6675.cpp
 // this library is public domain. enjoy!
 // https://learn.adafruit.com/thermocouple/
 
-#include "max6675.h"
+//#include "max6675.h"
+#include "Adafruit_MAX6675.h"
 
 /**************************************************************************/
 /*!

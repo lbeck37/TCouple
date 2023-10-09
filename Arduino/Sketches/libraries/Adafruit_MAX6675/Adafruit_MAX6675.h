@@ -1,8 +1,12 @@
+//LBeck 10/9/23b
+// file= Adafruit_MAX6675.h
 // this library is public domain. enjoy!
 // https://learn.adafruit.com/thermocouple/
-
+/*
 #ifndef ADAFRUIT_MAX6675_H
 #define ADAFRUIT_MAX6675_H
+*/
+#pragma once
 
 #include "Arduino.h"
 
@@ -27,4 +31,4 @@ private:
   uint8_t spiread(void);
 };
 
-#endif
+//#endif

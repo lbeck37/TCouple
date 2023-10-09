@@ -15,9 +15,9 @@
     @brief  Class for communicating with thermocouple sensor
 */
 /**************************************************************************/
-class MAX6675 {
+class Adafruit_MAX6675 {
 public:
-  MAX6675(int8_t SCLK, int8_t CS, int8_t MISO);
+  Adafruit_MAX6675(int8_t SCLK, int8_t CS, int8_t MISO);
 
   float readCelsius(void);
   float readFahrenheit(void);

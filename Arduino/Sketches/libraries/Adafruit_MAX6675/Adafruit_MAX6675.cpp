@@ -14,7 +14,7 @@
     @param   MISO The Arduino pin connected to Data Out
 */
 /**************************************************************************/
-MAX6675::MAX6675(int8_t SCLK, int8_t CS, int8_t MISO) {
+Adafruit_MAX6675::Adafruit_MAX6675(int8_t SCLK, int8_t CS, int8_t MISO) {
   sclk = SCLK;
   cs = CS;
   miso = MISO;
@@ -33,7 +33,7 @@ MAX6675::MAX6675(int8_t SCLK, int8_t CS, int8_t MISO) {
     @returns Temperature in C or NAN on failure!
 */
 /**************************************************************************/
-float MAX6675::readCelsius(void) {
+float Adafruit_MAX6675::readCelsius(void) {
 
   uint16_t v;
 
@@ -63,9 +63,9 @@ float MAX6675::readCelsius(void) {
     @returns Temperature in F or NAN on failure!
 */
 /**************************************************************************/
-float MAX6675::readFahrenheit(void) { return readCelsius() * 9.0 / 5.0 + 32; }
+float Adafruit_MAX6675::readFahrenheit(void) { return readCelsius() * 9.0 / 5.0 + 32; }
 
-byte MAX6675::spiread(void) {
+byte Adafruit_MAX6675::spiread(void) {
   int i;
   byte d = 0;
 
@@ -83,3 +83,4 @@ byte MAX6675::spiread(void) {
 
   return d;
 }
+//Last linbe.

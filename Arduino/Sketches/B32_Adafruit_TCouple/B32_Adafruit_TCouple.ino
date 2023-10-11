@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_Adafruit_TCouple.ino";
-const char szFileDate[]    = "10/10/23d";
+const char szFileDate[]    = "10/10/23g";
 /***************************************************
   This is an example for the Adafruit Thermocouple Sensor w/MAX31855K
   Designed specifically to work with the Adafruit Thermocouple Sensor
@@ -54,13 +54,13 @@ void 	    setup			      (void);
 void 	    loop			      (void);
 double    dDegF           (double dDegC);
 void      SetupPins       (void);
-void      ReadTCouples    (void);
+void      PrintTCouples   (void);
 void      SelectTCouple   (int wTCoupleNum);
 
 #if DO_MAX6675
   void 	  Read_MAX6675	  (void);
 #else
-  double 	dRead_MAX31855  (void);
+  void 	  Print_MAX31855  (int wTCoupleNum);
 #endif
 
 void setup() {
@@ -83,7 +83,7 @@ void setup() {
   } //if(!TCouple.begin())
 #endif
   SetupPins();
-  Serial << "setup(): DONE." << endl;
+  Serial << "T    Internal    Probe    Error" << endl;
   return;
 } //setup
 
@@ -93,25 +93,10 @@ void loop() {
 #if DO_MAX6675
 	Read_MAX6675();
 #else
-	ReadTCouples();
+	PrintTCouples();
 #endif
   delay(5000);
 } //loop
-
-
-void ReadTCouples(void){
-  for (int wTCoupleNum= 0; wTCoupleNum < 8; wTCoupleNum++){
-    SelectTCouple(wTCoupleNum);
-    double dTCoupleDegF= dRead_MAX31855();
-    if ( dTCoupleDegF != dError){
-      Serial << "ReadTCouples(): TCouple= " << wTCoupleNum << ", DegF= " << dTCoupleDegF << endl;
-    }
-    else {
-      Serial << "ReadTCouples(): TCouple= " << wTCoupleNum << ", ERROR" << dTCoupleDegF << endl;
-    }
-  }
-  return;
-} //ReadTCouples
 
 
 void SelectTCouple(int wTCoupleNum){
@@ -141,35 +126,30 @@ void SetupPins(void){
 
 
 #if !DO_MAX6675
-double dRead_MAX31855(){
-   Serial.print("\nRead_MAX31855(): Internal Temp = ");
-   double   dReturn;
+void PrintTCouples(void){
+  for (int wTCoupleNum= 0; wTCoupleNum < 8; wTCoupleNum++){
+    SelectTCouple(wTCoupleNum);
+    Print_MAX31855(wTCoupleNum);
+  } //for(int wTCoupleNum=0;wTCoupleNum<8;wTCoupleNum++)
+  Serial << endl;
+  return;
+} //PrintTCouples
+
+
+void Print_MAX31855(int wTCoupleNum){
    double   dInternalDegF= dDegF(TCouple.readInternal());
-   Serial << "Read_MAX31855(): Read_MAX31855(): Internal DegF= " << dInternalDegF << endl;
 
    double dDegTCoupleDegC= TCouple.readCelsius();
-   if (isnan(dDegTCoupleDegC)) {
-     dReturn= dError;
-     Serial << "Read_MAX31855(): Read_MAX31855(): Thermocouple fault(s) detected!" << endl;
-     //uint8_t e = TCouple1.readError();
-     uint8_t ucError= TCouple.readError();
+   double dDegTCoupleDegF= dDegF(dDegTCoupleDegC);
 
-     if (ucError & MAX31855_FAULT_OPEN){
-       Serial << "Read_MAX31855(): Read_MAX31855(): FAULT: Thermocouple is open - no connections." << endl;
-     }
-     if (ucError & MAX31855_FAULT_SHORT_GND){
-       Serial << "Read_MAX31855(): Read_MAX31855(): FAULT: Thermocouple is short-circuited to GND." << endl;
-     }
-     if (ucError & MAX31855_FAULT_SHORT_VCC){
-       Serial.println("loop(): FAULT: Thermocouple is short-circuited to VCC.");
-       Serial << "Read_MAX31855(): Read_MAX31855(): FAULT: Thermocouple is short-circuited to VCC." << endl;
-     }
-   }	//if(isnan(dDegC))
+   if (isnan(dDegTCoupleDegC)) {
+     uint8_t ucError= TCouple.readError();
+     Serial <<  wTCoupleNum << "  " <<   dInternalDegF << "                    " << ucError << endl;
+   }  //if(isnan(dDegTCoupleDegC))
    else {
-     dReturn= dDegF(dDegTCoupleDegC);
-     Serial << "Read_MAX31855(): TCouple DegF= " << dReturn << endl;
-   }	//if(isnan(c))else
-   return dReturn;
+     Serial <<  wTCoupleNum << "  " <<   dInternalDegF << "  " << dDegTCoupleDegF << endl;
+   }
+   return;
 }	//Read_MAX31855
 
 
@@ -183,4 +163,16 @@ void Read_MAX6675(){
   return;
 } //Read_MAX6675
 #endif
+/*
+     if (ucError & MAX31855_FAULT_OPEN){
+       Serial << "Read_MAX31855(): Read_MAX31855(): FAULT: Thermocouple is open - no connections." << endl;
+     }
+     if (ucError & MAX31855_FAULT_SHORT_GND){
+       Serial << "Read_MAX31855(): Read_MAX31855(): FAULT: Thermocouple is short-circuited to GND." << endl;
+     }
+     if (ucError & MAX31855_FAULT_SHORT_VCC){
+       Serial.println("loop(): FAULT: Thermocouple is short-circuited to VCC.");
+       Serial << "Read_MAX31855(): Read_MAX31855(): FAULT: Thermocouple is short-circuited to VCC." << endl;
+     }
+*/
 //Last line.

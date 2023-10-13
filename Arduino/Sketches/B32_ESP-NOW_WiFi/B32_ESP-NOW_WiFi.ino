@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_ESP-NOW_WiFi.ino";
-const char szFileDate[]    = "10/13/23b, TwoDot receiver";
+const char szFileDate[]    = "10/13/23c, OneDot receiver";
 // Beck 10/13/23, B32_ESP-NOW_WiFi.ino
 /*
   Rui Santos
@@ -27,7 +27,7 @@ const char szFileDate[]    = "10/13/23b, TwoDot receiver";
   #include <Adafruit_SSD1306.h>
 #endif  //WITH_SENSOR_AND_DISPLAY
 
-#define TWO_DOT_RECEVIER    true
+#define TWO_DOT_RECEVIER    false
 
 #define SCREEN_WIDTH 128  // OLED display width, in pixels
 #define SCREEN_HEIGHT 64  // OLED display height, in pixels

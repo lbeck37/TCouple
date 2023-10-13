@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_Adafruit_TCouple.ino";
-const char szFileDate[]    = "10/10/23g";
+const char szFileDate[]    = "10/11/23c";
 /***************************************************
   This is an example for the Adafruit Thermocouple Sensor w/MAX31855K
   Designed specifically to work with the Adafruit Thermocouple Sensor
@@ -52,10 +52,10 @@ Adafruit_MAX31855 TCouple=
 //Function prototypes
 void 	    setup			      (void);
 void 	    loop			      (void);
-double    dDegF           (double dDegC);
 void      SetupPins       (void);
-void      PrintTCouples   (void);
 void      SelectTCouple   (int wTCoupleNum);
+void      PrintTCouples   (void);
+double    dDegF           (double dDegC);
 
 #if DO_MAX6675
   void 	  Read_MAX6675	  (void);
@@ -83,7 +83,7 @@ void setup() {
   } //if(!TCouple.begin())
 #endif
   SetupPins();
-  Serial << "T    Internal    Probe    Error" << endl;
+  Serial << "T Internal Probe     Error" << endl;
   return;
 } //setup
 
@@ -99,6 +99,19 @@ void loop() {
 } //loop
 
 
+void SetupPins(void){
+  Serial << "SetupPins(): Begin" << endl;
+  pinMode(wTCoupleSPIDataOut  , INPUT);
+  pinMode(wTCoupleSPIClk      , OUTPUT);
+  pinMode(w8ChanBoardCS       , OUTPUT);
+
+  for(int wSelectBit= 0; wSelectBit < wNumSelectBits; wSelectBit++){
+    pinMode(wTCoupleSelectBit[wSelectBit], OUTPUT);
+  } //for(int wSelectBit=0;...
+  return;
+} //SetupPins
+
+
 void SelectTCouple(int wTCoupleNum){
   digitalWrite(wTCoupleSelectBit[0], wTCoupleNum & 1? HIGH: LOW);
   digitalWrite(wTCoupleSelectBit[1], wTCoupleNum & 2? HIGH: LOW);
@@ -110,19 +123,6 @@ void SelectTCouple(int wTCoupleNum){
 double dDegF(double dDegC){
   return ((dDegC * 9.0) / 5.0) + 32.0;
 } //dDegF
-
-
-void SetupPins(void){
-	Serial << "SetupPins(): Begin" << endl;
-	pinMode(wTCoupleSPIDataOut	, INPUT);
-	pinMode(wTCoupleSPIClk		  , OUTPUT);
-	pinMode(w8ChanBoardCS		    , OUTPUT);
-
-	for(int wSelectBit= 0; wSelectBit < wNumSelectBits; wSelectBit++){
-		pinMode(wTCoupleSelectBit[wSelectBit], OUTPUT);
-	}	//for(int wSelectBit=0;...
-	return;
-}	//SetupPins
 
 
 #if !DO_MAX6675
@@ -144,10 +144,10 @@ void Print_MAX31855(int wTCoupleNum){
 
    if (isnan(dDegTCoupleDegC)) {
      uint8_t ucError= TCouple.readError();
-     Serial <<  wTCoupleNum << "  " <<   dInternalDegF << "                    " << ucError << endl;
+     Serial <<  wTCoupleNum << "  " <<   dInternalDegF << "               " << ucError << endl;
    }  //if(isnan(dDegTCoupleDegC))
    else {
-     Serial <<  wTCoupleNum << "  " <<   dInternalDegF << "  " << dDegTCoupleDegF << endl;
+     Serial <<  wTCoupleNum << "    " <<   dInternalDegF << "  " << dDegTCoupleDegF << endl;
    }
    return;
 }	//Read_MAX31855

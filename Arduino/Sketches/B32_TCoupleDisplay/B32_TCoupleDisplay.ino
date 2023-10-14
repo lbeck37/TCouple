@@ -1,6 +1,5 @@
-const char szSketchName[]  = "B32_ESP-NOW_WiFi.ino";
-const char szFileDate[]    = "10/14/23b, OneDot receiver";
-// Beck 10/13/23, B32_ESP-NOW_WiFi.ino
+const char szSketchName[]  = "B32_TCoupleDisplay.ino";
+const char szFileDate[]    = "10/14/23b";
 /*
   Rui Santos
   Complete project details at https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32/

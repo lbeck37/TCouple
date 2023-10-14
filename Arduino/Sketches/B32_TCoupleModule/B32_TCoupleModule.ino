@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleModule.ino";
-const char szFileDate[]    = "10/13/23b";
+const char szFileDate[]    = "10/14/23b";
 /*
  MAX31855 library example sketch
  
@@ -123,9 +123,12 @@ void setup() {
 
 void loop () {
   // Display the junction temperature
-  float temperature = temp.readJunction(FAHRENHEIT);
+  double  dJunctionDegF = temp.readJunction(FAHRENHEIT);
+  double  dTCoupleDegF;
+
+  //float temperature = temp.readJunction(FAHRENHEIT);
   Serial.print("Ambiant=");
-  printTemperature(temperature);
+  printTemperature(dJunctionDegF);
     
   // Display the temperatures of the 8 thermocouples
   for (int therm=0; therm<8; therm++) {
@@ -137,14 +140,14 @@ void loop () {
     // Wait a bit longer to be safe.  We'll wait 0.125 seconds
     delay(125);
     
-    temperature = temp.readThermocouple(FAHRENHEIT);   
-    if (temperature == FAULT_OPEN){
+    dTCoupleDegF = temp.readThermocouple(FAHRENHEIT);
+    if (dTCoupleDegF == FAULT_OPEN){
         continue;
     } //if(temperature==FAULT_OPEN)
     Serial.print(" T");
     Serial.print(therm);
     Serial.print("=");
-    printTemperature(temperature);
+    printTemperature(dTCoupleDegF);
 /*
     // Right here is where I think the line of code should go to turn on and off Relay_1
     // which is the relay I want to activate when Thermocouple0 is above 70 degrees F
@@ -163,8 +166,8 @@ void loop () {
 
 
 // Print the temperature, or the type of fault
-void printTemperature(double temperature) {
-  switch ((int) temperature) {
+void printTemperature(double dDegF) {
+  switch ((int) dDegF) {
     case FAULT_OPEN:
       Serial.print("FAULT_OPEN");
       break;
@@ -178,7 +181,7 @@ void printTemperature(double temperature) {
       Serial.print("NO_MAX31855");
       break;
     default:
-      Serial.print(temperature);
+      Serial.print(dDegF);
       break;
   }
   Serial.print(" ");

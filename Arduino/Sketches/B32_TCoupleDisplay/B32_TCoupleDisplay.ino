@@ -1,21 +1,20 @@
 const char szSketchName[]  = "B32_TCoupleDisplay.ino";
-const char szFileDate[]    = "10/14/23b";
-/*
-  Rui Santos
-  Complete project details at https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32/
+const char szFileDate[]    = "10/14/23e";
+//Thanks to Rui Santos, https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32
 
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files.
-
-  The above copyright notice and this permission notice shall be included in all
-  copies or substantial portions of the Software.
-*/
-
+//This sketch, B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
+//communication code from the esp_now.h library. The example used to generate this code
+//was an example with a Adafruit_BME280 temp, humidity pressure chip and
+//Adafruit_SSD1306 display libraries.
+//Previously it was tested on ESP32 chips idenfiied by either one or two dots on top.
 #include <Streaming.h>
 #include <esp_now.h>
 #include <WiFi.h>
 
-#define WITH_SENSOR_AND_DISPLAY    false
+#define WITH_SENSOR_AND_DISPLAY     false
+
+#define BUILD_AS_TCOUPLE_DISPLAY    true
+#define BUILD_AS_TCOUPLE_READER     false
 
 #if WITH_SENSOR_AND_DISPLAY
   #include <Wire.h>
@@ -26,20 +25,14 @@ const char szFileDate[]    = "10/14/23b";
   #include <Adafruit_SSD1306.h>
 #endif  //WITH_SENSOR_AND_DISPLAY
 
-#define ONE_DOT_RECEVIER    false       //ESP32 w/o USB-C, returned to Amazon
-#define TWO_DOT_RECEVIER    false       //ESP32 w/o USB-C, returned to Amazon
-
-#define RED_PIN_RECEVIER    false       //TTGO with red header pins
-#define BLACK_PIN_RECEVIER  false       //TTGO with black header pins
-
-//Red pin TTGO to be connected to 8x tcouple board and transmit to black pin TTGO
+//Red pin TTGO to be connected to 8x TCouple board and transmit to black pin TTGO
 //Black pin TTGO is the display module
-//  Receives (3) tcouple readings from red pin, readings are printed as T, H and P
-
-#define SCREEN_WIDTH 128  // OLED display width, in pixels
-#define SCREEN_HEIGHT 64  // OLED display height, in pixels
+//  Receives (3) TCouple readings from red pin, readings are printed as T, H and P
 
 #if WITH_SENSOR_AND_DISPLAY
+#define ONE_DOT_RECEVIER    false       //ESP32 w/o USB-C, returned to Amazon
+#define SCREEN_WIDTH 128  // OLED display width, in pixels
+#define SCREEN_HEIGHT 64  // OLED display height, in pixels
   // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
   Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
@@ -47,32 +40,54 @@ const char szFileDate[]    = "10/14/23b";
 #endif
 
 // REPLACE WITH THE MAC Address of your receiver
-//uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+//uint8_t RemoteMAC[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+/*
 #if TWO_DOT_RECEVIER
   //TwoDot ESP32 MAC Address for receiver
-  uint8_t broadcastAddress[]    = {0x48, 0xE7, 0x29, 0xB6, 0xC3,0xA0};
+  uint8_t RemoteMAC[]    = {0x48, 0xE7, 0x29, 0xB6, 0xC3,0xA0};
 #else
   //OneDot ESP32 MAC Address for receiver
-  uint8_t broadcastAddress[]    = {0x48, 0xE7, 0x29, 0xAF, 0x7B,0xDC};
+  uint8_t RemoteMAC[]    = {0x48, 0xE7, 0x29, 0xAF, 0x7B,0xDC};
+#endif  //TWO_DOT_RECEVIER
+*/
+
+//From B32_GetMACAddress.ino
+  //Red pin TT-GO T-Display   - B0:B2:1C:4F:28:0C
+  //Black pin TT-GO T-Display - B0:B2:1C:4F:32:CC
+#if BUILD_AS_TCOUPLE_DISPLAY
+  //We are running on BlackPin TTGO as the Display and we receive from RedPin
+  uint8_t RemoteMAC[]   = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //RedPin MAC
+#endif
+
+#if BUILD_AS_TCOUPLE_READER
+  //We are running on RedPin TTGO and we send TCouple readings to BlackPin Display
+  uint8_t RemoteMAC[]   = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //BlackPin MAC
 #endif  //TWO_DOT_RECEVIER
 
-//Red pin TT-GO T-Display   - B0:B2:1C:4F:28:0C
-//Black pin TT-GO T-Display - B0:B2:1C:4F:32:CC
-
-
 // Define variables to store BME280 readings to be sent
+/*
 float temperature;
 float humidity;
 float pressure;
+*/
+double dTCouple0_DegF;
+double dTCouple1_DegF;
+double dTCouple2_DegF;
 
 // Define variables to store incoming readings
+/*
 float incomingTemp;
 float incomingHum;
 float incomingPres;
+*/
+double dIncomingTCouple0_DegF;
+double dIncomingTCouple1_DegF;
+double dIncomingTCouple2_DegF;
 
 // Variable to store if sending data was successful
 String success;
 
+/*
 //Structure example to send data
 //Must match the receiver structure
 typedef struct struct_message {
@@ -80,17 +95,24 @@ typedef struct struct_message {
     float hum;
     float pres;
 } struct_message;
+*/
+//Message Structure that is used to pass data back an forth
+typedef struct stMessageStructure {
+    double dTCouple0_DegF;
+    double dTCouple1_DegF;
+    double dTCouple2_DegF;
+} stMessageStructure;
 
-// Create a struct_message called BME280Readings to hold sensor readings
-struct_message BME280Readings;
+// Create a stMessageStructure called BME280Readings to hold sensor readings
+stMessageStructure BME280Readings;
 
-// Create a struct_message to hold incoming sensor readings
-struct_message incomingReadings;
+// Create a stMessageStructure to hold incoming sensor readings
+stMessageStructure incomingReadings;
 
 esp_now_peer_info_t peerInfo;
 
 
-// Callback when data is sent
+//Callback when data is sent. Used by TCouple Module that sends to Display Module
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   Serial.print("\r\nLast Packet Send Status:\t");
   Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
@@ -100,17 +122,19 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   else{
     success = "Delivery Fail :(";
   }
+  return;
 } //OnDataSent
 
 
-// Callback when data is received
+//Callback when data is received. Used by Display that receives from TCouple Module
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   memcpy(&incomingReadings, incomingData, sizeof(incomingReadings));
   Serial.print("Bytes received: ");
   Serial.println(len);
-  incomingTemp = incomingReadings.temp;
-  incomingHum = incomingReadings.hum;
-  incomingPres = incomingReadings.pres;
+  dIncomingTCouple0_DegF = incomingReadings.dTCouple0_DegF;
+  dIncomingTCouple1_DegF = incomingReadings.dTCouple1_DegF;
+  dIncomingTCouple2_DegF = incomingReadings.dTCouple2_DegF;
+  return;
 } //OnDataRecv
 
 
@@ -149,7 +173,7 @@ void setup() {
   esp_now_register_send_cb(OnDataSent);
 
   // Register peer
-  memcpy(peerInfo.peer_addr, broadcastAddress, 6);
+  memcpy(peerInfo.peer_addr, RemoteMAC, 6);
   peerInfo.channel = 0;
   peerInfo.encrypt = false;
 
@@ -169,12 +193,12 @@ void loop() {
   getReadings();
 
   // Set values to send
-  BME280Readings.temp = temperature;
-  BME280Readings.hum = humidity;
-  BME280Readings.pres = pressure;
+  BME280Readings.dTCouple0_DegF = dTCouple0_DegF;
+  BME280Readings.dTCouple1_DegF = dTCouple1_DegF;
+  BME280Readings.dTCouple2_DegF = dTCouple2_DegF;
 
   // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &BME280Readings, sizeof(BME280Readings));
+  esp_err_t result = esp_now_send(RemoteMAC, (uint8_t *) &BME280Readings, sizeof(BME280Readings));
 
   if (result == ESP_OK) {
     Serial.println("Sent with success");
@@ -195,9 +219,9 @@ void getReadings(){
   pressure = (bme.readPressure() / 100.0F);
 #else
   static int  wCount= 0;
-  temperature   = wCount++  * 1.0;
-  humidity      = wCount    * 10.0;
-  pressure      = wCount    * 100.0;
+  dTCouple0_DegF   = wCount++  * 1.0;
+  dTCouple1_DegF      = wCount    * 10.0;
+  dTCouple2_DegF      = wCount    * 100.0;
 #endif  //WITH_SENSOR_AND_DISPLAY
   return;
 }//getReadings
@@ -213,17 +237,17 @@ void updateDisplay(){
   display.println("INCOMING READINGS");
   display.setCursor(0, 15);
   display.print("Temperature: ");
-  display.print(incomingTemp);
+  display.print(dIncomingTCouple0_DegF);
   display.cp437(true);
   display.write(248);
   display.print("C");
   display.setCursor(0, 25);
   display.print("Humidity: ");
-  display.print(incomingHum);
+  display.print(dIncomingTCouple1_DegF);
   display.print("%");
   display.setCursor(0, 35);
   display.print("Pressure: ");
-  display.print(incomingPres);
+  display.print(dIncomingTCouple2_DegF);
   display.print("hPa");
   display.setCursor(0, 56);
   display.print(success);
@@ -233,14 +257,15 @@ void updateDisplay(){
   // Display Readings in Serial Monitor
   Serial.println("INCOMING READINGS");
   Serial.print("Temperature: ");
-  Serial.print(incomingReadings.temp);
+  Serial.print(incomingReadings.dTCouple0_DegF);
   Serial.println(" �C");
   Serial.print("Humidity: ");
-  Serial.print(incomingReadings.hum);
+  Serial.print(incomingReadings.dTCouple1_DegF);
   Serial.println(" %");
   Serial.print("Pressure: ");
-  Serial.print(incomingReadings.pres);
+  Serial.print(incomingReadings.dTCouple2_DegF);
   Serial.println(" hPa");
   Serial.println();
+  return;
 }   //updateDisplay
 //Last line.

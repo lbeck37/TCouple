@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_ESP-NOW_WiFi.ino";
-const char szFileDate[]    = "10/15/23d, TwoDot Receiver";
+const char szFileDate[]    = "10/15/23h, BlackPin Receiver";
 // Beck 10/13/23, B32_ESP-NOW_WiFi.ino
 /*Rui Santos
   Complete project details at https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32/
@@ -27,10 +27,10 @@ const char szFileDate[]    = "10/15/23d, TwoDot Receiver";
 #endif  //WITH_SENSOR_AND_DISPLAY
 
 #define ONE_DOT_RECEIVER    false       //ESP32 w/o USB-C, returned to Amazon
-#define TWO_DOT_RECEIVER    true        //ESP32 w/o USB-C, returned to Amazon
+#define TWO_DOT_RECEIVER    false        //ESP32 w/o USB-C, returned to Amazon
 
 #define RED_PIN_RECEIVER    false       //TTGO with red header pins
-#define BLACK_PIN_RECEIVER  false        //TTGO with black header pins
+#define BLACK_PIN_RECEIVER  true        //TTGO with black header pins
 
 //Red pin TTGO to be connected to 8x tcouple board and transmit to black pin TTGO
 //Black pin TTGO is the display module
@@ -62,11 +62,13 @@ const char szFileDate[]    = "10/15/23d, TwoDot Receiver";
 
 #if RED_PIN_RECEIVER
   //Running on BlackPin TTGO, sends data to RedPin TTGO
-  uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};
+  //uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};
+  uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC};
 #endif
 #if BLACK_PIN_RECEIVER
   //Running on RedPin TTGO, sends data to BlackPin TTGO
-  uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC};
+  //uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC};
+  uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};
 #endif  //TWO_DOT_RECEIVER
 
 

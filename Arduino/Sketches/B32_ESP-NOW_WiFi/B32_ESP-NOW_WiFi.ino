@@ -1,8 +1,7 @@
 const char szSketchName[]  = "B32_ESP-NOW_WiFi.ino";
-const char szFileDate[]    = "10/14/23b, OneDot receiver";
+const char szFileDate[]    = "10/15/23d, TwoDot Receiver";
 // Beck 10/13/23, B32_ESP-NOW_WiFi.ino
-/*
-  Rui Santos
+/*Rui Santos
   Complete project details at https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32/
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,11 +26,11 @@ const char szFileDate[]    = "10/14/23b, OneDot receiver";
   #include <Adafruit_SSD1306.h>
 #endif  //WITH_SENSOR_AND_DISPLAY
 
-#define ONE_DOT_RECEVIER    false       //ESP32 w/o USB-C, returned to Amazon
-#define TWO_DOT_RECEVIER    false       //ESP32 w/o USB-C, returned to Amazon
+#define ONE_DOT_RECEIVER    false       //ESP32 w/o USB-C, returned to Amazon
+#define TWO_DOT_RECEIVER    true        //ESP32 w/o USB-C, returned to Amazon
 
-#define RED_PIN_RECEVIER    false       //TTGO with red header pins
-#define BLACK_PIN_RECEVIER  false       //TTGO with black header pins
+#define RED_PIN_RECEIVER    false       //TTGO with red header pins
+#define BLACK_PIN_RECEIVER  false        //TTGO with black header pins
 
 //Red pin TTGO to be connected to 8x tcouple board and transmit to black pin TTGO
 //Black pin TTGO is the display module
@@ -47,18 +46,28 @@ const char szFileDate[]    = "10/14/23b, OneDot receiver";
   Adafruit_BME280 bme;
 #endif
 
-// REPLACE WITH THE MAC Address of your receiver
-//uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-#if TWO_DOT_RECEVIER
-  //TwoDot ESP32 MAC Address for receiver
-  uint8_t broadcastAddress[]    = {0x48, 0xE7, 0x29, 0xB6, 0xC3,0xA0};
-#else
-  //OneDot ESP32 MAC Address for receiver
-  uint8_t broadcastAddress[]    = {0x48, 0xE7, 0x29, 0xAF, 0x7B,0xDC};
-#endif  //TWO_DOT_RECEVIER
+//Red pin TTGO to be connected to 8x TCouple board and transmit to black pin TTGO
+//Black pin TTGO is the display module. From B32_GetMACAddress.ino
+//uint8_t aucRedPinMAC[]    = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //RedPin MAC
+//uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //BlackPin MAC
 
-//Red pin TT-GO T-Display   - B0:B2:1C:4F:28:0C
-//Black pin TT-GO T-Display - B0:B2:1C:4F:32:CC
+#if TWO_DOT_RECEIVER
+  //TwoDot ESP32 MAC Address for receiver
+  uint8_t broadcastAddress[]= {0x48, 0xE7, 0x29, 0xB6, 0xC3,0xA0};
+#endif
+#if ONE_DOT_RECEIVER
+  //OneDot ESP32 MAC Address for receiver
+  uint8_t broadcastAddress[]= {0x48, 0xE7, 0x29, 0xAF, 0x7B,0xDC};
+#endif  //TWO_DOT_RECEIVER
+
+#if RED_PIN_RECEIVER
+  //Running on BlackPin TTGO, sends data to RedPin TTGO
+  uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};
+#endif
+#if BLACK_PIN_RECEIVER
+  //Running on RedPin TTGO, sends data to BlackPin TTGO
+  uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC};
+#endif  //TWO_DOT_RECEIVER
 
 
 // Define variables to store BME280 readings to be sent
@@ -138,6 +147,7 @@ void setup() {
 
   // Set device as a Wi-Fi Station
   WiFi.mode(WIFI_STA);
+  Serial << endl << "My MAC Address is- " << WiFi.macAddress() << endl;
 
   // Init ESP-NOW
   if (esp_now_init() != ESP_OK) {
@@ -184,7 +194,7 @@ void loop() {
     Serial.println("Error sending the data");
   }
   updateDisplay();
-  delay(10000);
+  delay(3000);
   return;
 }//loop
 

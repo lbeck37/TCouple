@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleDisplay.ino";
-const char szFileDate[]    = "10/14/23n";
+const char szFileDate[]    = "10/14/23p";
 //Thanks to Rui Santos, https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32
 
 //This sketch, B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
@@ -58,6 +58,7 @@ esp_now_peer_info_t     stPeerInfo;
 //Function prototypes
 void  setup           (void);
 void  loop            (void);
+void  SetupDisplay    (void);
 void  SetupESP_NOW    (void);
 void  OnDataRecv      (const uint8_t *pucMACAddress,
                        const uint8_t *pucIncomingData, int wNumBytes);
@@ -69,9 +70,17 @@ void setup(){
   delay(100);
   Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
+  SetupDisplay();
   SetupESP_NOW();
   return;
 } //setup
+
+
+void loop(){
+  UpdateDisplay();
+  delay(10000);
+  return;
+}//loop
 
 
 void SetupDisplay(){
@@ -82,16 +91,8 @@ void SetupDisplay(){
     for(;;);
   }
 #endif  //WITH_DISPLAY
-
   return;
 }//SetupDisplay
-
-
-void loop(){
-  UpdateDisplay();
-  delay(10000);
-  return;
-}//loop
 
 
 void SetupESP_NOW(void){

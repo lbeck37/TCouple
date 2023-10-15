@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleRemote.ino";
-const char szFileDate[]    = "10/15/23h";
+const char szFileDate[]    = "10/15/23j";
 /*
  MAX31855 library example sketch
 
@@ -85,8 +85,9 @@ void  SetupESP_NOW      (void);
 void  OnDataRecv        (const uint8_t *pucMACAddress,
                          const uint8_t *pucIncomingData, int wNumBytes);
 void  OnDataSent        (const uint8_t *pucMACAddress, esp_now_send_status_t wStatus);
+void  ReadAmbiant       (void);
 void  ReadTCouples      (void);
-void  printTemperature  (double dDegF);
+void  PrintTemperature  (double dDegF);
 
 void setup() {
   Serial.begin(115200);
@@ -101,68 +102,30 @@ void setup() {
 
 
 void loop() {
-  // Display the junction temperature
-  double  dJunctionDegF = TCoupleObject.readJunction(FAHRENHEIT);
-
-  //float temperature = temp.readJunction(FAHRENHEIT);
-  Serial.print("Ambiant=");
-  printTemperature(dJunctionDegF);
-
-/*
-  // Display the temperatures of the 8 thermocouples
-  for (int therm=0; therm<8; therm++) {
-    // Select the thermocouple
-    digitalWrite(T0, therm & 1? HIGH: LOW);
-    digitalWrite(T1, therm & 2? HIGH: LOW);
-    digitalWrite(T2, therm & 4? HIGH: LOW);
-    // The MAX31855 takes 100ms to sample the thermocouple.
-    // Wait a bit longer to be safe.  We'll wait 0.125 seconds
-    delay(125);
-
-    dTCoupleDegF = TCoupleObject.readThermocouple(FAHRENHEIT);
-    if (dTCoupleDegF == FAULT_OPEN){
-        continue;
-    } //if(temperature==FAULT_OPEN)
-    Serial.print(" T");
-    Serial.print(therm);
-    Serial.print("=");
-    printTemperature(dTCoupleDegF);
-    } //for(int therm=0;therm<8;therm++)
-  Serial.println();
-*/
+  ReadAmbiant();
   ReadTCouples();
   return;
 }   //loop
 
 
-void ReadTCouples(void){
-  double  dTCoupleDegF;
-  // Read the temperatures of the 8 thermocouples
-  for (int therm=0; therm<8; therm++) {
-    // Select the thermocouple
-    digitalWrite(T0, therm & 1? HIGH: LOW);
-    digitalWrite(T1, therm & 2? HIGH: LOW);
-    digitalWrite(T2, therm & 4? HIGH: LOW);
-    // The MAX31855 takes 100ms to sample the thermocouple.
-    // Wait a bit longer to be safe.  We'll wait 0.125 seconds
-    delay(125);
-
-    dTCoupleDegF = TCoupleObject.readThermocouple(FAHRENHEIT);
-    if (dTCoupleDegF == FAULT_OPEN){
-        continue;
-    } //if(temperature==FAULT_OPEN)
-/*
-    Serial.print(" T");
-    Serial.print(therm);
-    Serial.print("=");
-*/
-    Serial << "ReadTCouples(): T" << therm << "= ";
-    printTemperature(dTCoupleDegF);
-    } //for(int therm=0;therm<8;therm++)
-  //Serial.println();
-  Serial << endl;
+//Callback when data is received.
+void OnDataRecv(const uint8_t *pucMACAddress, const uint8_t *pucIncomingData, int wNumBytes) {
+  memcpy(&stIncomingReadings, pucIncomingData, sizeof(stIncomingReadings));
+  Serial << "OnDataRecv():  Bytes received= " << wNumBytes << endl;
   return;
-}   //ReadTCouples
+} //OnDataRecv
+
+
+// Callback when data is sent
+void OnDataSent(const uint8_t *pucMACAddress, esp_now_send_status_t wStatus) {
+  if (wStatus == ESP_NOW_SEND_SUCCESS){
+    Serial << endl << "OnDataSent(): Last Packet Send Status: FAIL" << endl;
+  } //if(wStatus==ESP_NOW_SEND_SUCCESS)
+  else {
+    Serial << endl << "OnDataSent(): Last Packet Send Status: Success" << endl;
+  } //if(wStatus==ESP_NOW_SEND_SUCCESS)else
+  return;
+} //OnDataSent
 
 
 void SetupPins(void){
@@ -185,7 +148,6 @@ void SetupESP_NOW(void){
 
   //Initialize ESP-NOW
   if (esp_now_init() != ESP_OK) {
-    //Serial.println("SetupESP_NOW(): Error initializing ESP-NOW");
     Serial << "SetupESP_NOW(): Error initializing ESP-NOW" << endl;
     return;
   } // if(esp_now_init()!=ESP_OK)
@@ -197,7 +159,6 @@ void SetupESP_NOW(void){
 
   //Add peer
   if (esp_now_add_peer(&stPeerInfo) != ESP_OK){
-    //Serial.println("SetupESP_NOW(): Failed to add peer");
     Serial << "SetupESP_NOW(): Failed to add peer" << endl;
     return;
   }   //if(esp_now_add_peer(&stPeerInfo)!=ESP_OK)
@@ -209,90 +170,60 @@ void SetupESP_NOW(void){
 }   //SetupESP_NOW
 
 
-//Callback when data is received.
-void OnDataRecv(const uint8_t *pucMACAddress, const uint8_t *pucIncomingData, int wNumBytes) {
-  memcpy(&stIncomingReadings, pucIncomingData, sizeof(stIncomingReadings));
-/*
-  Serial.print("OnDataRecv(): Bytes received: ");
-  Serial.println(wNumBytes);
-*/
-  Serial << "OnDataRecv():  Bytes received= " << wNumBytes << endl;
+void ReadAmbiant(void){
+  double  dJunctionDegF = TCoupleObject.readJunction(FAHRENHEIT);
+
+  Serial << "Ambiant=";
+  PrintTemperature(dJunctionDegF);
   return;
-} //OnDataRecv
+} //ReadAmbiant
 
 
-// Callback when data is sent
-void OnDataSent(const uint8_t *pucMACAddress, esp_now_send_status_t wStatus) {
-/*
-  Serial.print("\r\nLast Packet Send Status:\t");
-  Serial.println(wStatus == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
-*/
-  //Serial << endl << "OnDataSent(): Last Packet Send Status: Delivery Success" << endl;
-      if (wStatus == ESP_NOW_SEND_SUCCESS){
-        Serial << endl << "OnDataSent(): Last Packet Send Status: FAIL" << endl;
-      }
-      else {
-        Serial << endl << "OnDataSent(): Last Packet Send Status: Success" << endl;
-      }
-/*
-  if (wStatus == 0){
-    szSuccess = "Delivery Success :)";
-  }
-  else{
-    szSuccess = "Delivery Fail :(";
-  }
-*/
+void ReadTCouples(void){
+  double  dTCoupleDegF;
+  //Read the temperatures of the 8 thermocouples
+  for (int therm=0; therm<8; therm++) {
+    //Select the thermocouple
+    digitalWrite(T0, therm & 1? HIGH: LOW);
+    digitalWrite(T1, therm & 2? HIGH: LOW);
+    digitalWrite(T2, therm & 4? HIGH: LOW);
+    // The MAX31855 takes 100ms to sample the thermocouple.
+    // Wait a bit longer to be safe.  We'll wait 0.125 seconds
+    delay(125);
+
+    dTCoupleDegF = TCoupleObject.readThermocouple(FAHRENHEIT);
+    if (dTCoupleDegF == FAULT_OPEN){
+        continue;
+    } //if(temperature==FAULT_OPEN)
+    Serial << "ReadTCouples(): T" << therm << "= ";
+    PrintTemperature(dTCoupleDegF);
+    } //for(int therm=0;therm<8;therm++)
+  Serial << endl;
   return;
-} //OnDataSent
+}   //ReadTCouples
 
 
 // Print the temperature, or the type of fault
-void printTemperature(double dDegF) {
+void PrintTemperature(double dDegF) {
   //switch statement takes an integer value and executes the case that corresponds
   //Cast the double dDegF to be an int so it becomes an error code
-/*
-  switch ((int)dDegF) {
-    case FAULT_OPEN:
-      Serial.print("FAULT_OPEN");
-      break;
-    case FAULT_SHORT_GND:
-      Serial.print("FAULT_SHORT_GND");
-      break;
-    case FAULT_SHORT_VCC:
-      Serial.print("FAULT_SHORT_VCC");
-      break;
-    case NO_MAX31855:
-      Serial.print("NO_MAX31855");
-      break;
-    default:
-      Serial.print(dDegF);
-      break;
-  }
-  Serial.print(" ");
-*/
   switch ((int)dDegF){
     case FAULT_OPEN:
-      //Serial.print("FAULT_OPEN");
       Serial << "FAULT_OPEN";
       break;
     case FAULT_SHORT_GND:
-      //Serial.print("FAULT_SHORT_GND");
       Serial << "FAULT_SHORT_GND";
       break;
     case FAULT_SHORT_VCC:
-      //Serial.print("FAULT_SHORT_VCC");
       Serial << "FAULT_SHORT_VCC";
       break;
     case NO_MAX31855:
-      //Serial.print("NO_MAX31855");
       Serial << "NO_MAX31855";
       break;
     default:
-      //Serial.print(dDegF);
       Serial << dDegF;
       break;
   } //switch
-  //Serial.print(" ");
   Serial << " ";
-}//printTemperature
+}//PrintTemperature
 //Last line.

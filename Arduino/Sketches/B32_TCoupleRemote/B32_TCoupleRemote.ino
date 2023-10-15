@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleRemote.ino";
-const char szFileDate[]    = "10/15/23t";
+const char szFileDate[]    = "10/15/23w";
 /* MAX31855 library example sketch
  This sample code is designed to be used on the MAX31855x8 breakout board.
  The board has a single MAX31855 IC on it, and uses a multiplexer
@@ -41,13 +41,32 @@ const char szFileDate[]    = "10/15/23t";
 #define CS   17
 #define SCK  33
 
+#define ONE_DOT_RECEIVER    false       //ESP32 w/o USB-C, returned to Amazon
+#define TWO_DOT_RECEIVER    false        //ESP32 w/o USB-C, returned to Amazon
+
+#define RED_PIN_RECEIVER    false       //TTGO with red header pins, Remote tcouple reader
+#define BLACK_PIN_RECEIVER  true        //TTGO with black header pins, tcouple display
+
+#if RED_PIN_RECEIVER
+  //Running on BlackPin TTGO, sends data to RedPin TTGO
+  uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC};
+#endif
+#if BLACK_PIN_RECEIVER
+  //Running on RedPin TTGO, sends data to BlackPin TTGO
+  uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};
+#endif  //TWO_DOT_RECEIVER
+
 //Create the temperature object, defining the pins used for communication
 MAX31855 TCoupleObject = MAX31855(MISO, CS, SCK);
 
+/*
 //Red pin TTGO to be connected to 8x TCouple board and transmit to black pin TTGO
 //Black pin TTGO is the display module. From B32_GetMACAddress.ino
-uint8_t aucRedPinMAC[]    = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //RedPin MAC
-uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //BlackPin MAC
+//uint8_t aucRedPinMAC[]    = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //RedPin MAC
+//uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //BlackPin MAC
+uint8_t aucRedPinMAC[]    = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //RedPin MAC
+uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
+*/
 
 const int   wNumTCouples= 3;
 double      adTCoupleDegF[wNumTCouples];
@@ -132,7 +151,12 @@ void SendDataToDisplay(void){
   stOutgoingReadings.dTCouple2_DegF= adTCoupleDegF[2];
 
   //esp_err_t wResult = esp_now_send(broadcastAddress, (uint8_t *) &BME280Readings, sizeof(BME280Readings));
+/*
   esp_err_t wResult= esp_now_send(aucBlackPinMAC,
+                                  (uint8_t *)&stOutgoingReadings,
+                                  sizeof(stOutgoingReadings));
+*/
+  esp_err_t wResult= esp_now_send(broadcastAddress,
                                   (uint8_t *)&stOutgoingReadings,
                                   sizeof(stOutgoingReadings));
   if (wResult == ESP_OK) {
@@ -170,7 +194,8 @@ void SetupESP_NOW(void){
   } // if(esp_now_init()!=ESP_OK)
 
   //Register remote module
-  memcpy(stPeerInfo.peer_addr, aucRedPinMAC, 6);
+  //memcpy(stPeerInfo.peer_addr, aucRedPinMAC, 6);
+  memcpy(stPeerInfo.peer_addr, broadcastAddress, 6);
   stPeerInfo.channel = 0;
   stPeerInfo.encrypt = false;
 

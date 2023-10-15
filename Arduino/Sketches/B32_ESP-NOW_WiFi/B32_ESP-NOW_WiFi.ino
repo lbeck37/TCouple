@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_ESP-NOW_WiFi.ino";
-const char szFileDate[]    = "10/15/23h, BlackPin Receiver";
+const char szFileDate[]    = "10/15/23j, BlackPin Receiver";
 // Beck 10/13/23, B32_ESP-NOW_WiFi.ino
 /*Rui Santos
   Complete project details at https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32/
@@ -62,12 +62,10 @@ const char szFileDate[]    = "10/15/23h, BlackPin Receiver";
 
 #if RED_PIN_RECEIVER
   //Running on BlackPin TTGO, sends data to RedPin TTGO
-  //uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};
   uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC};
 #endif
 #if BLACK_PIN_RECEIVER
   //Running on RedPin TTGO, sends data to BlackPin TTGO
-  //uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC};
   uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};
 #endif  //TWO_DOT_RECEIVER
 

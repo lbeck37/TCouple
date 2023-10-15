@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleDisplay.ino";
-const char szFileDate[]    = "10/15/23b";
+const char szFileDate[]    = "10/15/23d";
 //Thanks to Rui Santos, https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32
 
 //This sketch, B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
@@ -22,14 +22,32 @@ const char szFileDate[]    = "10/15/23b";
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 #endif
 
+#define ONE_DOT_RECEIVER    false       //ESP32 w/o USB-C, returned to Amazon
+#define TWO_DOT_RECEIVER    false        //ESP32 w/o USB-C, returned to Amazon
 
+#define RED_PIN_RECEIVER    true       //TTGO with red header pins, Remote tcouple reader
+#define BLACK_PIN_RECEIVER  false        //TTGO with black header pins, tcouple display
+
+#if RED_PIN_RECEIVER
+  //Running on BlackPin TTGO, sends data to RedPin TTGO
+  uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC};
+#endif
+#if BLACK_PIN_RECEIVER
+  //Running on RedPin TTGO, sends data to BlackPin TTGO
+  uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};
+#endif  //TWO_DOT_RECEIVER
+
+/*
 //Red pin TTGO to be connected to 8x TCouple board and transmit to black pin TTGO
 //Black pin TTGO is the display module
 //From B32_GetMACAddress.ino
 //uint8_t OneDotMAC[]     = {0x48, 0xE7, 0x29, 0xAF, 0x7B,0xDC};  //Returned to Amazon
 //uint8_t TwoDotMAC[]     = {0x48, 0xE7, 0x29, 0xB6, 0xC3,0xA0};  //Returned to Amazon
-uint8_t aucRedPinMAC[]    = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //RedPin MAC
-uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //BlackPin MAC
+//uint8_t aucRedPinMAC[]    = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //RedPin MAC
+//uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //BlackPin MAC
+uint8_t aucRedPinMAC[]    = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //RedPin MAC
+uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
+*/
 
 //Define variables to store BME280 readings to be sent
 double dTCouple0_DegF;
@@ -108,7 +126,8 @@ void SetupESP_NOW(void){
   } // if(esp_now_init()!=ESP_OK)
 
   //Register remote module
-  memcpy(stPeerInfo.peer_addr, aucRedPinMAC, 6);
+  //memcpy(stPeerInfo.peer_addr, aucRedPinMAC, 6);
+  memcpy(stPeerInfo.peer_addr, broadcastAddress, 6);
   stPeerInfo.channel = 0;
   stPeerInfo.encrypt = false;
 

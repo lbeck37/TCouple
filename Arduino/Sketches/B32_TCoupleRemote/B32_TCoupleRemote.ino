@@ -80,6 +80,14 @@ const char szFileDate[]    = "10/14/23b";
 // Create the temperature object, defining the pins used for communication
 MAX31855 temp = MAX31855(MISO, CS, SCK);
 
+//Function prototypes
+void  setup             (void);
+void  loop              (void);
+void  SetupPins         (void);
+void  SetupESP_NOW      (void);
+void  OnDataSent        (const uint8_t *mac_addr, esp_now_send_status_t status);
+void  printTemperature  (double dDegF);
+
 void setup() {
   // Display temperatures using the serial port
   //Serial.begin(9600);
@@ -87,38 +95,11 @@ void setup() {
   delay(100);
   Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
   
-  // Initialize pins
-  pinMode(T0,   OUTPUT);
-  pinMode(T1,   OUTPUT);
-  pinMode(T2,   OUTPUT);
-
-  pinMode(MISO, INPUT);
-  pinMode(CS,   OUTPUT);
-  pinMode(SCK,  OUTPUT);
-
-/*
-  pinMode(RELAY_1, OUTPUT);       
-  pinMode(RELAY_2, OUTPUT);
-  pinMode(RELAY_3, OUTPUT);
-  pinMode(RELAY_4, OUTPUT);
-*/
+  SetupPins();
+  SetupESP_NOW();
   
-  // Power up the board
-/*
-  digitalWrite(RELAY_1, RELAY_OFF);
-  digitalWrite(RELAY_2, RELAY_OFF);
-  digitalWrite(RELAY_3, RELAY_OFF);
-  digitalWrite(RELAY_4, RELAY_OFF);
-*/
-#if VccGndOnOutputPins
-  pinMode(VIN, OUTPUT);
-  pinMode(GND, OUTPUT);
-
-  digitalWrite(GND, LOW);
-  digitalWrite(VIN, HIGH);
-#endif
-  delay(200);
-}
+  return;
+}   //setup
 
 
 void loop () {
@@ -163,6 +144,83 @@ void loop () {
     } //for(int therm=0;therm<8;therm++)
   Serial.println();
 }//loop
+
+
+void SetupPins(void(){
+  // Initialize pins
+  pinMode(T0,   OUTPUT);
+  pinMode(T1,   OUTPUT);
+  pinMode(T2,   OUTPUT);
+
+  pinMode(MISO, INPUT);
+  pinMode(CS,   OUTPUT);
+  pinMode(SCK,  OUTPUT);
+
+/*
+  pinMode(RELAY_1, OUTPUT);
+  pinMode(RELAY_2, OUTPUT);
+  pinMode(RELAY_3, OUTPUT);
+  pinMode(RELAY_4, OUTPUT);
+*/
+
+  // Power up the board
+/*
+  digitalWrite(RELAY_1, RELAY_OFF);
+  digitalWrite(RELAY_2, RELAY_OFF);
+  digitalWrite(RELAY_3, RELAY_OFF);
+  digitalWrite(RELAY_4, RELAY_OFF);
+*/
+#if VccGndOnOutputPins
+  pinMode(VIN, OUTPUT);
+  pinMode(GND, OUTPUT);
+
+  digitalWrite(GND, LOW);
+  digitalWrite(VIN, HIGH);
+#endif
+  delay(200);
+  return;
+} //SetupPins
+
+
+void SetupESP_NOW(void){
+  //Set device as a Wi-Fi Station
+  WiFi.mode(WIFI_STA);
+
+  //Initialize ESP-NOW
+  if (esp_now_init() != ESP_OK) {
+    Serial.println("SetupESP_NOW(): Error initializing ESP-NOW");
+    return;
+  } // if(esp_now_init()!=ESP_OK)
+
+  //Register remote module
+  memcpy(stPeerInfo.peer_addr, aucRedPinMAC, 6);
+  stPeerInfo.channel = 0;
+  stPeerInfo.encrypt = false;
+
+  //Add peer
+  if (esp_now_add_peer(&stPeerInfo) != ESP_OK){
+    Serial.println("SetupESP_NOW(): Failed to add peer");
+    return;
+  }   //if(esp_now_add_peer(&stPeerInfo)!=ESP_OK)
+
+  // Register for a callback function that will be called when data is received
+  esp_now_register_recv_cb(OnDataRecv);
+
+  return;
+}   //SetupESP_NOW
+
+
+// Callback when data is sent
+void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
+  Serial.print("\r\nLast Packet Send Status:\t");
+  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  if (status ==0){
+    success = "Delivery Success :)";
+  }
+  else{
+    success = "Delivery Fail :(";
+  }
+} //OnDataSent
 
 
 // Print the temperature, or the type of fault

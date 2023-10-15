@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleDisplay.ino";
-const char szFileDate[]    = "10/14/23p";
+const char szFileDate[]    = "10/15/23b";
 //Thanks to Rui Santos, https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32
 
 //This sketch, B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
@@ -53,6 +53,7 @@ typedef struct stMessageStructure {
 
 // Create a stMessageStructure to hold incoming sensor readings
 stMessageStructure      stIncomingReadings;
+stMessageStructure      stOutgoingReadings;
 esp_now_peer_info_t     stPeerInfo;
 
 //Function prototypes
@@ -62,6 +63,7 @@ void  SetupDisplay    (void);
 void  SetupESP_NOW    (void);
 void  OnDataRecv      (const uint8_t *pucMACAddress,
                        const uint8_t *pucIncomingData, int wNumBytes);
+void  OnDataSent      (const uint8_t *mac_addr, esp_now_send_status_t status);
 void  UpdateDisplay   (void);
 
 void setup(){

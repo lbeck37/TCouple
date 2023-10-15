@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleRemote.ino";
-const char szFileDate[]    = "10/15/23j";
+const char szFileDate[]    = "10/15/23r";
 /*
  MAX31855 library example sketch
 
@@ -62,6 +62,9 @@ MAX31855 TCoupleObject = MAX31855(MISO, CS, SCK);
 uint8_t aucRedPinMAC[]    = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //RedPin MAC
 uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //BlackPin MAC
 
+const int   wNumTCouples= 3;
+double      adTCoupleDegF[wNumTCouples];
+
 //Message Structure that is used to pass data back and forth
 typedef struct stMessageStructure {
   double dTCouple0_DegF;
@@ -74,19 +77,23 @@ stMessageStructure      stIncomingReadings;
 stMessageStructure      stOutgoingReadings;
 esp_now_peer_info_t     stPeerInfo;
 
+double  dJunctionDegF;
+
 // Variable to store if sending data was successful
 String szSuccess;
 
 //Function prototypes
 void  setup             (void);
 void  loop              (void);
-void  SetupPins         (void);
-void  SetupESP_NOW      (void);
 void  OnDataRecv        (const uint8_t *pucMACAddress,
                          const uint8_t *pucIncomingData, int wNumBytes);
 void  OnDataSent        (const uint8_t *pucMACAddress, esp_now_send_status_t wStatus);
+void  SendDataToDisplay (void);
+void  SetupPins         (void);
+void  SetupESP_NOW      (void);
 void  ReadAmbiant       (void);
 void  ReadTCouples      (void);
+void  PrintTemperatures (void);
 void  PrintTemperature  (double dDegF);
 
 void setup() {
@@ -104,6 +111,10 @@ void setup() {
 void loop() {
   ReadAmbiant();
   ReadTCouples();
+  PrintTemperatures();
+  SendDataToDisplay();
+
+  delay(3000);
   return;
 }   //loop
 
@@ -126,6 +137,27 @@ void OnDataSent(const uint8_t *pucMACAddress, esp_now_send_status_t wStatus) {
   } //if(wStatus==ESP_NOW_SEND_SUCCESS)else
   return;
 } //OnDataSent
+
+
+void SendDataToDisplay(void){
+  stOutgoingReadings.dTCouple0_DegF= adTCoupleDegF[0];
+  stOutgoingReadings.dTCouple1_DegF= adTCoupleDegF[1];
+  stOutgoingReadings.dTCouple2_DegF= adTCoupleDegF[2];
+
+  // Send message via ESP-NOW
+  //esp_err_t wResult = esp_now_send(broadcastAddress, (uint8_t *) &BME280Readings, sizeof(BME280Readings));
+  esp_err_t wResult= esp_now_send(aucBlackPinMAC, (uint8_t *)&stOutgoingReadings,
+                                  sizeof(stOutgoingReadings));
+
+  if (wResult == ESP_OK) {
+    Serial.println("Sent with success");
+  } //if(wResult==ESP_OK)
+  else {
+    Serial.println("Error sending the data");
+  } //if(wResult==ESP_OK)else
+
+  return;
+} //SendDataToDisplay
 
 
 void SetupPins(void){
@@ -171,36 +203,43 @@ void SetupESP_NOW(void){
 
 
 void ReadAmbiant(void){
-  double  dJunctionDegF = TCoupleObject.readJunction(FAHRENHEIT);
-
-  Serial << "Ambiant=";
-  PrintTemperature(dJunctionDegF);
+  dJunctionDegF= TCoupleObject.readJunction(FAHRENHEIT);
   return;
 } //ReadAmbiant
 
 
 void ReadTCouples(void){
-  double  dTCoupleDegF;
   //Read the temperatures of the 8 thermocouples
-  for (int therm=0; therm<8; therm++) {
+  for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
     //Select the thermocouple
-    digitalWrite(T0, therm & 1? HIGH: LOW);
-    digitalWrite(T1, therm & 2? HIGH: LOW);
-    digitalWrite(T2, therm & 4? HIGH: LOW);
-    // The MAX31855 takes 100ms to sample the thermocouple.
-    // Wait a bit longer to be safe.  We'll wait 0.125 seconds
+    digitalWrite(T0, wTCoupleNum & 1? HIGH: LOW);
+    digitalWrite(T1, wTCoupleNum & 2? HIGH: LOW);
+    digitalWrite(T2, wTCoupleNum & 4? HIGH: LOW);
+    //The MAX31855 takes 100ms to sample the TCouple.
+    //Wait a bit longer to be safe.  We'll wait 0.125 seconds
     delay(125);
 
-    dTCoupleDegF = TCoupleObject.readThermocouple(FAHRENHEIT);
-    if (dTCoupleDegF == FAULT_OPEN){
-        continue;
+    adTCoupleDegF[wTCoupleNum]= TCoupleObject.readThermocouple(FAHRENHEIT);
+    if (adTCoupleDegF[wTCoupleNum] == FAULT_OPEN){
+      //Break out of for loop, go to top of for loop and next TCouple
+      continue;
     } //if(temperature==FAULT_OPEN)
-    Serial << "ReadTCouples(): T" << therm << "= ";
-    PrintTemperature(dTCoupleDegF);
-    } //for(int therm=0;therm<8;therm++)
-  Serial << endl;
+  } //for(int wTCoupleNum=0;wTCoupleNum<8;wTCoupleNum++)
   return;
 }   //ReadTCouples
+
+
+void PrintTemperatures(void){
+  Serial << "Ambiant= ";
+  PrintTemperature(dJunctionDegF);
+  for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
+    Serial << ", ";
+    Serial << "T" << wTCoupleNum << "= ";
+    PrintTemperature(adTCoupleDegF[wTCoupleNum]);
+  } //for(int wTCoupleNum=0;wTCoupleNum<8;wTCoupleNum++)
+  Serial << endl;
+  return;
+} //PrintTemperatures
 
 
 // Print the temperature, or the type of fault
@@ -224,6 +263,5 @@ void PrintTemperature(double dDegF) {
       Serial << dDegF;
       break;
   } //switch
-  Serial << " ";
 }//PrintTemperature
 //Last line.

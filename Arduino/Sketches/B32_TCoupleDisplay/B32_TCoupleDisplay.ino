@@ -1,47 +1,37 @@
 const char szSketchName[]  = "B32_TCoupleDisplay.ino";
-const char szFileDate[]    = "10/14/23k";
+const char szFileDate[]    = "10/14/23n";
 //Thanks to Rui Santos, https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32
 
 //This sketch, B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
-//communication code from the esp_now.h library. The example used to generate this code
-//was an example with a Adafruit_BME280 temp, humidity pressure chip and
-//Adafruit_SSD1306 display libraries.
-//Previously it was tested on ESP32 chips idenfiied by either one or two dots on top.
+//communication code from the esp_now.h library.
+//Previously it was tested on two ESP32 chips idenfiied by either one or two dots on top.
 #include <Streaming.h>
 #include <esp_now.h>
 #include <WiFi.h>
 
-#define WITH_SENSOR_AND_DISPLAY     false
+#define WITH_DISPLAY     false
 
-#if WITH_SENSOR_AND_DISPLAY
-  #include <Wire.h>
-  #include <Adafruit_Sensor.h>
-  #include <Adafruit_BME280.h>
+#if WITH_DISPLAY
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
-  #include <Adafruit_GFX.h>
-  #include <Adafruit_SSD1306.h>
-#endif  //WITH_SENSOR_AND_DISPLAY
+#define SCREEN_WIDTH 128  // OLED display width, in pixels
+#define SCREEN_HEIGHT 64  // OLED display height, in pixels
 
-//Red pin TTGO to be connected to 8x TCouple board and transmit to black pin TTGO
-//Black pin TTGO is the display module
-#if WITH_SENSOR_AND_DISPLAY
-  #define ONE_DOT_RECEVIER    false       //ESP32 w/o USB-C, returned to Amazon
-  #define SCREEN_WIDTH 128  // OLED display width, in pixels
-  #define SCREEN_HEIGHT 64  // OLED display height, in pixels
-    // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-    Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
-
-    Adafruit_BME280 bme;
+// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 #endif
 
 
+//Red pin TTGO to be connected to 8x TCouple board and transmit to black pin TTGO
+//Black pin TTGO is the display module
 //From B32_GetMACAddress.ino
 //uint8_t OneDotMAC[]     = {0x48, 0xE7, 0x29, 0xAF, 0x7B,0xDC};  //Returned to Amazon
 //uint8_t TwoDotMAC[]     = {0x48, 0xE7, 0x29, 0xB6, 0xC3,0xA0};  //Returned to Amazon
 uint8_t aucRedPinMAC[]    = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //RedPin MAC
 uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //BlackPin MAC
 
-// Define variables to store BME280 readings to be sent
+//Define variables to store BME280 readings to be sent
 double dTCouple0_DegF;
 double dTCouple1_DegF;
 double dTCouple2_DegF;
@@ -56,9 +46,9 @@ String szSuccess;
 
 //Message Structure that is used to pass data back an forth
 typedef struct stMessageStructure {
-    double dTCouple0_DegF;
-    double dTCouple1_DegF;
-    double dTCouple2_DegF;
+  double dTCouple0_DegF;
+  double dTCouple1_DegF;
+  double dTCouple2_DegF;
 } stMessageStructure;
 
 // Create a stMessageStructure to hold incoming sensor readings
@@ -69,7 +59,8 @@ esp_now_peer_info_t     stPeerInfo;
 void  setup           (void);
 void  loop            (void);
 void  SetupESP_NOW    (void);
-void  OnDataRecv      (const uint8_t *pucMACAddress, const uint8_t *pucIncomingData, int wNumBytes);
+void  OnDataRecv      (const uint8_t *pucMACAddress,
+                       const uint8_t *pucIncomingData, int wNumBytes);
 void  UpdateDisplay   (void);
 
 void setup(){
@@ -78,23 +69,22 @@ void setup(){
   delay(100);
   Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
-#if WITH_SENSOR_AND_DISPLAY
-  // Init BME280 sensor
-  bool status = bme.begin(0x76);
-  if (!status) {
-    Serial.println("Could not find a valid BME280 sensor, check wiring!");
-    while (1);
-  }
+  SetupESP_NOW();
+  return;
+} //setup
 
+
+void SetupDisplay(){
+#if WITH_DISPLAY
   // Init OLED display
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
     Serial.println(F("SSD1306 allocation failed"));
     for(;;);
   }
-#endif  //WITH_SENSOR_AND_DISPLAY
+#endif  //WITH_DISPLAY
 
   return;
-} //setup
+}//SetupDisplay
 
 
 void loop(){
@@ -145,7 +135,7 @@ void OnDataRecv(const uint8_t *pucMACAddress, const uint8_t *pucIncomingData, in
 
 
 void UpdateDisplay(){
-#if WITH_SENSOR_AND_DISPLAY
+#if WITH_DISPLAY
   // Display Readings on OLED Display
   display.clearDisplay();
   display.setTextSize(1);
@@ -169,19 +159,19 @@ void UpdateDisplay(){
   display.setCursor(0, 56);
   display.print(szSuccess);
   display.display();
-#endif  //WITH_SENSOR_AND_DISPLAY
+#endif  //WITH_DISPLAY
 
   // Display Readings in Serial Monitor
   Serial.println("UpdateDisplay(): INCOMING READINGS");
-  Serial.print("Temperature: ");
+  Serial.print("TCouple 0: ");
   Serial.print(stIncomingReadings.dTCouple0_DegF);
-  Serial.println(" �C");
-  Serial.print("Humidity: ");
+  Serial.println(" F");
+  Serial.print("TCouple 1: ");
   Serial.print(stIncomingReadings.dTCouple1_DegF);
-  Serial.println(" %");
-  Serial.print("Pressure: ");
+  Serial.println(" F");
+  Serial.print("TCouple 2: ");
   Serial.print(stIncomingReadings.dTCouple2_DegF);
-  Serial.println(" hPa");
+  Serial.println(" F");
   Serial.println();
   return;
 }   //UpdateDisplay

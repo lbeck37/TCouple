@@ -1,4 +1,4 @@
-const char szSketchName[]  = "B32_TCoupleModule.ino";
+const char szSketchName[]  = "B32_TCoupleRemote.ino";
 const char szFileDate[]    = "10/14/23b";
 /*
  MAX31855 library example sketch

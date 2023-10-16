@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleDisplay.ino";
-const char szFileDate[]    = "10/16/23g";
+const char szFileDate[]    = "10/16/23h";
 //Thanks to Rui Santos, https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32
 
 //This sketch, B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
@@ -213,7 +213,7 @@ void UpdateDisplay(){
   //tft.setTextFont(4);
   tft.setTextFont(3);
   tft.setCursor(0, 0, 2);
-  tft << "Thermocouple Temperatures" << endl << endl;
+  tft << "Thermocouple Temperatures" << endl;
 
   for (int wTCoupleNum=0; (wTCoupleNum < 5); wTCoupleNum++) {
     //tft.println("T", wTCoupleNum, "= ", adTCoupleDegF[wTCoupleNum]);

@@ -1,5 +1,5 @@
 const char szFileName[]  = "B32_TCoupleLib.ino";
-const char szFileDate[]  = "10/16/23b";
+const char szFileDate[]  = "10/16/23c";
 #include <B32_TCoupleLib.h>
 
 #if RED_PIN_RECEIVER
@@ -96,13 +96,6 @@ void OnDataRecv(const uint8_t *pucMACAddress, const uint8_t *pucIncomingData, in
 
 
 void SetupDisplay(){
-#if WITH_DISPLAY
-  // Init OLED display
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-    Serial.println(F("SSD1306 allocation failed"));
-    for(;;);
-  }
-#endif  //WITH_DISPLAY
   tft.init();
   tft.setRotation(1);   //1= USB Right Landscape
   tft.fillScreen(TFT_BLACK);
@@ -111,31 +104,6 @@ void SetupDisplay(){
 
 
 void UpdateDisplay(){
-#if WITH_DISPLAY
-  // Display Readings on OLED Display
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
-  display.setCursor(0, 0);
-  display.println("INCOMING READINGS");
-  display.setCursor(0, 15);
-  display.print("Temperature: ");
-  display.print(dIncomingTCouple0_DegF);
-  display.cp437(true);
-  display.write(248);
-  display.print("C");
-  display.setCursor(0, 25);
-  display.print("Humidity: ");
-  display.print(dIncomingTCouple1_DegF);
-  display.print("%");
-  display.setCursor(0, 35);
-  display.print("Pressure: ");
-  display.print(dIncomingTCouple2_DegF);
-  display.print("hPa");
-  display.setCursor(0, 56);
-  display.print(szSuccess);
-  display.display();
-#endif  //WITH_DISPLAY
   tft.fillScreen(TFT_BLACK);
   tft.setTextColor(TFT_GREEN,TFT_BLACK);
   //tft.setTextFont(4);

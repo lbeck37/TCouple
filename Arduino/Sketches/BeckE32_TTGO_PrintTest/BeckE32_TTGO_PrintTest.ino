@@ -1,4 +1,6 @@
-// Beck, 3/23/21d, BeckE32_TTGO_PrintTest.ino
+const char szSketchName[]  = "BeckE32_TTGO_PrintTest.ino";
+const char szFileDate[]    = "10/15/23b";
+//Was BeckE32_TTGO_PrintTest.ino 3/23/21d
 /*Test the tft.print() viz embedded tft.write() function
  This sketch used font 2, 4, 7
  Make sure all the display driver and pin connections are correct by
@@ -7,6 +9,7 @@
  ###### DON'T FORGET TO UPDATE THE User_Setup.h FILE IN THE LIBRARY ######
  #########################################################################
  */
+#include <Streaming.h>
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
 #include <SPI.h>
 
@@ -17,7 +20,8 @@ TFT_eSPI tft = TFT_eSPI();  // Invoke library
 void setup(void) {
 	Serial.begin(115200);
 	delay(500);
-	Serial.println("\nBeckE32_TTGO_PrintTest, 3/23/21d: setup(): Begin");
+	//Serial.println("\nBeckE32_TTGO_PrintTest, 3/23/21d: setup(): Begin");
+  Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
 	tft.init();
 	tft.setRotation(2);

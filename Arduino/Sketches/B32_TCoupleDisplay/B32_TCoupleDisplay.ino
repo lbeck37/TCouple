@@ -1,11 +1,13 @@
 const char szSketchName[]  = "B32_TCoupleDisplay.ino";
-const char szFileDate[]    = "10/15/23n";
+const char szFileDate[]    = "10/16/23f";
 //Thanks to Rui Santos, https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32
 
 //This sketch, B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
 //communication code from the esp_now.h library.
 //Previously it was tested on two ESP32 chips idenfiied by either one or two dots on top.
 #include <Streaming.h>
+#include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
+#include <SPI.h>
 #include <esp_now.h>
 #include <WiFi.h>
 #include <MAX31855.h>
@@ -73,6 +75,9 @@ typedef struct stMessageStructure {
 // Create a stMessageStructure to hold incoming sensor readings
 stMessageStructure      stIncomingReadings;
 stMessageStructure      stOutgoingReadings;
+
+TFT_eSPI tft = TFT_eSPI();  //Class library for TTGO T-Display
+
 esp_now_peer_info_t     stPeerInfo;
 
 //Function prototypes
@@ -115,18 +120,6 @@ void ResetTimer(void){
   lNextMsec= millis() + lAliveMsec;
   return;
 } //ResetTimer
-
-
-void SetupDisplay(){
-#if WITH_DISPLAY
-  // Init OLED display
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-    Serial.println(F("SSD1306 allocation failed"));
-    for(;;);
-  }
-#endif  //WITH_DISPLAY
-  return;
-}//SetupDisplay
 
 
 void SetupESP_NOW(void){
@@ -174,6 +167,21 @@ void OnDataRecv(const uint8_t *pucMACAddress, const uint8_t *pucIncomingData, in
 } //OnDataRecv
 
 
+void SetupDisplay(){
+#if WITH_DISPLAY
+  // Init OLED display
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;);
+  }
+#endif  //WITH_DISPLAY
+  tft.init();
+  tft.setRotation(1);   //1= USB Right Landscape
+  tft.fillScreen(TFT_BLACK);
+  return;
+}//SetupDisplay
+
+
 void UpdateDisplay(){
 #if WITH_DISPLAY
   // Display Readings on OLED Display
@@ -200,7 +208,18 @@ void UpdateDisplay(){
   display.print(szSuccess);
   display.display();
 #endif  //WITH_DISPLAY
+  tft.fillScreen(TFT_BLACK);
+  tft.setTextColor(TFT_GREEN,TFT_BLACK);
+  tft.setTextFont(4);
+  //tft.println("Hey Dude!");
+  tft.setCursor(0, 0, 2);
 
+  for (int wTCoupleNum=0; (wTCoupleNum < 5); wTCoupleNum++) {
+    //tft.println("T", wTCoupleNum, "= ", adTCoupleDegF[wTCoupleNum]);
+    //tft << "Test" << endl;
+    tft << "T" << wTCoupleNum << "= " << adTCoupleDegF[wTCoupleNum] << "F, T"
+        << (wTCoupleNum + 3) << "= " << adTCoupleDegF[wTCoupleNum +3] << "F" << endl;
+  }
   return;
 }   //UpdateDisplay
 

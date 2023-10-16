@@ -1,5 +1,5 @@
 const char szSketchName[]  = "BeckE32_TTGO_PrintTest.ino";
-const char szFileDate[]    = "10/15/23b";
+const char szFileDate[]    = "10/16/23h";
 //Was BeckE32_TTGO_PrintTest.ino 3/23/21d
 /*Test the tft.print() viz embedded tft.write() function
  This sketch used font 2, 4, 7
@@ -18,13 +18,21 @@ const char szFileDate[]    = "10/15/23b";
 TFT_eSPI tft = TFT_eSPI();  // Invoke library
 
 void setup(void) {
+  bool bLandscape= true;
 	Serial.begin(115200);
 	delay(500);
 	//Serial.println("\nBeckE32_TTGO_PrintTest, 3/23/21d: setup(): Begin");
   Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
+  // 0 is USB top     Portrait (Default)
+  // 1 is USB right   Landscape
+  // 2 is USB bottom  Portrait
+  // 3 is USB left    Landscape
+  bLandscape= true;
 	tft.init();
-	tft.setRotation(2);
+	if(bLandscape){
+	  tft.setRotation(1);
+	}
 	return;
 }	//setup
 
@@ -48,7 +56,8 @@ void loop() {
   tft.println(1234.56);
   
   // Set the font colour to be red with black background, set to font 4
-  tft.setTextColor(TFT_RED,TFT_BLACK);    tft.setTextFont(4);
+  tft.setTextColor(TFT_RED,TFT_BLACK);
+  tft.setTextFont(4);
   //tft.println(3735928559L, HEX); // Should print DEADBEEF
 
   // Set the font colour to be green with black background, set to font 4

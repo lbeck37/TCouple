@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleDisplay.ino";
-const char szFileDate[]    = "10/15/23d";
+const char szFileDate[]    = "10/15/23f";
 //Thanks to Rui Santos, https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32
 
 //This sketch, B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
@@ -8,6 +8,7 @@ const char szFileDate[]    = "10/15/23d";
 #include <Streaming.h>
 #include <esp_now.h>
 #include <WiFi.h>
+#include <MAX31855.h>
 
 #define WITH_DISPLAY     false
 
@@ -54,10 +55,14 @@ double dTCouple0_DegF;
 double dTCouple1_DegF;
 double dTCouple2_DegF;
 
+/*
 // Define variables to store incoming readings
 double dIncomingTCouple0_DegF;
 double dIncomingTCouple1_DegF;
 double dIncomingTCouple2_DegF;
+*/
+const int   wNumTCouples= 3;
+double      adTCoupleDegF[wNumTCouples];
 
 // Variable to store if sending data was successful
 String szSuccess;
@@ -75,14 +80,16 @@ stMessageStructure      stOutgoingReadings;
 esp_now_peer_info_t     stPeerInfo;
 
 //Function prototypes
-void  setup           (void);
-void  loop            (void);
-void  SetupDisplay    (void);
-void  SetupESP_NOW    (void);
-void  OnDataRecv      (const uint8_t *pucMACAddress,
-                       const uint8_t *pucIncomingData, int wNumBytes);
-void  OnDataSent      (const uint8_t *mac_addr, esp_now_send_status_t status);
-void  UpdateDisplay   (void);
+void  setup             (void);
+void  loop              (void);
+void  SetupDisplay      (void);
+void  SetupESP_NOW      (void);
+void  OnDataRecv        (const uint8_t *pucMACAddress,
+                         const uint8_t *pucIncomingData, int wNumBytes);
+void  OnDataSent        (const uint8_t *mac_addr, esp_now_send_status_t status);
+void  UpdateDisplay     (void);
+void  PrintTemperatures (void);
+void  PrintTemperature  (double dDegF);
 
 void setup(){
   // Init Serial Monitor
@@ -97,6 +104,7 @@ void setup(){
 
 
 void loop(){
+  PrintTemperatures();
   UpdateDisplay();
   delay(10000);
   return;
@@ -149,9 +157,14 @@ void OnDataRecv(const uint8_t *pucMACAddress, const uint8_t *pucIncomingData, in
   memcpy(&stIncomingReadings, pucIncomingData, sizeof(stIncomingReadings));
   Serial.print("OnDataRecv(): Bytes received: ");
   Serial.println(wNumBytes);
+/*
   dIncomingTCouple0_DegF = stIncomingReadings.dTCouple0_DegF;
   dIncomingTCouple1_DegF = stIncomingReadings.dTCouple1_DegF;
   dIncomingTCouple2_DegF = stIncomingReadings.dTCouple2_DegF;
+*/
+  adTCoupleDegF[0]= stIncomingReadings.dTCouple0_DegF;
+  adTCoupleDegF[1]= stIncomingReadings.dTCouple1_DegF;
+  adTCoupleDegF[2]= stIncomingReadings.dTCouple2_DegF;
   return;
 } //OnDataRecv
 
@@ -184,6 +197,7 @@ void UpdateDisplay(){
 #endif  //WITH_DISPLAY
 
   // Display Readings in Serial Monitor
+/*
   Serial.println("UpdateDisplay(): INCOMING READINGS");
   Serial.print("TCouple 0: ");
   Serial.print(stIncomingReadings.dTCouple0_DegF);
@@ -195,6 +209,42 @@ void UpdateDisplay(){
   Serial.print(stIncomingReadings.dTCouple2_DegF);
   Serial.println(" F");
   Serial.println();
+*/
   return;
 }   //UpdateDisplay
+
+
+void PrintTemperatures(void){
+  for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
+    Serial << ", ";
+    Serial << "T" << wTCoupleNum << "= ";
+    PrintTemperature(adTCoupleDegF[wTCoupleNum]);
+  } //for(int wTCoupleNum=0;wTCoupleNum<8;wTCoupleNum++)
+  Serial << endl;
+  return;
+} //PrintTemperatures
+
+
+//Print the temperature, or the type of fault
+void PrintTemperature(double dDegF) {
+  //switch statement takes an integer value and executes the case that corresponds
+  //Cast the double dDegF to be an int so it becomes an error code
+  switch ((int)dDegF){
+    case FAULT_OPEN:
+      Serial << "FAULT_OPEN";
+      break;
+    case FAULT_SHORT_GND:
+      Serial << "FAULT_SHORT_GND";
+      break;
+    case FAULT_SHORT_VCC:
+      Serial << "FAULT_SHORT_VCC";
+      break;
+    case NO_MAX31855:
+      Serial << "NO_MAX31855";
+      break;
+    default:
+      Serial << dDegF;
+      break;
+  } //switch
+}//PrintTemperature
 //Last line.

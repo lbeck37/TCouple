@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleDisplay.ino";
-const char szFileDate[]    = "10/15/23f";
+const char szFileDate[]    = "10/15/23n";
 //Thanks to Rui Santos, https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32
 
 //This sketch, B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
@@ -31,36 +31,32 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 #if RED_PIN_RECEIVER
   //Running on BlackPin TTGO, sends data to RedPin TTGO
-  uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC};
+  uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC};   //RedPin MAC
 #endif
 #if BLACK_PIN_RECEIVER
   //Running on RedPin TTGO, sends data to BlackPin TTGO
-  uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};
+  uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};   //BlackPin MAC
 #endif  //TWO_DOT_RECEIVER
 
 /*
 //Red pin TTGO to be connected to 8x TCouple board and transmit to black pin TTGO
 //Black pin TTGO is the display module
 //From B32_GetMACAddress.ino
-//uint8_t OneDotMAC[]     = {0x48, 0xE7, 0x29, 0xAF, 0x7B,0xDC};  //Returned to Amazon
-//uint8_t TwoDotMAC[]     = {0x48, 0xE7, 0x29, 0xB6, 0xC3,0xA0};  //Returned to Amazon
-//uint8_t aucRedPinMAC[]    = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //RedPin MAC
-//uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //BlackPin MAC
-uint8_t aucRedPinMAC[]    = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //RedPin MAC
-uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
+uint8_t OneDotMAC[]     = {0x48, 0xE7, 0x29, 0xAF, 0x7B, 0xDC};  //Returned to Amazon
+uint8_t TwoDotMAC[]     = {0x48, 0xE7, 0x29, 0xB6, 0xC3, 0xA0};  //Returned to Amazon
+uint8_t aucRedPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //RedPin MAC
+uint8_t aucBlackPinMAC[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
 */
+
+long lAliveMsec     = 5000;
+long lCurrentMsec   = 0;
+long lNextMsec      = 0;
 
 //Define variables to store BME280 readings to be sent
 double dTCouple0_DegF;
 double dTCouple1_DegF;
 double dTCouple2_DegF;
 
-/*
-// Define variables to store incoming readings
-double dIncomingTCouple0_DegF;
-double dIncomingTCouple1_DegF;
-double dIncomingTCouple2_DegF;
-*/
 const int   wNumTCouples= 3;
 double      adTCoupleDegF[wNumTCouples];
 
@@ -82,6 +78,7 @@ esp_now_peer_info_t     stPeerInfo;
 //Function prototypes
 void  setup             (void);
 void  loop              (void);
+void  ResetTimer        (void);
 void  SetupDisplay      (void);
 void  SetupESP_NOW      (void);
 void  OnDataRecv        (const uint8_t *pucMACAddress,
@@ -104,11 +101,20 @@ void setup(){
 
 
 void loop(){
-  PrintTemperatures();
-  UpdateDisplay();
-  delay(10000);
+  //Loop doesn't have to anything, it's all driven by the receiving of data
+  if (millis() > lNextMsec){
+    Serial << "loop(): We're still here but we haven't seen any data." << endl;
+    ResetTimer();
+  }
+  //delay(3000);
   return;
 }//loop
+
+
+void ResetTimer(void){
+  lNextMsec= millis() + lAliveMsec;
+  return;
+} //ResetTimer
 
 
 void SetupDisplay(){
@@ -155,16 +161,15 @@ void SetupESP_NOW(void){
 //Callback when data is received. Used by Display that receives from TCouple Module
 void OnDataRecv(const uint8_t *pucMACAddress, const uint8_t *pucIncomingData, int wNumBytes) {
   memcpy(&stIncomingReadings, pucIncomingData, sizeof(stIncomingReadings));
-  Serial.print("OnDataRecv(): Bytes received: ");
-  Serial.println(wNumBytes);
-/*
-  dIncomingTCouple0_DegF = stIncomingReadings.dTCouple0_DegF;
-  dIncomingTCouple1_DegF = stIncomingReadings.dTCouple1_DegF;
-  dIncomingTCouple2_DegF = stIncomingReadings.dTCouple2_DegF;
-*/
+
+  ResetTimer();
+  //Serial << "OnDataRecv(): Number of Bytes received= " << wNumBytes << endl;
   adTCoupleDegF[0]= stIncomingReadings.dTCouple0_DegF;
   adTCoupleDegF[1]= stIncomingReadings.dTCouple1_DegF;
   adTCoupleDegF[2]= stIncomingReadings.dTCouple2_DegF;
+
+  PrintTemperatures();
+  UpdateDisplay();
   return;
 } //OnDataRecv
 
@@ -196,29 +201,17 @@ void UpdateDisplay(){
   display.display();
 #endif  //WITH_DISPLAY
 
-  // Display Readings in Serial Monitor
-/*
-  Serial.println("UpdateDisplay(): INCOMING READINGS");
-  Serial.print("TCouple 0: ");
-  Serial.print(stIncomingReadings.dTCouple0_DegF);
-  Serial.println(" F");
-  Serial.print("TCouple 1: ");
-  Serial.print(stIncomingReadings.dTCouple1_DegF);
-  Serial.println(" F");
-  Serial.print("TCouple 2: ");
-  Serial.print(stIncomingReadings.dTCouple2_DegF);
-  Serial.println(" F");
-  Serial.println();
-*/
   return;
 }   //UpdateDisplay
 
 
 void PrintTemperatures(void){
   for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
-    Serial << ", ";
     Serial << "T" << wTCoupleNum << "= ";
     PrintTemperature(adTCoupleDegF[wTCoupleNum]);
+    if (wTCoupleNum < (wNumTCouples - 1)){  //Put a comma after all but last
+      Serial << ", ";
+    }
   } //for(int wTCoupleNum=0;wTCoupleNum<8;wTCoupleNum++)
   Serial << endl;
   return;

@@ -65,8 +65,8 @@ MAX31855 TCoupleObject = MAX31855(MISO, CS, SCK);
 //uint8_t aucRedPinMAC[]    = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //RedPin MAC
 //uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //BlackPin MAC
 uint8_t aucRedPinMAC[]    = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //RedPin MAC
-uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
 */
+uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
 
 const int   wNumTCouples= 3;
 double      adTCoupleDegF[wNumTCouples];
@@ -150,15 +150,14 @@ void SendDataToDisplay(void){
   stOutgoingReadings.dTCouple1_DegF= adTCoupleDegF[1];
   stOutgoingReadings.dTCouple2_DegF= adTCoupleDegF[2];
 
-  //esp_err_t wResult = esp_now_send(broadcastAddress, (uint8_t *) &BME280Readings, sizeof(BME280Readings));
-/*
   esp_err_t wResult= esp_now_send(aucBlackPinMAC,
                                   (uint8_t *)&stOutgoingReadings,
                                   sizeof(stOutgoingReadings));
-*/
+/*
   esp_err_t wResult= esp_now_send(broadcastAddress,
                                   (uint8_t *)&stOutgoingReadings,
                                   sizeof(stOutgoingReadings));
+*/
   if (wResult == ESP_OK) {
     Serial << "Sent with success" << endl;
   }

@@ -1,68 +1,6 @@
-const char szSketchName[]  = "B32_TCoupleDisplay.ino";
-const char szFileDate[]    = "10/16/23j";
-//Thanks to Rui Santos, https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32
-
-//This sketch, B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
-//communication code from the esp_now.h library.
-//Previously it was tested on two ESP32 chips idenfiied by either one or two dots on top.
-/*
-#include <Streaming.h>
-#include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
-#include <SPI.h>
-#include <esp_now.h>
-#include <WiFi.h>
-#include <MAX31855.h>
-*/
+const char szFileName[]  = "B32_TCoupleLib.ino";
+const char szFileDate[]  = "10/16/23b";
 #include <B32_TCoupleLib.h>
-
-//Function prototypes
-void  setup             (void);
-void  loop              (void);
-
-void setup(){
-  // Init Serial Monitor
-  Serial.begin(115200);
-  delay(100);
-  Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
-
-  SetupDisplay();
-  SetupESP_NOW();
-  return;
-} //setup
-
-
-void loop(){
-  //Loop doesn't have to anything, it's all driven by the receiving of data
-  if (millis() > lNextMsec){
-    Serial << "loop(): We're still here but we haven't seen any data." << endl;
-    ResetTimer();
-  }
-  //delay(3000);
-  return;
-}//loop
-
-
-/*
-#define WITH_DISPLAY     false
-
-#if WITH_DISPLAY
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
-
-#define SCREEN_WIDTH 128  // OLED display width, in pixels
-#define SCREEN_HEIGHT 64  // OLED display height, in pixels
-
-// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
-#endif
-*/
-
-/*
-#define ONE_DOT_RECEIVER    false       //ESP32 w/o USB-C, returned to Amazon
-#define TWO_DOT_RECEIVER    false        //ESP32 w/o USB-C, returned to Amazon
-
-#define RED_PIN_RECEIVER    true       //TTGO with red header pins, Remote tcouple reader
-#define BLACK_PIN_RECEIVER  false        //TTGO with black header pins, tcouple display
 
 #if RED_PIN_RECEIVER
   //Running on BlackPin TTGO, sends data to RedPin TTGO
@@ -73,7 +11,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
   uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};   //BlackPin MAC
 #endif  //TWO_DOT_RECEIVER
 
-
+/*
 //Red pin TTGO to be connected to 8x TCouple board and transmit to black pin TTGO
 //Black pin TTGO is the display module
 //From B32_GetMACAddress.ino
@@ -81,54 +19,31 @@ uint8_t OneDotMAC[]     = {0x48, 0xE7, 0x29, 0xAF, 0x7B, 0xDC};  //Returned to A
 uint8_t TwoDotMAC[]     = {0x48, 0xE7, 0x29, 0xB6, 0xC3, 0xA0};  //Returned to Amazon
 uint8_t aucRedPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //RedPin MAC
 uint8_t aucBlackPinMAC[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
-
-
-
-long lAliveMsec     = 5000;
-long lCurrentMsec   = 0;
-long lNextMsec      = 0;
-
-
+*/
 //Define variables to store temperature readings to be sent
-double dTCouple0_DegF;
-double dTCouple1_DegF;
-double dTCouple2_DegF;
+double      dTCouple0_DegF;
+double      dTCouple1_DegF;
+double      dTCouple2_DegF;
 
-const int   wNumTCouples= 3;
+const int   wNumTCouples    = 3;
 double      adTCoupleDegF[wNumTCouples];
 
-// Variable to store if sending data was successful
-String szSuccess;
+long        lAliveMsec     = 5000;
+long        lCurrentMsec   = 0;
+long        lNextMsec      = 0;
 
-//Message Structure that is used to pass data back an forth
-typedef struct stMessageStructure {
-  double dTCouple0_DegF;
-  double dTCouple1_DegF;
-  double dTCouple2_DegF;
-} stMessageStructure;
+// Variable to store if sending data was successful
+String      szSuccess;
 
 // Create a stMessageStructure to hold incoming sensor readings
 stMessageStructure      stIncomingReadings;
 stMessageStructure      stOutgoingReadings;
 
-TFT_eSPI tft = TFT_eSPI();  //Class library for TTGO T-Display
+TFT_eSPI                tft=     TFT_eSPI();  //Class library for TTGO T-Display
 
 esp_now_peer_info_t     stPeerInfo;
-*/
 
-/*
-//Function prototypes
-void  ResetTimer        (void);
-void  SetupDisplay      (void);
-void  SetupESP_NOW      (void);
-void  OnDataRecv        (const uint8_t *pucMACAddress,
-                         const uint8_t *pucIncomingData, int wNumBytes);
-void  OnDataSent        (const uint8_t *mac_addr, esp_now_send_status_t status);
-void  UpdateDisplay     (void);
-void  PrintTemperatures (void);
-void  PrintTemperature  (double dDegF);
-*/
-/*
+
 void ResetTimer(void){
   lNextMsec= millis() + lAliveMsec;
   return;
@@ -273,5 +188,4 @@ void PrintTemperature(double dDegF) {
       break;
   } //switch
 }//PrintTemperature
-*/
 //Last line.

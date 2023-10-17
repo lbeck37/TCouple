@@ -1,15 +1,6 @@
-const char szFileName[]  = "B32_TCoupleLib.ino";
-const char szFileDate[]  = "10/16/23c";
+//const char szFileName[]  = "B32_TCoupleLib.ino";
+//const char szFileDate[]  = "10/16/23e";
 #include <B32_TCoupleLib.h>
-
-#if RED_PIN_RECEIVER
-  //Running on BlackPin TTGO, sends data to RedPin TTGO
-  uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC};   //RedPin MAC
-#endif
-#if BLACK_PIN_RECEIVER
-  //Running on RedPin TTGO, sends data to BlackPin TTGO
-  uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};   //BlackPin MAC
-#endif  //TWO_DOT_RECEIVER
 
 /*
 //Red pin TTGO to be connected to 8x TCouple board and transmit to black pin TTGO
@@ -21,19 +12,19 @@ uint8_t aucRedPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //RedPin MAC
 uint8_t aucBlackPinMAC[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
 */
 //Define variables to store temperature readings to be sent
-double      dTCouple0_DegF;
-double      dTCouple1_DegF;
-double      dTCouple2_DegF;
+double                  dTCouple0_DegF;
+double                  dTCouple1_DegF;
+double                  dTCouple2_DegF;
 
-const int   wNumTCouples    = 3;
-double      adTCoupleDegF[wNumTCouples];
+const int               wNumTCouples    = 3;
+double                  adTCoupleDegF[wNumTCouples];
 
-long        lAliveMsec     = 5000;
-long        lCurrentMsec   = 0;
-long        lNextMsec      = 0;
+long                    lAliveMsec     = 5000;
+long                    lCurrentMsec   = 0;
+long                    lNextMsec      = 0;
 
 // Variable to store if sending data was successful
-String      szSuccess;
+String                  szSuccess;
 
 // Create a stMessageStructure to hold incoming sensor readings
 stMessageStructure      stIncomingReadings;
@@ -42,12 +33,6 @@ stMessageStructure      stOutgoingReadings;
 TFT_eSPI                tft=     TFT_eSPI();  //Class library for TTGO T-Display
 
 esp_now_peer_info_t     stPeerInfo;
-
-
-void ResetTimer(void){
-  lNextMsec= millis() + lAliveMsec;
-  return;
-} //ResetTimer
 
 
 void SetupESP_NOW(void){
@@ -62,7 +47,7 @@ void SetupESP_NOW(void){
 
   //Register remote module
   //memcpy(stPeerInfo.peer_addr, aucRedPinMAC, 6);
-  memcpy(stPeerInfo.peer_addr, broadcastAddress, 6);
+  memcpy(stPeerInfo.peer_addr, aucReceiverMACAddress, 6);
   stPeerInfo.channel = 0;
   stPeerInfo.encrypt = false;
 
@@ -109,7 +94,10 @@ void UpdateDisplay(){
   //tft.setTextFont(4);
   tft.setTextFont(3);
   tft.setCursor(0, 0, 2);
-  tft << "Thermocouple Temperatures" << endl;
+
+  //tft << szSketchName << ", " << szFileDate << ", " << WiFi.macAddress() << endl;
+  tft << "My MAC= " << WiFi.macAddress() << endl;
+  //tft << "Thermocouple Temperatures" << endl;
 
   for (int wTCoupleNum=0; (wTCoupleNum < 5); wTCoupleNum++) {
     //tft.println("T", wTCoupleNum, "= ", adTCoupleDegF[wTCoupleNum]);
@@ -156,4 +144,10 @@ void PrintTemperature(double dDegF) {
       break;
   } //switch
 }//PrintTemperature
+
+
+void ResetTimer(void){
+  lNextMsec= (millis() + lAliveMsec);
+  return;
+} //ResetTimer
 //Last line.

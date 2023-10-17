@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleRemote.ino";
-const char szFileDate[]    = "10/16/23d";
+const char szFileDate[]    = "10/16/23f";
 /* MAX31855 library example sketch
  This sample code is designed to be used on the MAX31855x8 breakout board.
  The board has a single MAX31855 IC on it, and uses a multiplexer
@@ -27,11 +27,19 @@ const char szFileDate[]    = "10/16/23d";
  will go up instead of down (and vice versa).  No problem, just reverse the terminals.
  Released under WTFPL license, 27 October 2014 by Peter Easton
 */
+/*
 #include <Arduino.h>
 #include <MAX31855.h>
 #include <Streaming.h>
 #include <esp_now.h>
 #include <WiFi.h>
+*/
+
+//This sketch, (B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
+//communication code from the esp_now.h library.
+#include <B32_TCoupleLib.h>
+
+uint8_t aucReceiverMACAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};   //BlackPin MAC
 
 //ESP32 GPIO pin numbers (range from 0 to 39)
 #define T0   27
@@ -41,6 +49,7 @@ const char szFileDate[]    = "10/16/23d";
 #define CS   17
 #define SCK  33
 
+/*
 #define ONE_DOT_RECEIVER    false       //ESP32 w/o USB-C, returned to Amazon
 #define TWO_DOT_RECEIVER    false        //ESP32 w/o USB-C, returned to Amazon
 
@@ -55,6 +64,7 @@ const char szFileDate[]    = "10/16/23d";
   //Running on RedPin TTGO, sends data to BlackPin TTGO
   uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};
 #endif  //TWO_DOT_RECEIVER
+*/
 
 //Create the temperature object, defining the pins used for communication
 MAX31855 TCoupleObject = MAX31855(MISO, CS, SCK);
@@ -68,6 +78,7 @@ uint8_t aucRedPinMAC[]    = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //RedPin MAC
 */
 uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
 
+/*
 const int   wNumTCouples= 3;
 double      adTCoupleDegF[wNumTCouples];
 
@@ -78,35 +89,36 @@ typedef struct stMessageStructure {
   double dTCouple2_DegF;
 } stMessageStructure;
 
-/*
 typedef struct stMessageStructure {
   double adTCoupleDegF[wNumTCouples];
 } stMessageStructure;
-*/
 
 //Create an stMessageStructure to hold  sensor readings
 stMessageStructure      stIncomingReadings;
 stMessageStructure      stOutgoingReadings;
 esp_now_peer_info_t     stPeerInfo;
 
-double  dJunctionDegF;
-
 //Variable to store if sending data was successful
 String szSuccess;
+*/
+
+double  dJunctionDegF;
 
 //Function prototypes
 void  setup             (void);
 void  loop              (void);
+void  SetupPins         (void);
+void  ReadAmbiant       (void);
+void  ReadTCouples      (void);
+void  SendDataToDisplay (void);
+/*
 void  OnDataRecv        (const uint8_t *pucMACAddress,
                          const uint8_t *pucIncomingData, int wNumBytes);
 void  OnDataSent        (const uint8_t *pucMACAddress, esp_now_send_status_t wStatus);
-void  SendDataToDisplay (void);
-void  SetupPins         (void);
 void  SetupESP_NOW      (void);
-void  ReadAmbiant       (void);
-void  ReadTCouples      (void);
 void  PrintTemperatures (void);
 void  PrintTemperature  (double dDegF);
+*/
 
 void setup() {
   Serial.begin(115200);
@@ -131,24 +143,18 @@ void loop() {
 }   //loop
 
 
-//Callback when data is received.
-void OnDataRecv(const uint8_t *pucMACAddress, const uint8_t *pucIncomingData, int wNumBytes) {
-  memcpy(&stIncomingReadings, pucIncomingData, sizeof(stIncomingReadings));
-  Serial << "OnDataRecv():  Bytes received= " << wNumBytes << endl;
-  return;
-} //OnDataRecv
+void SetupPins(void){
+  pinMode(T0,   OUTPUT);
+  pinMode(T1,   OUTPUT);
+  pinMode(T2,   OUTPUT);
 
+  pinMode(MISO, INPUT);
+  pinMode(CS,   OUTPUT);
+  pinMode(SCK,  OUTPUT);
 
-// Callback when data is sent
-void OnDataSent(const uint8_t *pucMACAddress, esp_now_send_status_t wStatus) {
-  if (wStatus == ESP_NOW_SEND_SUCCESS){
-    Serial << endl << "OnDataSent(): Last Packet Send Status: FAIL" << endl;
-  }
-  else {
-    Serial << endl << "OnDataSent(): Last Packet Send Status: Success" << endl;
-  }
+  delay(200);
   return;
-} //OnDataSent
+} //SetupPins
 
 
 void SendDataToDisplay(void){
@@ -174,18 +180,52 @@ void SendDataToDisplay(void){
 } //SendDataToDisplay
 
 
-void SetupPins(void){
-  pinMode(T0,   OUTPUT);
-  pinMode(T1,   OUTPUT);
-  pinMode(T2,   OUTPUT);
-
-  pinMode(MISO, INPUT);
-  pinMode(CS,   OUTPUT);
-  pinMode(SCK,  OUTPUT);
-
-  delay(200);
+void ReadAmbiant(void){
+  dJunctionDegF= TCoupleObject.readJunction(FAHRENHEIT);
   return;
-} //SetupPins
+} //ReadAmbiant
+
+
+void ReadTCouples(void){
+  //Read the temperatures of the 8 thermocouples
+  for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
+    //Select the thermocouple
+    digitalWrite(T0, wTCoupleNum & 1? HIGH: LOW);
+    digitalWrite(T1, wTCoupleNum & 2? HIGH: LOW);
+    digitalWrite(T2, wTCoupleNum & 4? HIGH: LOW);
+    //The MAX31855 takes 100ms to sample the TCouple.
+    //Wait a bit longer to be safe.  We'll wait 0.125 seconds
+    delay(125);
+
+    adTCoupleDegF[wTCoupleNum]= TCoupleObject.readThermocouple(FAHRENHEIT);
+    if (adTCoupleDegF[wTCoupleNum] == FAULT_OPEN){
+      //Break out of for loop, go to top of for loop and next TCouple
+      continue;
+    } //if(temperature==FAULT_OPEN)
+  } //for(int wTCoupleNum=0;wTCoupleNum<8;wTCoupleNum++)
+  return;
+}   //ReadTCouples
+
+
+/*
+//Callback when data is received.
+void OnDataRecv(const uint8_t *pucMACAddress, const uint8_t *pucIncomingData, int wNumBytes) {
+  memcpy(&stIncomingReadings, pucIncomingData, sizeof(stIncomingReadings));
+  Serial << "OnDataRecv():  Bytes received= " << wNumBytes << endl;
+  return;
+} //OnDataRecv
+
+
+// Callback when data is sent
+void OnDataSent(const uint8_t *pucMACAddress, esp_now_send_status_t wStatus) {
+  if (wStatus == ESP_NOW_SEND_SUCCESS){
+    Serial << endl << "OnDataSent(): Last Packet Send Status: FAIL" << endl;
+  }
+  else {
+    Serial << endl << "OnDataSent(): Last Packet Send Status: Success" << endl;
+  }
+  return;
+} //OnDataSent
 
 
 void SetupESP_NOW(void){
@@ -215,33 +255,6 @@ void SetupESP_NOW(void){
 
   return;
 }   //SetupESP_NOW
-
-
-void ReadAmbiant(void){
-  dJunctionDegF= TCoupleObject.readJunction(FAHRENHEIT);
-  return;
-} //ReadAmbiant
-
-
-void ReadTCouples(void){
-  //Read the temperatures of the 8 thermocouples
-  for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
-    //Select the thermocouple
-    digitalWrite(T0, wTCoupleNum & 1? HIGH: LOW);
-    digitalWrite(T1, wTCoupleNum & 2? HIGH: LOW);
-    digitalWrite(T2, wTCoupleNum & 4? HIGH: LOW);
-    //The MAX31855 takes 100ms to sample the TCouple.
-    //Wait a bit longer to be safe.  We'll wait 0.125 seconds
-    delay(125);
-
-    adTCoupleDegF[wTCoupleNum]= TCoupleObject.readThermocouple(FAHRENHEIT);
-    if (adTCoupleDegF[wTCoupleNum] == FAULT_OPEN){
-      //Break out of for loop, go to top of for loop and next TCouple
-      continue;
-    } //if(temperature==FAULT_OPEN)
-  } //for(int wTCoupleNum=0;wTCoupleNum<8;wTCoupleNum++)
-  return;
-}   //ReadTCouples
 
 
 void PrintTemperatures(void){
@@ -279,4 +292,5 @@ void PrintTemperature(double dDegF) {
       break;
   } //switch
 }//PrintTemperature
+*/
 //Last line.

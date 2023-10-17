@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.ino";
-//const char szFileDate[]  = "10/17/23c";
+//const char szFileDate[]  = "10/17/23d";
 #include <B32_TCoupleLib.h>
 
 //Define variables to store temperature readings to be sent
@@ -86,14 +86,19 @@ void SetupScreen(){
 
 
 //void UpdateScreen(){
-void UpdateScreen(stMessageStructure stReadings){
-  Screen.fillScreen(TFT_BLACK);
-  Screen.setTextColor(TFT_GREEN,TFT_BLACK);
-  //Screen.setTextFont(4);
-  Screen.setTextFont(3);
-  Screen.setCursor(0, 0, 2);
+void UpdateScreen       (stMessageStructure stReadings){
+  Screen.fillScreen     (TFT_BLACK);
+  Screen.setTextColor   (TFT_GREEN,TFT_BLACK);
+  Screen.setTextFont    (3);
+  Screen.setCursor      (0, 0, 2);
 
   Screen << "My MAC= " << WiFi.macAddress() << endl;
+/*
+  int wNum= 0;
+  Screen.println("T%d= %8f.2, T%d= %8f.2",
+      wNum,       stReadings.adTCoupleDegF[wNum],
+      (wNum + 3), stReadings.adTCoupleDegF[wNum + 3]);
+*/
 
   for (int wTCoupleNum=0; (wTCoupleNum < 5); wTCoupleNum++) {
     Screen << "T" << wTCoupleNum << "= " << stReadings.adTCoupleDegF[wTCoupleNum] << "F, T"

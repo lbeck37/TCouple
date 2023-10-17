@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.ino";
-//const char szFileDate[]  = "10/16/23f";
+//const char szFileDate[]  = "10/17/23b";
 #include <B32_TCoupleLib.h>
 
 //Define variables to store temperature readings to be sent
@@ -7,8 +7,11 @@ double                  dTCouple0_DegF;
 double                  dTCouple1_DegF;
 double                  dTCouple2_DegF;
 
+/*
 const int               wNumTCouples    = 3;
 double                  adTCoupleDegF[wNumTCouples];
+*/
+//const int               wNumTCouples    = 8;
 
 long                    lAliveMsec     = 5000;
 long                    lCurrentMsec   = 0;
@@ -59,11 +62,30 @@ void SetupESP_NOW(void){
 void OnDataRecv(const uint8_t *pucMACAddress, const uint8_t *pucIncomingData, int wNumBytes) {
   memcpy(&stIncomingReadings, pucIncomingData, sizeof(stIncomingReadings));
 
+/*
   ResetTimer();
   //Serial << "OnDataRecv(): Number of Bytes received= " << wNumBytes << endl;
   adTCoupleDegF[0]= stIncomingReadings.dTCouple0_DegF;
   adTCoupleDegF[1]= stIncomingReadings.dTCouple1_DegF;
   adTCoupleDegF[2]= stIncomingReadings.dTCouple2_DegF;
+
+  PrintTemperatures();
+  UpdateDisplay();
+*/
+  HandleDataReceived();
+  return;
+} //OnDataRecv
+
+
+//Callback when data is received. Used by Display that receives from TCouple Module
+void HandleDataReceived(void) {
+  ResetTimer();
+/*
+  //Serial << "OnDataRecv(): Number of Bytes received= " << wNumBytes << endl;
+  adTCoupleDegF[0]= stIncomingReadings.dTCouple0_DegF;
+  adTCoupleDegF[1]= stIncomingReadings.dTCouple1_DegF;
+  adTCoupleDegF[2]= stIncomingReadings.dTCouple2_DegF;
+*/
 
   PrintTemperatures();
   UpdateDisplay();
@@ -93,9 +115,13 @@ void UpdateDisplay(){
   for (int wTCoupleNum=0; (wTCoupleNum < 5); wTCoupleNum++) {
     //tft.println("T", wTCoupleNum, "= ", adTCoupleDegF[wTCoupleNum]);
     //tft << "Test" << endl;
+/*
     tft << "T" << wTCoupleNum << "= " << adTCoupleDegF[wTCoupleNum] << "F, T"
         << (wTCoupleNum + 3) << "= " << adTCoupleDegF[wTCoupleNum +3] << "F" << endl;
-  }
+*/
+    tft << "T" << wTCoupleNum << "= " << stIncomingReadings.adTCoupleDegF[wTCoupleNum] << "F, T"
+        << (wTCoupleNum + 3)  << "= " << stIncomingReadings.adTCoupleDegF[wTCoupleNum +3] << "F" << endl;
+  } //for(int wTCoupleNum=0;(wTCoupleNum<5);wTCoupleNum++)
   return;
 }   //UpdateDisplay
 
@@ -103,7 +129,8 @@ void UpdateDisplay(){
 void PrintTemperatures(void){
   for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
     Serial << "T" << wTCoupleNum << "= ";
-    PrintTemperature(adTCoupleDegF[wTCoupleNum]);
+    //PrintTemperature(adTCoupleDegF[wTCoupleNum]);
+    PrintTemperature(stIncomingReadings.adTCoupleDegF[wTCoupleNum]);
     if (wTCoupleNum < (wNumTCouples - 1)){  //Put a comma after all but last
       Serial << ", ";
     }

@@ -1,5 +1,5 @@
 char szSketchName[]  = "B32_TCoupleRemote.ino";
-char szFileDate[]    = "10/17/23d";
+char szFileDate[]    = "10/17/23f";
 /* MAX31855 library example sketch
  This sample code is designed to be used on the MAX31855x8 breakout board.
  The board has a single MAX31855 IC on it, and uses a multiplexer
@@ -32,7 +32,7 @@ char szFileDate[]    = "10/17/23d";
 //communication code from the esp_now.h library.
 #include <B32_TCoupleLib.h>
 
-uint8_t aucReceiverMACAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};   //BlackPin MAC
+//uint8_t aucReceiverMACAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};   //BlackPin MAC
 
 //ESP32 GPIO pin numbers (range from 0 to 39)
 #define T0   27
@@ -78,7 +78,7 @@ void loop() {
   //UpdateDisplay();
   UpdateDisplay(stOutgoingReadings);
 
-  //delay(500);
+  //No delay, loop as fast as possible
   return;
 }   //loop
 
@@ -98,20 +98,9 @@ void SetupPins(void){
 
 
 void SendDataToDisplayBoard(void){
-/*
-  stOutgoingReadings.dTCouple0_DegF= adTCoupleDegF[0];
-  stOutgoingReadings.dTCouple1_DegF= adTCoupleDegF[1];
-  stOutgoingReadings.dTCouple2_DegF= adTCoupleDegF[2];
-*/
-
   esp_err_t wResult= esp_now_send(aucBlackPinMAC,
                                   (uint8_t *)&stOutgoingReadings,
                                   sizeof(stOutgoingReadings));
-/*
-  esp_err_t wResult= esp_now_send(broadcastAddress,
-                                  (uint8_t *)&stOutgoingReadings,
-                                  sizeof(stOutgoingReadings));
-*/
   if (wResult == ESP_OK) {
     Serial << "Sent with success" << endl;
   }

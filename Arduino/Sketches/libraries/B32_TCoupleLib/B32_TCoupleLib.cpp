@@ -62,16 +62,6 @@ void SetupESP_NOW(void){
 void OnDataRecv(const uint8_t *pucMACAddress, const uint8_t *pucIncomingData, int wNumBytes) {
   memcpy(&stIncomingReadings, pucIncomingData, sizeof(stIncomingReadings));
 
-/*
-  ResetTimer();
-  //Serial << "OnDataRecv(): Number of Bytes received= " << wNumBytes << endl;
-  adTCoupleDegF[0]= stIncomingReadings.dTCouple0_DegF;
-  adTCoupleDegF[1]= stIncomingReadings.dTCouple1_DegF;
-  adTCoupleDegF[2]= stIncomingReadings.dTCouple2_DegF;
-
-  PrintTemperatures();
-  UpdateDisplay();
-*/
   HandleDataReceived();
   return;
 } //OnDataRecv
@@ -80,15 +70,8 @@ void OnDataRecv(const uint8_t *pucMACAddress, const uint8_t *pucIncomingData, in
 //Callback when data is received. Used by Display that receives from TCouple Module
 void HandleDataReceived(void) {
   ResetTimer();
-/*
-  //Serial << "OnDataRecv(): Number of Bytes received= " << wNumBytes << endl;
-  adTCoupleDegF[0]= stIncomingReadings.dTCouple0_DegF;
-  adTCoupleDegF[1]= stIncomingReadings.dTCouple1_DegF;
-  adTCoupleDegF[2]= stIncomingReadings.dTCouple2_DegF;
-*/
 
   PrintTemperatures();
-  //UpdateDisplay();
   UpdateDisplay(stIncomingReadings);
   return;
 } //OnDataRecv
@@ -110,21 +93,9 @@ void UpdateDisplay(stMessageStructure stReadings){
   tft.setTextFont(3);
   tft.setCursor(0, 0, 2);
 
-  //tft << szSketchName << ", " << szFileDate << ", " << WiFi.macAddress() << endl;
   tft << "My MAC= " << WiFi.macAddress() << endl;
-  //tft << szSketchName << ", " << szFileDate << endl;
 
   for (int wTCoupleNum=0; (wTCoupleNum < 5); wTCoupleNum++) {
-    //tft.println("T", wTCoupleNum, "= ", adTCoupleDegF[wTCoupleNum]);
-    //tft << "Test" << endl;
-/*
-    tft << "T" << wTCoupleNum << "= " << adTCoupleDegF[wTCoupleNum] << "F, T"
-        << (wTCoupleNum + 3) << "= " << adTCoupleDegF[wTCoupleNum +3] << "F" << endl;
-*/
-/*
-    tft << "T" << wTCoupleNum << "= " << stIncomingReadings.adTCoupleDegF[wTCoupleNum] << "F, T"
-        << (wTCoupleNum + 3)  << "= " << stIncomingReadings.adTCoupleDegF[wTCoupleNum +3] << "F" << endl;
-*/
     tft << "T" << wTCoupleNum << "= " << stReadings.adTCoupleDegF[wTCoupleNum] << "F, T"
         << (wTCoupleNum + 3)  << "= " << stReadings.adTCoupleDegF[wTCoupleNum +3] << "F" << endl;
   } //for(int wTCoupleNum=0;(wTCoupleNum<5);wTCoupleNum++)
@@ -135,7 +106,6 @@ void UpdateDisplay(stMessageStructure stReadings){
 void PrintTemperatures(void){
   for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
     Serial << "T" << wTCoupleNum << "= ";
-    //PrintTemperature(adTCoupleDegF[wTCoupleNum]);
     PrintTemperature(stIncomingReadings.adTCoupleDegF[wTCoupleNum]);
     if (wTCoupleNum < (wNumTCouples - 1)){  //Put a comma after all but last
       Serial << ", ";

@@ -32,7 +32,7 @@ char szFileDate[]    = "10/17/23f";
 //communication code from the esp_now.h library.
 #include <B32_TCoupleLib.h>
 
-//uint8_t aucReceiverMACAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};   //BlackPin MAC
+uint8_t aucReceiverMACAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};   //BlackPin MAC
 
 //ESP32 GPIO pin numbers (range from 0 to 39)
 #define T0   27
@@ -63,7 +63,7 @@ void setup() {
   Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
   SetupPins();
-  SetupDisplay();
+  SetupScreen();
   SetupESP_NOW();
 
   return;
@@ -75,8 +75,8 @@ void loop() {
   ReadTCouples();
   PrintTemperatures();
   SendDataToDisplayBoard();
-  //UpdateDisplay();
-  UpdateDisplay(stOutgoingReadings);
+  //UpdateScreen();
+  UpdateScreen(stOutgoingReadings);
 
   //No delay, loop as fast as possible
   return;

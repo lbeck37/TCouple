@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.ino";
-//const char szFileDate[]  = "10/17/23b";
+//const char szFileDate[]  = "10/17/23c";
 #include <B32_TCoupleLib.h>
 
 //Define variables to store temperature readings to be sent
@@ -24,7 +24,7 @@ String                  szSuccess;
 stMessageStructure      stIncomingReadings;
 stMessageStructure      stOutgoingReadings;
 
-TFT_eSPI                tft=     TFT_eSPI();  //Class library for TTGO T-Display
+TFT_eSPI                Screen=     TFT_eSPI();  //Class library for TTGO T-Screen
 
 esp_now_peer_info_t     stPeerInfo;
 
@@ -72,35 +72,35 @@ void HandleDataReceived(void) {
   ResetTimer();
 
   PrintTemperatures();
-  UpdateDisplay(stIncomingReadings);
+  UpdateScreen(stIncomingReadings);
   return;
 } //OnDataRecv
 
 
-void SetupDisplay(){
-  tft.init();
-  tft.setRotation(1);   //1= USB Right Landscape
-  tft.fillScreen(TFT_BLACK);
+void SetupScreen(){
+  Screen.init();
+  Screen.setRotation(1);   //1= USB Right Landscape
+  Screen.fillScreen(TFT_BLACK);
   return;
-}//SetupDisplay stMessageStructure stMessage
+}//SetupScreen stMessageStructure stMessage
 
 
-//void UpdateDisplay(){
-void UpdateDisplay(stMessageStructure stReadings){
-  tft.fillScreen(TFT_BLACK);
-  tft.setTextColor(TFT_GREEN,TFT_BLACK);
-  //tft.setTextFont(4);
-  tft.setTextFont(3);
-  tft.setCursor(0, 0, 2);
+//void UpdateScreen(){
+void UpdateScreen(stMessageStructure stReadings){
+  Screen.fillScreen(TFT_BLACK);
+  Screen.setTextColor(TFT_GREEN,TFT_BLACK);
+  //Screen.setTextFont(4);
+  Screen.setTextFont(3);
+  Screen.setCursor(0, 0, 2);
 
-  tft << "My MAC= " << WiFi.macAddress() << endl;
+  Screen << "My MAC= " << WiFi.macAddress() << endl;
 
   for (int wTCoupleNum=0; (wTCoupleNum < 5); wTCoupleNum++) {
-    tft << "T" << wTCoupleNum << "= " << stReadings.adTCoupleDegF[wTCoupleNum] << "F, T"
+    Screen << "T" << wTCoupleNum << "= " << stReadings.adTCoupleDegF[wTCoupleNum] << "F, T"
         << (wTCoupleNum + 3)  << "= " << stReadings.adTCoupleDegF[wTCoupleNum +3] << "F" << endl;
   } //for(int wTCoupleNum=0;(wTCoupleNum<5);wTCoupleNum++)
   return;
-}   //UpdateDisplay
+}   //UpdateScreen
 
 
 void PrintTemperatures(void){

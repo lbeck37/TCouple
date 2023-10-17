@@ -17,7 +17,7 @@ void setup(){
   delay(100);
   Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
-  SetupDisplay();
+  SetupScreen();
   SetupESP_NOW();
   return;
 } //setup

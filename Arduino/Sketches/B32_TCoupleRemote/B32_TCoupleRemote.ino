@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleRemote.ino";
-const char szFileDate[]    = "10/16/23f";
+const char szFileDate[]    = "10/16/23h";
 /* MAX31855 library example sketch
  This sample code is designed to be used on the MAX31855x8 breakout board.
  The board has a single MAX31855 IC on it, and uses a multiplexer
@@ -27,13 +27,6 @@ const char szFileDate[]    = "10/16/23f";
  will go up instead of down (and vice versa).  No problem, just reverse the terminals.
  Released under WTFPL license, 27 October 2014 by Peter Easton
 */
-/*
-#include <Arduino.h>
-#include <MAX31855.h>
-#include <Streaming.h>
-#include <esp_now.h>
-#include <WiFi.h>
-*/
 
 //This sketch, (B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
 //communication code from the esp_now.h library.
@@ -49,58 +42,10 @@ uint8_t aucReceiverMACAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};   //Black
 #define CS   17
 #define SCK  33
 
-/*
-#define ONE_DOT_RECEIVER    false       //ESP32 w/o USB-C, returned to Amazon
-#define TWO_DOT_RECEIVER    false        //ESP32 w/o USB-C, returned to Amazon
-
-#define RED_PIN_RECEIVER    false       //TTGO with red header pins, Remote tcouple reader
-#define BLACK_PIN_RECEIVER  true        //TTGO with black header pins, tcouple display
-
-#if RED_PIN_RECEIVER
-  //Running on BlackPin TTGO, sends data to RedPin TTGO
-  uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC};
-#endif
-#if BLACK_PIN_RECEIVER
-  //Running on RedPin TTGO, sends data to BlackPin TTGO
-  uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};
-#endif  //TWO_DOT_RECEIVER
-*/
-
 //Create the temperature object, defining the pins used for communication
 MAX31855 TCoupleObject = MAX31855(MISO, CS, SCK);
 
-/*
-//Red pin TTGO to be connected to 8x TCouple board and transmit to black pin TTGO
-//Black pin TTGO is the display module. From B32_GetMACAddress.ino
-//uint8_t aucRedPinMAC[]    = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //RedPin MAC
-//uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //BlackPin MAC
-uint8_t aucRedPinMAC[]    = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //RedPin MAC
-*/
 uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
-
-/*
-const int   wNumTCouples= 3;
-double      adTCoupleDegF[wNumTCouples];
-
-//Message Structure that is used to pass data back and forth
-typedef struct stMessageStructure {
-  double dTCouple0_DegF;
-  double dTCouple1_DegF;
-  double dTCouple2_DegF;
-} stMessageStructure;
-
-typedef struct stMessageStructure {
-  double adTCoupleDegF[wNumTCouples];
-} stMessageStructure;
-
-//Create an stMessageStructure to hold  sensor readings
-stMessageStructure      stIncomingReadings;
-stMessageStructure      stOutgoingReadings;
-esp_now_peer_info_t     stPeerInfo;
-
-//Variable to store if sending data was successful
-String szSuccess;
-*/
 
 double  dJunctionDegF;
 
@@ -111,14 +56,6 @@ void  SetupPins         (void);
 void  ReadAmbiant       (void);
 void  ReadTCouples      (void);
 void  SendDataToDisplay (void);
-/*
-void  OnDataRecv        (const uint8_t *pucMACAddress,
-                         const uint8_t *pucIncomingData, int wNumBytes);
-void  OnDataSent        (const uint8_t *pucMACAddress, esp_now_send_status_t wStatus);
-void  SetupESP_NOW      (void);
-void  PrintTemperatures (void);
-void  PrintTemperature  (double dDegF);
-*/
 
 void setup() {
   Serial.begin(115200);
@@ -126,6 +63,7 @@ void setup() {
   Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
   SetupPins();
+  SetupDisplay();
   SetupESP_NOW();
 
   return;
@@ -137,6 +75,7 @@ void loop() {
   ReadTCouples();
   PrintTemperatures();
   SendDataToDisplay();
+  UpdateDisplay();
 
   //delay(500);
   return;
@@ -205,92 +144,4 @@ void ReadTCouples(void){
   } //for(int wTCoupleNum=0;wTCoupleNum<8;wTCoupleNum++)
   return;
 }   //ReadTCouples
-
-
-/*
-//Callback when data is received.
-void OnDataRecv(const uint8_t *pucMACAddress, const uint8_t *pucIncomingData, int wNumBytes) {
-  memcpy(&stIncomingReadings, pucIncomingData, sizeof(stIncomingReadings));
-  Serial << "OnDataRecv():  Bytes received= " << wNumBytes << endl;
-  return;
-} //OnDataRecv
-
-
-// Callback when data is sent
-void OnDataSent(const uint8_t *pucMACAddress, esp_now_send_status_t wStatus) {
-  if (wStatus == ESP_NOW_SEND_SUCCESS){
-    Serial << endl << "OnDataSent(): Last Packet Send Status: FAIL" << endl;
-  }
-  else {
-    Serial << endl << "OnDataSent(): Last Packet Send Status: Success" << endl;
-  }
-  return;
-} //OnDataSent
-
-
-void SetupESP_NOW(void){
-  //Set device as a Wi-Fi Station
-  WiFi.mode(WIFI_STA);
-
-  //Initialize ESP-NOW
-  if (esp_now_init() != ESP_OK) {
-    Serial << "SetupESP_NOW(): Error initializing ESP-NOW" << endl;
-    return;
-  } // if(esp_now_init()!=ESP_OK)
-
-  //Register remote module
-  //memcpy(stPeerInfo.peer_addr, aucRedPinMAC, 6);
-  memcpy(stPeerInfo.peer_addr, broadcastAddress, 6);
-  stPeerInfo.channel = 0;
-  stPeerInfo.encrypt = false;
-
-  //Add peer
-  if (esp_now_add_peer(&stPeerInfo) != ESP_OK){
-    Serial << "SetupESP_NOW(): Failed to add peer" << endl;
-    return;
-  }   //if(esp_now_add_peer(&stPeerInfo)!=ESP_OK)
-
-  //Register for a callback function that will be called when data is received
-  esp_now_register_recv_cb(OnDataRecv);
-
-  return;
-}   //SetupESP_NOW
-
-
-void PrintTemperatures(void){
-  Serial << "Ambiant= ";
-  PrintTemperature(dJunctionDegF);
-  for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
-    Serial << ", ";
-    Serial << "T" << wTCoupleNum << "= ";
-    PrintTemperature(adTCoupleDegF[wTCoupleNum]);
-  } //for(int wTCoupleNum=0;wTCoupleNum<8;wTCoupleNum++)
-  Serial << endl;
-  return;
-} //PrintTemperatures
-
-
-//Print the temperature, or the type of fault
-void PrintTemperature(double dDegF) {
-  //switch statement takes an integer value and executes the case that corresponds
-  //Cast the double dDegF to be an int so it becomes an error code
-  switch ((int)dDegF){
-    case FAULT_OPEN:
-      Serial << "FAULT_OPEN";
-      break;
-    case FAULT_SHORT_GND:
-      Serial << "FAULT_SHORT_GND";
-      break;
-    case FAULT_SHORT_VCC:
-      Serial << "FAULT_SHORT_VCC";
-      break;
-    case NO_MAX31855:
-      Serial << "NO_MAX31855";
-      break;
-    default:
-      Serial << dDegF;
-      break;
-  } //switch
-}//PrintTemperature
-*/
 //Last line.

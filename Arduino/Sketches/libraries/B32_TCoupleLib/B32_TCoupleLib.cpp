@@ -88,7 +88,8 @@ void HandleDataReceived(void) {
 */
 
   PrintTemperatures();
-  UpdateDisplay();
+  //UpdateDisplay();
+  UpdateDisplay(stIncomingReadings);
   return;
 } //OnDataRecv
 
@@ -98,10 +99,11 @@ void SetupDisplay(){
   tft.setRotation(1);   //1= USB Right Landscape
   tft.fillScreen(TFT_BLACK);
   return;
-}//SetupDisplay
+}//SetupDisplay stMessageStructure stMessage
 
 
-void UpdateDisplay(){
+//void UpdateDisplay(){
+void UpdateDisplay(stMessageStructure stReadings){
   tft.fillScreen(TFT_BLACK);
   tft.setTextColor(TFT_GREEN,TFT_BLACK);
   //tft.setTextFont(4);
@@ -110,7 +112,7 @@ void UpdateDisplay(){
 
   //tft << szSketchName << ", " << szFileDate << ", " << WiFi.macAddress() << endl;
   tft << "My MAC= " << WiFi.macAddress() << endl;
-  //tft << "Thermocouple Temperatures" << endl;
+  //tft << szSketchName << ", " << szFileDate << endl;
 
   for (int wTCoupleNum=0; (wTCoupleNum < 5); wTCoupleNum++) {
     //tft.println("T", wTCoupleNum, "= ", adTCoupleDegF[wTCoupleNum]);
@@ -119,8 +121,12 @@ void UpdateDisplay(){
     tft << "T" << wTCoupleNum << "= " << adTCoupleDegF[wTCoupleNum] << "F, T"
         << (wTCoupleNum + 3) << "= " << adTCoupleDegF[wTCoupleNum +3] << "F" << endl;
 */
+/*
     tft << "T" << wTCoupleNum << "= " << stIncomingReadings.adTCoupleDegF[wTCoupleNum] << "F, T"
         << (wTCoupleNum + 3)  << "= " << stIncomingReadings.adTCoupleDegF[wTCoupleNum +3] << "F" << endl;
+*/
+    tft << "T" << wTCoupleNum << "= " << stReadings.adTCoupleDegF[wTCoupleNum] << "F, T"
+        << (wTCoupleNum + 3)  << "= " << stReadings.adTCoupleDegF[wTCoupleNum +3] << "F" << endl;
   } //for(int wTCoupleNum=0;(wTCoupleNum<5);wTCoupleNum++)
   return;
 }   //UpdateDisplay

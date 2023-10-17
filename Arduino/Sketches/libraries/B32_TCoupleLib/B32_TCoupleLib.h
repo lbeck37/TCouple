@@ -1,4 +1,4 @@
-//B32_TCoupleLib.h, 10/17/23b
+//B32_TCoupleLib.h, 10/17/23c
 #pragma once
 
 #include <Streaming.h>
@@ -19,8 +19,12 @@
 #define BLACK_PIN_RECEIVER  false        //TTGO with black header pins, tcouple display
 
 */
+/*
 extern const char           szFileName[];
 extern const char           szFileDate[];
+*/
+extern char           szFileName[];
+extern char           szFileDate[];
 
 
 /*
@@ -34,10 +38,10 @@ typedef struct stMessageStructure {
 } stMessageStructure;
 */
 //extern const int            wNumTCouples;
-const int             wNumTCouples= 8;
+const int                   wNumTCouples= 8;
 //Message Structure that is used to pass data back an forth
 typedef struct stMessageStructure {
-  double              adTCoupleDegF[wNumTCouples];
+  double                    adTCoupleDegF[wNumTCouples];
 } stMessageStructure;
 
 //Create an stMessageStructure to hold incoming sensor readings
@@ -70,7 +74,8 @@ void  OnDataRecv        (const uint8_t *pucMACAddress,
                          const uint8_t *pucIncomingData, int wNumBytes);
 void  OnDataSent        (const uint8_t *mac_addr, esp_now_send_status_t status);
 void  HandleDataReceived(void);
-void  UpdateDisplay     (void);
+//void  UpdateDisplay     (void);
+void  UpdateDisplay     (stMessageStructure stReadings);
 void  PrintTemperatures (void);
 void  PrintTemperature  (double dDegF);
 void  ResetTimer        (void);

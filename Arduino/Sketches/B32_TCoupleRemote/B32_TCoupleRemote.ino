@@ -1,5 +1,5 @@
-const char szSketchName[]  = "B32_TCoupleRemote.ino";
-const char szFileDate[]    = "10/17/23b";
+char szSketchName[]  = "B32_TCoupleRemote.ino";
+char szFileDate[]    = "10/17/23d";
 /* MAX31855 library example sketch
  This sample code is designed to be used on the MAX31855x8 breakout board.
  The board has a single MAX31855 IC on it, and uses a multiplexer
@@ -75,7 +75,8 @@ void loop() {
   ReadTCouples();
   PrintTemperatures();
   SendDataToDisplayBoard();
-  UpdateDisplay();
+  //UpdateDisplay();
+  UpdateDisplay(stOutgoingReadings);
 
   //delay(500);
   return;
@@ -97,9 +98,11 @@ void SetupPins(void){
 
 
 void SendDataToDisplayBoard(void){
+/*
   stOutgoingReadings.dTCouple0_DegF= adTCoupleDegF[0];
   stOutgoingReadings.dTCouple1_DegF= adTCoupleDegF[1];
   stOutgoingReadings.dTCouple2_DegF= adTCoupleDegF[2];
+*/
 
   esp_err_t wResult= esp_now_send(aucBlackPinMAC,
                                   (uint8_t *)&stOutgoingReadings,
@@ -136,11 +139,12 @@ void ReadTCouples(void){
     //Wait a bit longer to be safe.  We'll wait 0.125 seconds
     delay(125);
 
-    adTCoupleDegF[wTCoupleNum]= TCoupleObject.readThermocouple(FAHRENHEIT);
-    if (adTCoupleDegF[wTCoupleNum] == FAULT_OPEN){
+    //adTCoupleDegF[wTCoupleNum]= TCoupleObject.readThermocouple(FAHRENHEIT);
+    stOutgoingReadings.adTCoupleDegF[wTCoupleNum]= TCoupleObject.readThermocouple(FAHRENHEIT);
+    if (stOutgoingReadings.adTCoupleDegF[wTCoupleNum] == FAULT_OPEN){
       //Break out of for loop, go to top of for loop and next TCouple
       continue;
-    } //if(temperature==FAULT_OPEN)
+    } //if(stOutgoingReadings.adTCoupleDegF[wTCoupleNum]==FAULT_OPEN)
   } //for(int wTCoupleNum=0;wTCoupleNum<8;wTCoupleNum++)
   return;
 }   //ReadTCouples

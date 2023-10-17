@@ -1,16 +1,7 @@
 //const char szFileName[]  = "B32_TCoupleLib.ino";
-//const char szFileDate[]  = "10/16/23e";
+//const char szFileDate[]  = "10/16/23f";
 #include <B32_TCoupleLib.h>
 
-/*
-//Red pin TTGO to be connected to 8x TCouple board and transmit to black pin TTGO
-//Black pin TTGO is the display module
-//From B32_GetMACAddress.ino
-uint8_t OneDotMAC[]     = {0x48, 0xE7, 0x29, 0xAF, 0x7B, 0xDC};  //Returned to Amazon
-uint8_t TwoDotMAC[]     = {0x48, 0xE7, 0x29, 0xB6, 0xC3, 0xA0};  //Returned to Amazon
-uint8_t aucRedPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC}; //RedPin MAC
-uint8_t aucBlackPinMAC[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
-*/
 //Define variables to store temperature readings to be sent
 double                  dTCouple0_DegF;
 double                  dTCouple1_DegF;

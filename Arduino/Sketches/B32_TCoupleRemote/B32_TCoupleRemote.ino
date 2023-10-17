@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleRemote.ino";
-const char szFileDate[]    = "10/16/23h";
+const char szFileDate[]    = "10/16/23j";
 /* MAX31855 library example sketch
  This sample code is designed to be used on the MAX31855x8 breakout board.
  The board has a single MAX31855 IC on it, and uses a multiplexer
@@ -50,12 +50,12 @@ uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
 double  dJunctionDegF;
 
 //Function prototypes
-void  setup             (void);
-void  loop              (void);
-void  SetupPins         (void);
-void  ReadAmbiant       (void);
-void  ReadTCouples      (void);
-void  SendDataToDisplay (void);
+void  setup                   (void);
+void  loop                    (void);
+void  SetupPins               (void);
+void  ReadAmbiant             (void);
+void  ReadTCouples            (void);
+void  SendDataToDisplayBoard  (void);
 
 void setup() {
   Serial.begin(115200);
@@ -74,7 +74,7 @@ void loop() {
   ReadAmbiant();
   ReadTCouples();
   PrintTemperatures();
-  SendDataToDisplay();
+  SendDataToDisplayBoard();
   UpdateDisplay();
 
   //delay(500);
@@ -96,7 +96,7 @@ void SetupPins(void){
 } //SetupPins
 
 
-void SendDataToDisplay(void){
+void SendDataToDisplayBoard(void){
   stOutgoingReadings.dTCouple0_DegF= adTCoupleDegF[0];
   stOutgoingReadings.dTCouple1_DegF= adTCoupleDegF[1];
   stOutgoingReadings.dTCouple2_DegF= adTCoupleDegF[2];
@@ -116,7 +116,7 @@ void SendDataToDisplay(void){
     Serial << "Error sending the data" << endl;
   }
   return;
-} //SendDataToDisplay
+} //SendDataToDisplayBoard
 
 
 void ReadAmbiant(void){

@@ -25,20 +25,8 @@ typedef struct stMessageStructure {
   double dTCouple2_DegF;
 } stMessageStructure;
 
-/*
-#if RED_PIN_RECEIVER
-  //Running on BlackPin TTGO, sends data to RedPin TTGO
-  //extern uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC};   //RedPin MAC
-  extern uint8_t broadcastAddress[];
-#endif
-#if BLACK_PIN_RECEIVER
-  //Running on RedPin TTGO, sends data to BlackPin TTGO
-  extern uint8_t broadcastAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};   //BlackPin MAC
-#endif  //TWO_DOT_RECEIVER
-*/
-
-extern const char szFileName[];
-extern const char szFileDate[];
+extern const char           szFileName[];
+extern const char           szFileDate[];
 
 extern uint8_t              aucReceiverMACAddress[];
 
@@ -57,7 +45,7 @@ extern long                 lNextMsec;
 // Variable to store if sending data was successful
 extern String               szSuccess;
 
-// Create a stMessageStructure to hold incoming sensor readings
+//Create an stMessageStructure to hold incoming sensor readings
 extern stMessageStructure   stIncomingReadings;
 extern stMessageStructure   stOutgoingReadings;
 

@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleDisplay.ino";
-const char szFileDate[]    = "10/17/23d";
+const char szFileDate[]    = "10/19/23b";
 //Thanks to Rui Santos, https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32
 
 //This sketch, (B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
@@ -19,6 +19,7 @@ void setup(){
 
   SetupScreen();
   SetupESP_NOW();
+  Serial << endl << "My MAC Address is- " << WiFi.macAddress() << endl;
   return;
 } //setup
 

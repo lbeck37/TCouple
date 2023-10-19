@@ -1,17 +1,15 @@
 //const char szFileName[]  = "B32_TCoupleLib.ino";
-//const char szFileDate[]  = "10/17/23d";
+//const char szFileDate[]  = "10/19/23b";
 #include <B32_TCoupleLib.h>
+
+const uint8_t aucBlackPinMAC[]          = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
+const uint8_t aucESP32_ScreenOneDot[]   = {0xB4, 0xE6, 0x2D, 0xC8, 0x0F, 0x55}; //ESP32 w/3.2" LCD
+const uint8_t aucESP32_ScreenTwoDot[]   = {0xB4, 0xE6, 0x2D, 0xC2, 0xC9, 0xF5}; //ESP32 w/3.2" LCD
 
 //Define variables to store temperature readings to be sent
 double                  dTCouple0_DegF;
 double                  dTCouple1_DegF;
 double                  dTCouple2_DegF;
-
-/*
-const int               wNumTCouples    = 3;
-double                  adTCoupleDegF[wNumTCouples];
-*/
-//const int               wNumTCouples    = 8;
 
 long                    lAliveMsec     = 5000;
 long                    lCurrentMsec   = 0;
@@ -40,7 +38,6 @@ void SetupESP_NOW(void){
   } // if(esp_now_init()!=ESP_OK)
 
   //Register remote module
-  //memcpy(stPeerInfo.peer_addr, aucRedPinMAC, 6);
   memcpy(stPeerInfo.peer_addr, aucReceiverMACAddress, 6);
   stPeerInfo.channel = 0;
   stPeerInfo.encrypt = false;
@@ -93,12 +90,6 @@ void UpdateScreen       (stMessageStructure stReadings){
   Screen.setCursor      (0, 0, 2);
 
   Screen << "My MAC= " << WiFi.macAddress() << endl;
-/*
-  int wNum= 0;
-  Screen.println("T%d= %8f.2, T%d= %8f.2",
-      wNum,       stReadings.adTCoupleDegF[wNum],
-      (wNum + 3), stReadings.adTCoupleDegF[wNum + 3]);
-*/
 
   for (int wTCoupleNum=0; (wTCoupleNum < 5); wTCoupleNum++) {
     Screen << "T" << wTCoupleNum << "= " << stReadings.adTCoupleDegF[wTCoupleNum] << "F, T"

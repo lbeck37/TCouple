@@ -1,5 +1,5 @@
 char szSketchName[]  = "B32_TCoupleRemote.ino";
-char szFileDate[]    = "10/17/23f";
+char szFileDate[]    = "10/19/23b";
 /* MAX31855 library example sketch
  This sample code is designed to be used on the MAX31855x8 breakout board.
  The board has a single MAX31855 IC on it, and uses a multiplexer
@@ -45,7 +45,11 @@ uint8_t aucReceiverMACAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};   //Black
 //Create the temperature object, defining the pins used for communication
 MAX31855 TCoupleObject = MAX31855(MISO, CS, SCK);
 
-uint8_t aucBlackPinMAC[]  = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
+/*
+uint8_t aucBlackPinMAC[]          = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
+uint8_t aucESP32_ScreenOneDot[]   = {0xB4, 0xE6, 0x2D, 0xC8, 0x0F, 0x55}; //ESP32 w/3.2" LCD
+uint8_t aucESP32_ScreenTwoDot[]   = {0xB4, 0xE6, 0x2D, 0xC2, 0xC9, 0xF5}; //ESP32 w/3.2" LCD
+*/
 
 double  dJunctionDegF;
 
@@ -65,7 +69,7 @@ void setup() {
   SetupPins();
   SetupScreen();
   SetupESP_NOW();
-
+  Serial << endl << "My MAC Address is- " << WiFi.macAddress() << endl;
   return;
 }   //setup
 

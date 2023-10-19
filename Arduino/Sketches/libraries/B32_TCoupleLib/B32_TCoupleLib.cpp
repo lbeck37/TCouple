@@ -73,6 +73,27 @@ void HandleDataReceived(void) {
   return;
 } //OnDataRecv
 
+void SendDataToDisplayBoards(void){
+  SendDataToDisplayBoard(aucBlackPinMAC);
+  SendDataToDisplayBoard(aucESP32_ScreenOneDot);
+  SendDataToDisplayBoard(aucESP32_ScreenTwoDot);
+  return;
+} //SendDataToDisplayBoards
+
+
+void SendDataToDisplayBoard(const uint8_t *aucDestinationMAC){
+  esp_err_t wResult= esp_now_send(aucDestinationMAC,
+                                  (uint8_t *)&stOutgoingReadings,
+                                  sizeof(stOutgoingReadings));
+  if (wResult == ESP_OK) {
+    Serial << "SendDataToDisplayBoard(): Sent, no guarantee if received." << endl;
+  }
+  else {
+    Serial << "SendDataToDisplayBoard(): Error sending the data" << endl;
+  }
+  return;
+} //SendDataToDisplayBoard
+
 
 void SetupScreen(){
   Screen.init();

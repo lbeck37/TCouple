@@ -1,5 +1,5 @@
 char szSketchName[]  = "B32_TCoupleRemote.ino";
-char szFileDate[]    = "10/19/23b";
+char szFileDate[]    = "10/19/23c";
 /* MAX31855 library example sketch
  This sample code is designed to be used on the MAX31855x8 breakout board.
  The board has a single MAX31855 IC on it, and uses a multiplexer
@@ -45,12 +45,6 @@ uint8_t aucReceiverMACAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};   //Black
 //Create the temperature object, defining the pins used for communication
 MAX31855 TCoupleObject = MAX31855(MISO, CS, SCK);
 
-/*
-uint8_t aucBlackPinMAC[]          = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
-uint8_t aucESP32_ScreenOneDot[]   = {0xB4, 0xE6, 0x2D, 0xC8, 0x0F, 0x55}; //ESP32 w/3.2" LCD
-uint8_t aucESP32_ScreenTwoDot[]   = {0xB4, 0xE6, 0x2D, 0xC2, 0xC9, 0xF5}; //ESP32 w/3.2" LCD
-*/
-
 double  dJunctionDegF;
 
 //Function prototypes
@@ -59,7 +53,10 @@ void  loop                    (void);
 void  SetupPins               (void);
 void  ReadAmbiant             (void);
 void  ReadTCouples            (void);
+/*
+void  SendDataToDisplayBoards (void);
 void  SendDataToDisplayBoard  (void);
+*/
 
 void setup() {
   Serial.begin(115200);
@@ -78,7 +75,7 @@ void loop() {
   ReadAmbiant();
   ReadTCouples();
   PrintTemperatures();
-  SendDataToDisplayBoard();
+  SendDataToDisplayBoards();
   //UpdateScreen();
   UpdateScreen(stOutgoingReadings);
 
@@ -101,7 +98,8 @@ void SetupPins(void){
 } //SetupPins
 
 
-void SendDataToDisplayBoard(void){
+/*
+void SendDataToDisplayBoards(void){
   esp_err_t wResult= esp_now_send(aucBlackPinMAC,
                                   (uint8_t *)&stOutgoingReadings,
                                   sizeof(stOutgoingReadings));
@@ -112,7 +110,22 @@ void SendDataToDisplayBoard(void){
     Serial << "Error sending the data" << endl;
   }
   return;
+} //SendDataToDisplayBoards
+
+
+void SendDataToDisplayBoard(const uint8_t *peer_addr){
+  esp_err_t wResult= esp_now_send(aucBlackPinMAC,
+                                  (uint8_t *)&stOutgoingReadings,
+                                  sizeof(stOutgoingReadings));
+  if (wResult == ESP_OK) {
+    Serial << "Sent with success" << endl;
+  }
+  else {
+    Serial << "SendDataToDisplayBoard(): Error sending the data" << endl;
+  }
+  return;
 } //SendDataToDisplayBoard
+*/
 
 
 void ReadAmbiant(void){

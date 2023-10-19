@@ -1,4 +1,4 @@
-//B32_TCoupleLib.h, 10/17/23f
+//B32_TCoupleLib.h, 10/19/23b
 #pragma once
 
 #include <Streaming.h>
@@ -39,16 +39,18 @@ extern TFT_eSPI             Screen;  //Class library for TTGO T-Display
 extern esp_now_peer_info_t  stPeerInfo;
 
 //Function prototypes
-void  setup             (void);
-void  loop              (void);
-void  SetupScreen       (void);
-void  SetupESP_NOW      (void);
-void  OnDataRecv        (const uint8_t *pucMACAddress,
-                         const uint8_t *pucIncomingData, int wNumBytes);
-void  OnDataSent        (const uint8_t *mac_addr, esp_now_send_status_t status);
-void  HandleDataReceived(void);
-void  UpdateScreen      (stMessageStructure stReadings);
-void  PrintTemperatures (void);
-void  PrintTemperature  (double dDegF);
-void  ResetTimer        (void);
+void  setup                       (void);
+void  loop                        (void);
+void  SetupScreen                 (void);
+void  SetupESP_NOW                (void);
+void  OnDataRecv                  (const uint8_t *pucMACAddress,
+                                   const uint8_t *pucIncomingData, int wNumBytes);
+void  OnDataSent                  (const uint8_t *mac_addr, esp_now_send_status_t status);
+void  HandleDataReceived          (void);
+void  SendDataToDisplayBoards     (void);
+void  SendDataToDisplayBoard      (const uint8_t *aucDestinationMAC);
+void  UpdateScreen                (stMessageStructure stReadings);
+void  PrintTemperatures           (void);
+void  PrintTemperature            (double dDegF);
+void  ResetTimer                  (void);
 //Last line

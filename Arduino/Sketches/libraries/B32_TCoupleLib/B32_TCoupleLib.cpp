@@ -1,10 +1,8 @@
 //const char szFileName[]  = "B32_TCoupleLib.ino";
-//const char szFileDate[]  = "10/19/23e";
+//const char szFileDate[]  = "10/19/23f";
 #include <B32_TCoupleLib.h>
 
 const uint8_t aucBlackPinMAC[]          = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
-const uint8_t aucESP32_ScreenOneDot[]   = {0xB4, 0xE6, 0x2D, 0xC8, 0x0F, 0x55}; //ESP32 w/3.2" LCD
-const uint8_t aucESP32_ScreenTwoDot[]   = {0xB4, 0xE6, 0x2D, 0xC2, 0xC9, 0xF5}; //ESP32 w/3.2" LCD
 
 //Define variables to store temperature readings to be sent
 double                  dTCouple0_DegF;
@@ -54,27 +52,6 @@ void SetupESP_NOW(void){
 }   //SetupESP_NOW
 
 
-/*
-void RegisterDisplayBoard(const uint8_t         *aucReceiverMACAddress,
-                          esp_now_peer_info_t   &stPeerInfo){
-  //Register display module
-  memcpy(stPeerInfo.peer_addr, aucReceiverMACAddress, 6);
-  stPeerInfo.channel = 0;
-  stPeerInfo.encrypt = false;
-
-  //Add peer
-  if (esp_now_add_peer(&stPeerInfo) != ESP_OK){
-    Serial.println("RegisterDisplayBoard(): Failed to add peer");
-    return;
-  }   //if(esp_now_add_peer(&stPeerInfo)!=ESP_OK)
-
-  // Register for a callback function that will be called when data is received
-  esp_now_register_recv_cb(OnDataRecv);
-  return;
-}   //RegisterDisplayBoard
-*/
-
-
 //Callback when data is received. Used by Display that receives from TCouple Module
 void OnDataRecv(const uint8_t *pucMACAddress, const uint8_t *pucIncomingData, int wNumBytes) {
   memcpy(&stIncomingReadings, pucIncomingData, sizeof(stIncomingReadings));
@@ -93,23 +70,7 @@ void HandleDataReceived(void) {
   return;
 } //OnDataRecv
 
-/*
-void SendDataToDisplayBoards(void){
-  SendDataToDisplayBoard(aucBlackPinMAC);
-  SendDataToDisplayBoard(aucESP32_ScreenOneDot);
-  SendDataToDisplayBoard(aucESP32_ScreenTwoDot);
-  return;
-} //SendDataToDisplayBoards
-*/
-
-
-//void SendDataToDisplayBoard(const uint8_t *aucDestinationMAC){
 void SendDataToDisplayBoard(void){
-/*
-  esp_err_t wResult= esp_now_send(aucDestinationMAC,
-                                  (uint8_t *)&stOutgoingReadings,
-                                  sizeof(stOutgoingReadings));
-*/
   esp_err_t wResult= esp_now_send(aucReceiverMACAddress,
                                   (uint8_t *)&stOutgoingReadings,
                                   sizeof(stOutgoingReadings));

@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.ino";
-//const char szFileDate[]  = "10/19/23e";
+//const char szFileDate[]  = "10/19/23c";
 #include <B32_TCoupleLib.h>
 
 const uint8_t aucBlackPinMAC[]          = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
@@ -24,7 +24,11 @@ stMessageStructure      stOutgoingReadings;
 
 TFT_eSPI                Screen=     TFT_eSPI();  //Class library for TTGO T-Screen
 
-esp_now_peer_info_t     stPeerInfo;
+esp_now_peer_info_t     stPeerInfo1;
+esp_now_peer_info_t     stPeerInfo2;
+esp_now_peer_info_t     stPeerInfo3;
+esp_now_peer_info_t     stPeerInfo4;
+esp_now_peer_info_t     stPeerInfo5;
 
 
 void SetupESP_NOW(void){
@@ -37,6 +41,7 @@ void SetupESP_NOW(void){
     return;
   } // if(esp_now_init()!=ESP_OK)
 
+/*
   //Register display module
   memcpy(stPeerInfo.peer_addr, aucReceiverMACAddress, 6);
   stPeerInfo.channel = 0;
@@ -50,11 +55,14 @@ void SetupESP_NOW(void){
 
   // Register for a callback function that will be called when data is received
   esp_now_register_recv_cb(OnDataRecv);
+*/
+  RegisterDisplayBoard(aucBlackPinMAC,        &stPeerInfo1);
+  RegisterDisplayBoard(aucESP32_ScreenOneDot, &stPeerInfo2);
+  RegisterDisplayBoard(aucESP32_ScreenTwoDot, &stPeerInfo3);
   return;
 }   //SetupESP_NOW
 
 
-/*
 void RegisterDisplayBoard(const uint8_t         *aucReceiverMACAddress,
                           esp_now_peer_info_t   &stPeerInfo){
   //Register display module
@@ -72,7 +80,6 @@ void RegisterDisplayBoard(const uint8_t         *aucReceiverMACAddress,
   esp_now_register_recv_cb(OnDataRecv);
   return;
 }   //RegisterDisplayBoard
-*/
 
 
 //Callback when data is received. Used by Display that receives from TCouple Module
@@ -93,24 +100,16 @@ void HandleDataReceived(void) {
   return;
 } //OnDataRecv
 
-/*
 void SendDataToDisplayBoards(void){
   SendDataToDisplayBoard(aucBlackPinMAC);
   SendDataToDisplayBoard(aucESP32_ScreenOneDot);
   SendDataToDisplayBoard(aucESP32_ScreenTwoDot);
   return;
 } //SendDataToDisplayBoards
-*/
 
 
-//void SendDataToDisplayBoard(const uint8_t *aucDestinationMAC){
-void SendDataToDisplayBoard(void){
-/*
+void SendDataToDisplayBoard(const uint8_t *aucDestinationMAC){
   esp_err_t wResult= esp_now_send(aucDestinationMAC,
-                                  (uint8_t *)&stOutgoingReadings,
-                                  sizeof(stOutgoingReadings));
-*/
-  esp_err_t wResult= esp_now_send(aucReceiverMACAddress,
                                   (uint8_t *)&stOutgoingReadings,
                                   sizeof(stOutgoingReadings));
   if (wResult == ESP_OK) {

@@ -1,4 +1,4 @@
-//B32_TCoupleLib.h, 10/19/23f
+//B32_TCoupleLib.h, 10/19/23d
 #pragma once
 
 #include <Streaming.h>
@@ -43,16 +43,14 @@ void  setup                       (void);
 void  loop                        (void);
 void  SetupScreen                 (void);
 void  SetupESP_NOW                (void);
-/*
 void  RegisterDisplayBoard        (const uint8_t *aucReceiverMACAddress,
                                    esp_now_peer_info_t &stPeerInfo);
-*/
 void  OnDataRecv                  (const uint8_t *pucMACAddress,
                                    const uint8_t *pucIncomingData, int wNumBytes);
 void  OnDataSent                  (const uint8_t *mac_addr, esp_now_send_status_t status);
 void  HandleDataReceived          (void);
-//void  SendDataToDisplayBoards     (void);
-void  SendDataToDisplayBoard      (void);
+void  SendDataToDisplayBoards     (void);
+void  SendDataToDisplayBoard      (const uint8_t *aucDestinationMAC);
 void  UpdateScreen                (stMessageStructure stReadings);
 void  PrintTemperatures           (void);
 void  PrintTemperature            (double dDegF);

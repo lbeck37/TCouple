@@ -1,5 +1,5 @@
 char szSketchName[]  = "B32_TCoupleRemote.ino";
-char szFileDate[]    = "10/19/23d";
+char szFileDate[]    = "10/19/23c";
 /* MAX31855 library example sketch
  This sample code is designed to be used on the MAX31855x8 breakout board.
  The board has a single MAX31855 IC on it, and uses a multiplexer
@@ -71,8 +71,8 @@ void loop() {
   ReadAmbiant();
   ReadTCouples();
   PrintTemperatures();
-  //SendDataToDisplayBoards();
-  SendDataToDisplayBoard();
+  SendDataToDisplayBoards();
+  //UpdateScreen();
   UpdateScreen(stOutgoingReadings);
 
   //No delay, loop as fast as possible

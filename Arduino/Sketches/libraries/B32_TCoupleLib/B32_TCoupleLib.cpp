@@ -92,8 +92,7 @@ void SetupScreen(){
 }//SetupScreen stMessageStructure stMessage
 
 
-//void UpdateScreen(){
-void UpdateScreen       (stMessageStructure stReadings){
+ void UpdateScreen(stMessageStructure stReadings){
   Screen.fillScreen     (TFT_BLACK);
   Screen.setTextColor   (TFT_GREEN,TFT_BLACK);
   Screen.setTextFont    (3);

@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TFTPrintTest.ino";
-const char szFileDate[]    = "10/22/23b";
+const char szFileDate[]    = "10/22/23c";
 
 //CrapOut
 /*  
@@ -18,6 +18,7 @@ const char szFileDate[]    = "10/22/23b";
 
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
 #include <SPI.h>
+#include <Streaming.h>
 
 #define TFT_GREY 0x5AEB // New colour
 
@@ -27,12 +28,19 @@ void setup(void);
 void loop(void);
 
 void setup(void) {
+  Serial.begin(115200);
+  delay(100);
+  Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
+
+  Serial << "setup(): Call tft.init()" << endl;
   tft.init();
+  Serial << "setup(): Call tft.setRotation(2)" << endl;
   tft.setRotation(2);
-}
+  return;
+}//setup
+
 
 void loop() {
-  
   // Fill screen with grey so we can see the effect of printing with and without 
   // a background colour defined
   tft.fillScreen(TFT_GREY);
@@ -77,7 +85,9 @@ void loop() {
   tft.print("Binary = "); tft.println((int)fnumber, BIN); // Print as integer value in binary
   tft.print("Hexadecimal = "); tft.println((int)fnumber, HEX); // Print as integer number in Hexadecimal
   delay(10000);
-}
+  return;
+}//loop
+//Last line.
 
 
 

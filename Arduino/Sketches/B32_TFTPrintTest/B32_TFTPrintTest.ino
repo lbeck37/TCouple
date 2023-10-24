@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TFTPrintTest.ino";
-const char szFileDate[]    = "10/24/23c";
+const char szFileDate[]    = "10/24/23d";
 
 #define DO_ESP_LCD32
 

@@ -12,6 +12,7 @@
 	//#define TFT_RST  -1    // Set TFT_RST to -1 if the display RESET is connected to NodeMCU RST or 3.3V
 #endif
 
+#define TFT_BL          	27  	// Display backlight control pin for Walmart ESP32-2432S0 32
 #if 1
 //From ElectroDragon Wiki "ESP-LCD32
 	#define TFT_MOSI            15
@@ -21,7 +22,7 @@
 	#define TFT_DC              32
 	#define TFT_RST              5
 	//#define TFT_BL          	 4  	// Display backlight control pin
-	#define TFT_BL          	32  	// Display backlight control pin
+	//#define TFT_BL          	32  	// Display backlight control pin
 	//#define TFT_BACKLIGHT_ON 	HIGH  	// HIGH or LOW are options
 	#define TFT_BACKLIGHT_ON 	LOW  	// HIGH or LOW are options
 #endif
@@ -33,7 +34,7 @@
 	#define TFT_CS              15
 	#define TFT_DC               2
 	#define TFT_RST             12
-	#define TFT_BL          	 4  	// Display backlight control pin
+	//#define TFT_BL          	 4  	// Display backlight control pin
 	#define TFT_BACKLIGHT_ON 	HIGH  	// HIGH or LOW are options
 #endif
 
@@ -44,7 +45,7 @@
 	#define TFT_CS              13
 	#define TFT_DC              14
 	#define TFT_RST             12
-	#define TFT_BL          	 4  	// Display backlight control pin
+	//#define TFT_BL          	 4  	// Display backlight control pin
 	#define TFT_BACKLIGHT_ON 	HIGH  	// HIGH or LOW are options
 #endif
 
@@ -55,7 +56,7 @@
 	#define TFT_CS              14
 	#define TFT_DC              27
 	#define TFT_RST             33
-	#define TFT_BL          	32  	// Display backlight control pin
+	//#define TFT_BL          	32  	// Display backlight control pin
 	#define TFT_BACKLIGHT_ON 	HIGH  	// HIGH or LOW are options
 #endif
 

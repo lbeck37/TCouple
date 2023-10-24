@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TFTPrintTest.ino";
-const char szFileDate[]    = "10/24/23d";
+const char szFileDate[]    = "10/24/23k";
 
 #define DO_ESP_LCD32
 
@@ -22,20 +22,47 @@ const char szFileDate[]    = "10/24/23d";
 
 TFT_eSPI tft = TFT_eSPI();  // Invoke library
 
-void setup(void);
-void loop(void);
+void setup				(void);
+void loop				(void);
+void LookForBacklight	(void);
 
 void setup(void) {
-  Serial.begin(115200);
-  delay(100);
-  Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
+	Serial.begin(115200);
+	delay(100);
+	Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
-  Serial << "setup(): Call tft.init()" << endl;
-  tft.init();
-  Serial << "setup(): Call tft.setRotation(2)" << endl;
-  tft.setRotation(2);
-  return;
+	Serial << "setup(): Call tft.init()" << endl;
+	tft.init();
+	Serial << "setup(): Call tft.setRotation(2)" << endl;
+	tft.setRotation(2);
+
+	//LookForBacklight();
+	//Turn on backlight
+	int wBacklightPin= 27;
+	pinMode(wBacklightPin, OUTPUT);
+	Serial << "setup(): Set backlight pin to " << wBacklightPin << " HIGH" << endl;
+	digitalWrite(wBacklightPin, HIGH);
+
+	return;
 }//setup
+
+
+void LookForBacklight(void){
+	//for(int wPin= 12; wPin <= 33; wPin++){
+	while(true){
+		//for(int wPin= 22; wPin <= 30; wPin++){
+		for(int wPin= 27; wPin <= 27; wPin++){
+			pinMode(wPin, OUTPUT);
+			Serial << "LookForBackLight(): Set pin " << wPin << " HIGH" << endl;
+			digitalWrite(wPin, HIGH);
+			delay(1000);
+			Serial << "LookForBackLight(): Set pin " << wPin << " LOW" << endl;
+			digitalWrite(wPin, LOW);
+			delay(1000);
+		}	//for(int wPin=12;wPin<=33;wPin++)
+	}	//while
+	return;
+}//LookForBacklight
 
 
 void loop() {

@@ -1,7 +1,9 @@
-
+// Beck 10/24/23a
+//Not sure why this comment says it's for a ILI9341 when it defines ST7789_DRIVER
 // Setup for the TTGO T4 ("Bitcoin Tracker") ESP32 board with 2.2" ILI9341 display
 
 // See SetupX_Template.h for all options available
+//Beck BADCODE put in to fail compile if this file is even used! It did fail.
 
 #define ST7789_DRIVER
 

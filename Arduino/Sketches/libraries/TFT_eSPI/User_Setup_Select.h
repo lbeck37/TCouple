@@ -1,3 +1,9 @@
+// Larry Beck, 10/24/23b
+#define DO_ESP_LCD32
+
+// 10/24/23 Larry Beck, ElectroDragon ESP32 with 3.2" display
+//BADCODE put in to fail compile if this file is even used!
+
 // This header file contains a list of user setup files and defines which one the
 // compiler uses when the IDE performs a Verify/Compile or Upload.
 //
@@ -21,7 +27,9 @@
 
 // #include <User_Setup.h>           // Default setup is root library folder
 
-//#include <User_Setups/Setup1_ILI9341.h>  // Setup file configured for my ILI9341
+#ifdef DO_ESP_LCD32
+  #include <User_Setups/Setup1_ILI9341.h>  // Setup file configured for my ILI9341
+#endif
 //#include <User_Setups/Setup2_ST7735.h>   // Setup file configured for my ST7735
 //#include <User_Setups/Setup3_ILI9163.h>  // Setup file configured for my ILI9163
 //#include <User_Setups/Setup4_S6D02A1.h>  // Setup file configured for my S6D02A1
@@ -50,7 +58,9 @@
 //#include <User_Setups/Setup22_TTGO_T4_v1.3.h>      // Setup file for ESP32 and TTGO T4 version 1.3
 //#include <User_Setups/Setup23_TTGO_TM.h>           // Setup file for ESP32 and TTGO TM ST7789 SPI bus TFT
 //#include <User_Setups/Setup24_ST7789.h>            // Setup file configured for ST7789 240 x 240
-#include <User_Setups/Setup25_TTGO_T_Display.h>    // Setup file for ESP32 and TTGO T-Display ST7789V SPI bus TFT
+#ifndef DO_ESP_LCD32
+  #include <User_Setups/Setup25_TTGO_T_Display.h>    // Setup file for ESP32 and TTGO T-Display ST7789V SPI bus TFT
+#endif
 //#include <User_Setups/Setup26_TTGO_T_Wristband.h>  // Setup file for ESP32 and TTGO T-Wristband ST7735 SPI bus TFT
 
 //#include <User_Setups/Setup27_RPi_ST7796_ESP32.h>    // ESP32   RPi MHS-4.0 inch Display-B
@@ -113,8 +123,8 @@
 
 // Load the right driver definition - do not tinker here !
 #if   defined (ILI9341_DRIVER)
-#include <TFT_Drivers/ILI9341_Defines.h>
-#define  TFT_DRIVER 0x9341
+  #include <TFT_Drivers/ILI9341_Defines.h>
+  #define  TFT_DRIVER 0x9341
 #elif defined (ST7735_DRIVER)
 #include <TFT_Drivers/ST7735_Defines.h>
 #define  TFT_DRIVER 0x7735
@@ -143,8 +153,8 @@
 #include "TFT_Drivers/EPD_Defines.h"
 #define  TFT_DRIVER 0xE9D
 #elif defined (ST7789_DRIVER)
-#include "TFT_Drivers/ST7789_Defines.h"
-#define  TFT_DRIVER 0x7789
+  #include "TFT_Drivers/ST7789_Defines.h"
+  #define  TFT_DRIVER 0x7789
 #elif defined (R61581_DRIVER)
 #include "TFT_Drivers/R61581_Defines.h"
 #define  TFT_DRIVER 0x6158
@@ -173,24 +183,27 @@
 #endif
 
 
-// These are the pins for ESP8266 boards
-//      Name   GPIO    NodeMCU      Function
-#define PIN_D0  16  // GPIO16       WAKE
-#define PIN_D1   5  // GPIO5        User purpose
-#define PIN_D2   4  // GPIO4        User purpose
-#define PIN_D3   0  // GPIO0        Low on boot means enter FLASH mode
-#define PIN_D4   2  // GPIO2        TXD1 (must be high on boot to go to UART0 FLASH mode)
-#define PIN_D5  14  // GPIO14       HSCLK
-#define PIN_D6  12  // GPIO12       HMISO
-#define PIN_D7  13  // GPIO13       HMOSI  RXD2
-#define PIN_D8  15  // GPIO15       HCS    TXD0 (must be low on boot to enter UART0 FLASH mode)
-#define PIN_D9   3  //              RXD0
-#define PIN_D10  1  //              TXD0
+//Beck 10-24-23, Why are these in User_Setup_Select.h and not even with a #ifdef
+#if 0	//With these commented out, the TTGO still works
+	// These are the pins for ESP8266 boards
+	//      Name   GPIO    NodeMCU      Function
+	#define PIN_D0  16  // GPIO16       WAKE
+	#define PIN_D1   5  // GPIO5        User purpose
+	#define PIN_D2   4  // GPIO4        User purpose
+	#define PIN_D3   0  // GPIO0        Low on boot means enter FLASH mode
+	#define PIN_D4   2  // GPIO2        TXD1 (must be high on boot to go to UART0 FLASH mode)
+	#define PIN_D5  14  // GPIO14       HSCLK
+	#define PIN_D6  12  // GPIO12       HMISO
+	#define PIN_D7  13  // GPIO13       HMOSI  RXD2
+	#define PIN_D8  15  // GPIO15       HCS    TXD0 (must be low on boot to enter UART0 FLASH mode)
+	#define PIN_D9   3  //              RXD0
+	#define PIN_D10  1  //              TXD0
 
-#define PIN_MOSI 8  // SD1          FLASH and overlap mode
-#define PIN_MISO 7  // SD0
-#define PIN_SCLK 6  // CLK
-#define PIN_HWCS 0  // D3
+	#define PIN_MOSI 8  // SD1          FLASH and overlap mode
+	#define PIN_MISO 7  // SD0
+	#define PIN_SCLK 6  // CLK
+	#define PIN_HWCS 0  // D3
 
-#define PIN_D11  9  // SD2
-#define PIN_D12 10  // SD4
+	#define PIN_D11  9  // SD2
+	#define PIN_D12 10  // SD4
+#endif	//DO_ESP_LCD32

@@ -188,7 +188,7 @@
 // ###### EDIT THE PIN NUMBERS IN THE LINES FOLLOWING TO SUIT YOUR ESP32 SETUP   ######
 
 // 10/22/23 Larry Beck, ElectroDragon ESP32 with 3.2" display
-BADCODE
+BADCODE put in to fail compile if this file is even used! Apparantly not used.
 #define TFT_RST   5
 #define TFT_SCLK 18
 #define TFT_CS   27  // Chip select control pin

@@ -1,20 +1,18 @@
 const char szSketchName[]  = "B32_TFTPrintTest.ino";
-const char szFileDate[]    = "10/22/23c";
+const char szFileDate[]    = "10/24/23c";
 
-//CrapOut
-/*  
- Test the tft.print() viz embedded tft.write() function
+#define DO_ESP_LCD32
 
- This sketch used font 2, 4, 7
-
- Make sure all the display driver and pin comnenctions are correct by
- editting the User_Setup.h file in the TFT_eSPI library folder.
-
- #########################################################################
- ###### DON'T FORGET TO UPDATE THE User_Setup.h FILE IN THE LIBRARY ######
- #########################################################################
- */
-
+/*Test the tft.print() viz embedded tft.write() function, uses font 2, 4, 7
+*/
+ #ifndef DO_ESP_LCD32
+	//Make sure all the display driver and pin comnenctions are correct by
+	//editting the User_Setup.h file in the TFT_eSPI library folder.
+	//DON'T FORGET TO UPDATE THE User_Setup.h FILE IN THE LIBRARY ######
+ #else
+	//Make sure all the display driver and pin comnenctions are correct by
+	//editing the User_Setup_Select.h file in the TFT_eSPI library folder.
+ #endif		//DO_ESP_LCD32
 
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
 #include <SPI.h>

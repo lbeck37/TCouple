@@ -1,8 +1,24 @@
-// Setup1_ILI9341 Beck 10/24/23f
+// Setup1_ILI9341 Beck 10/27/23b
+//Included in User_Setup_Select.h
 //Beck BADCODE put in to fail compile if this file is even used!
+
+//Define for when working with Walmart ESP32 w/3.2" display
+//ESP32- 2432S032 is printed on back
+#define WALMART
 
 // See SetupX_Template.h for all options available
 #define ILI9341_DRIVER
+
+#ifdef WALMART
+//Start with https://forum.arduino.cc/t/esp32-2432s028r-all-in-one-display-touch-spi-problems/1059746
+  #define TFT_MOSI            13
+  #define TFT_SCLK            14
+  #define TFT_CS              15
+  #define TFT_DC               2
+  #define TFT_RST             12
+  #define TFT_BL              27    // Display backlight control pin for Walmart ESP32-2432S0 32
+  #define TFT_BACKLIGHT_ON  HIGH    // HIGH or LOW are options
+#endif  //WALMART
 
 #if 0
 	//Original from 10/24/23
@@ -12,7 +28,6 @@
 	//#define TFT_RST  -1    // Set TFT_RST to -1 if the display RESET is connected to NodeMCU RST or 3.3V
 #endif
 
-#define TFT_BL          	27  	// Display backlight control pin for Walmart ESP32-2432S0 32
 #if 1
 //From ElectroDragon Wiki "ESP-LCD32
 	#define TFT_MOSI            15
@@ -68,17 +83,15 @@
 #define LOAD_FONT8  // Font 8. Large 75 pixel font needs ~3256 bytes in FLASH, only characters 1234567890:-.
 #define LOAD_GFXFF  // FreeFonts. Include access to the 48 Adafruit_GFX free fonts FF1 to FF48 and custom fonts
 
-
 #define SMOOTH_FONT
 
-
 // #define SPI_FREQUENCY  27000000
-#define SPI_FREQUENCY  40000000
 // #define SPI_FREQUENCY  80000000
+#define SPI_FREQUENCY  			40000000
 
-#define SPI_READ_FREQUENCY  20000000
+#define SPI_READ_FREQUENCY  	20000000
 
-#define SPI_TOUCH_FREQUENCY  2500000
+#define SPI_TOUCH_FREQUENCY		2500000
 
 
 // #define SUPPORT_TRANSACTIONS

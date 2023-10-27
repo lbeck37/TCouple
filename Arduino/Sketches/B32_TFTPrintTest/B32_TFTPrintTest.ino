@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TFTPrintTest.ino";
-const char szFileDate[]    = "10/24/23n";
+const char szFileDate[]    = "10/27/23b";
 
 #define DO_ESP_LCD32
 
@@ -33,18 +33,27 @@ void setup(void) {
 
 	Serial << "setup(): Call tft.init()" << endl;
 	tft.init();
-	Serial << "setup(): Call tft.setRotation(2)" << endl;
+	Serial << "setup(): Call setRotation(2)" << endl;
 	tft.setRotation(2);
 
-	LookForBacklight();
-/*
-	//Turn on backlight
-	int wBacklightPin= 27;
-	pinMode(wBacklightPin, OUTPUT);
-	Serial << "setup(): Set backlight pin to " << wBacklightPin << " HIGH" << endl;
-	digitalWrite(wBacklightPin, HIGH);
-*/
+	//LookForBacklight();
+	Serial << "setup(): Call fillScreen(TFT_GREY)" << endl;
+  tft.fillScreen(TFT_GREY);
 
+  // Set "cursor" at top left corner of display (0,0) and select font 2
+  // (cursor will move to next line automatically during printing with 'tft.println'
+  //  or stay on the line is there is room for the text with tft.print)
+  Serial << "setup(): Call setCursor(0, 0, 2)" << endl;
+  tft.setCursor(0, 0, 2);
+
+  // Set the font colour to be white with a black background, set text size multiplier to 1
+  Serial << "setup(): Call setTextColor(TFT_WHITE,TFT_BLACK) and setTextSize(1)" << endl;
+  tft.setTextColor(TFT_WHITE,TFT_BLACK);
+  tft.setTextSize(1);
+
+  // We can now print text on screen using the "print" class
+  Serial << "setup(): Call tft.println(Hello World!)" << endl;
+  tft.println("Hello World!");
 	return;
 }//setup
 

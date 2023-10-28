@@ -228,7 +228,6 @@
   #else // VSPI port
 
     #ifndef TFT_MISO
-      #pragma message("TFT_eSPI_ESP32.h, Why is TFT_MISO not defined?")
       #define TFT_MISO 19
     #endif
     #if (TFT_MISO == -1)

@@ -1,11 +1,11 @@
-// Setup1_ILI9341.h Beck 10/27/23d
+// Setup1_ILI9341.h Beck 10/28/23b
 //Included in User_Setup_Select.h
 
 #pragma once
 
 //Define for when working with Walmart ESP32 w/3.2" display
 //ESP32- 2432S032 is printed on back
-#define WALMART
+//#define WALMART
 
 // See SetupX_Template.h for all options available
 #define ILI9341_DRIVER
@@ -13,6 +13,8 @@
 #ifdef WALMART
 #pragma message("Setup1_ILI9341.h, defining TFT_MOSI, SCLK, CS, DC, RST, BL")
 //Start with https://forum.arduino.cc/t/esp32-2432s028r-all-in-one-display-touch-spi-problems/1059746
+//Also found in esp32-smartdisplay.h for ESP32-2432S024N, 24R, 24C 28R
+//24C is only one with backlight on 27 like our Walmart, others are 21
   #define TFT_MOSI            13
   #define TFT_SCLK            14
   #define TFT_CS              15
@@ -21,6 +23,18 @@
   #define TFT_BL              27    // Display backlight control pin for Walmart ESP32-2432S0 32
   #define TFT_BACKLIGHT_ON  HIGH    // HIGH or LOW are options
 #endif  //WALMART
+
+#if 1
+//Modified from https://github.com/mstrens/grbl_controller_esp32
+  #define TFT_MISO            19    //From TFT_eSPI_ESP32.h if TFT_MISO is not defined
+  #define TFT_MOSI            23
+  #define TFT_SCLK            18
+  //#define TFT_CS              13
+  #define TFT_CS              15
+  #define TFT_DC              14
+  #define TFT_RST             12
+  #define TFT_BL              27    // Display backlight control pin for Walmart ESP32-2432S0 32
+#endif
 
 #if 0
 	//Original from 10/24/23

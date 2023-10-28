@@ -1,3 +1,4 @@
+//Beck, 10/28/23b
 /***************************************************
   Arduino TFT graphics library targeted at 32 bit
   processors such as ESP32, ESP8266 and STM32.
@@ -13,7 +14,7 @@
   Last update by Bodmer 20/03/20
  ****************************************************/
 
-
+#include <Streaming.h>
 #include "TFT_eSPI.h"
 
 #if defined (ESP32)
@@ -300,6 +301,9 @@ void TFT_eSPI::init(uint8_t tc)
 #else
   #if !defined(TFT_PARALLEL_8_BIT)
     #if defined (TFT_MOSI) && !defined (TFT_SPI_OVERLAP)
+  Serial << "init():  Call spi.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, -1)" << endl;
+  Serial << "init():  TFT_SCLK= " << TFT_SCLK << ", TFT_MISO= " << TFT_MISO <<
+      ", TFT_MOSI= " << TFT_MOSI << endl;
       spi.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, -1);
     #else
       spi.begin();

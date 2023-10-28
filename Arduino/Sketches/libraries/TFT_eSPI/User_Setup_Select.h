@@ -1,4 +1,5 @@
 // Larry Beck, 10/24/23b
+#pragma once
 #define DO_ESP_LCD32
 
 // 10/24/23 Larry Beck, ElectroDragon ESP32 with 3.2" display

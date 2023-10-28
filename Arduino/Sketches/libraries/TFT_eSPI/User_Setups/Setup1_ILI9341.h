@@ -1,6 +1,7 @@
-// Setup1_ILI9341 Beck 10/27/23b
+// Setup1_ILI9341.h Beck 10/27/23d
 //Included in User_Setup_Select.h
-//Beck BADCODE put in to fail compile if this file is even used!
+
+#pragma once
 
 //Define for when working with Walmart ESP32 w/3.2" display
 //ESP32- 2432S032 is printed on back
@@ -10,6 +11,7 @@
 #define ILI9341_DRIVER
 
 #ifdef WALMART
+#pragma message("Setup1_ILI9341.h, defining TFT_MOSI, SCLK, CS, DC, RST, BL")
 //Start with https://forum.arduino.cc/t/esp32-2432s028r-all-in-one-display-touch-spi-problems/1059746
   #define TFT_MOSI            13
   #define TFT_SCLK            14
@@ -28,7 +30,7 @@
 	//#define TFT_RST  -1    // Set TFT_RST to -1 if the display RESET is connected to NodeMCU RST or 3.3V
 #endif
 
-#if 1
+#if 0
 //From ElectroDragon Wiki "ESP-LCD32
 	#define TFT_MOSI            15
 	//#define TFT_MOSI            14

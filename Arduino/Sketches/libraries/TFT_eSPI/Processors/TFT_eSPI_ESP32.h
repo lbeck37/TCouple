@@ -1,7 +1,7 @@
-        ////////////////////////////////////////////////////
-        // TFT_eSPI driver functions for ESP32 processors //
-        ////////////////////////////////////////////////////
-
+// TFT_eSPI_ESP32.h, Driver functions for ESP32 processors
+//Beck 10/27/23, This file is included in TFT_eSPI.h after
+// the include of User_Setup_Select.h and Setup1_ILI9341.h
+// TFT_MOSI, SCLK, CS, DC, RST, BL are defined in Setup1_ILI9341.h
 #ifndef _TFT_eSPI_ESP32H_
 #define _TFT_eSPI_ESP32H_
 
@@ -228,6 +228,7 @@
   #else // VSPI port
 
     #ifndef TFT_MISO
+      #pragma message("TFT_eSPI_ESP32.h, Why is TFT_MISO not defined?")
       #define TFT_MISO 19
     #endif
     #if (TFT_MISO == -1)

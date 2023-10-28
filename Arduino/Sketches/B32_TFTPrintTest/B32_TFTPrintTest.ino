@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TFTPrintTest.ino";
-const char szFileDate[]    = "10/27/23b";
+const char szFileDate[]    = "10/27/23c";
 
 #define DO_ESP_LCD32
 
@@ -22,9 +22,10 @@ const char szFileDate[]    = "10/27/23b";
 
 TFT_eSPI tft = TFT_eSPI();  // Invoke library
 
-void setup				(void);
-void loop				(void);
-void LookForBacklight	(void);
+void setup				      (void);
+void loop				        (void);
+void TurnOnBacklight    (void);
+void LookForBacklight	  (void);
 
 void setup(void) {
 	Serial.begin(115200);
@@ -54,8 +55,18 @@ void setup(void) {
   // We can now print text on screen using the "print" class
   Serial << "setup(): Call tft.println(Hello World!)" << endl;
   tft.println("Hello World!");
+
+  TurnOnBacklight();
+
 	return;
 }//setup
+
+void TurnOnBacklight(void){
+  pinMode(TFT_BL, OUTPUT);
+  Serial << "TurnOnBacklight(): Set pin " << TFT_BL << " HIGH" << endl;
+  digitalWrite(TFT_BL, HIGH);
+  return;
+} //TurnOnBacklight
 
 
 void LookForBacklight(void){

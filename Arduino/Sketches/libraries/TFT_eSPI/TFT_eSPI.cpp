@@ -27,6 +27,7 @@
   #include "Processors/TFT_eSPI_Generic.c"
 #endif
 
+int   wChipSelectPin= 0;
 
 /***************************************************************************************
 ** Function name:           begin_tft_write (was called spi_begin)
@@ -128,6 +129,10 @@ TFT_eSPI::TFT_eSPI(int16_t w, int16_t h)
 // might call and initialise other SPI peripherals which would could cause conflicts
 // if CS is floating or undefined.
 #ifdef TFT_CS
+/*
+  Serial << "TFT_eSPI::TFT_eSPI(): Call pinMode(TFT_CS, OUTPUT) and digitalWrite(TFT_CS, HIGH)" << endl;
+  Serial << "TFT_eSPI::TFT_eSPI(): TFT_CS= " << TFT_CS << endl;
+*/
   pinMode(TFT_CS, OUTPUT);
   digitalWrite(TFT_CS, HIGH); // Chip select high (inactive)
 #endif
@@ -311,22 +316,20 @@ void TFT_eSPI::init(uint8_t tc)
   #endif
 #endif
 
-    inTransaction = false;
-    locked = true;
+  inTransaction = false;
+  locked = true;
 
-    INIT_TFT_DATA_BUS;
-
-
+  INIT_TFT_DATA_BUS;
 
 #ifdef TFT_CS
   // Set to output once again in case D6 (MISO) is used for CS
+  Serial << "init():  Call pinMode(TFT_CS, OUTPUT) and digitalWrite(TFT_CS, HIGH)" << endl;
+  Serial << "init():  TFT_CS= " << TFT_CS << endl;
   pinMode(TFT_CS, OUTPUT);
   digitalWrite(TFT_CS, HIGH); // Chip select high (inactive)
 #elif defined (ESP8266) && !defined (TFT_PARALLEL_8_BIT)
   spi.setHwCs(1); // Use hardware SS toggling
 #endif
-
-
 
   // Set to output once again in case D6 (MISO) is used for DC
 #ifdef TFT_DC
@@ -432,7 +435,7 @@ void TFT_eSPI::init(uint8_t tc)
     digitalWrite(TFT_BL, HIGH);
   #endif
 #endif
-}
+} //TFT_eSPI::init()
 
 
 /***************************************************************************************

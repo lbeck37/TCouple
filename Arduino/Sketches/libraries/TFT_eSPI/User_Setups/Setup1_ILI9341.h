@@ -1,7 +1,7 @@
-// Setup1_ILI9341.h Beck 10/28/23b
+// Setup1_ILI9341.h Beck 10/28/23d
 //Included in User_Setup_Select.h
-
 #pragma once
+extern int   wChipSelectPin;
 
 //Define for when working with Walmart ESP32 w/3.2" display
 //ESP32- 2432S032 is printed on back
@@ -26,11 +26,20 @@
 
 #if 1
 //Modified from https://github.com/mstrens/grbl_controller_esp32
-  #define TFT_MISO            19    //From TFT_eSPI_ESP32.h if TFT_MISO is not defined
-  #define TFT_MOSI            23
-  #define TFT_SCLK            18
-  //#define TFT_CS              13
-  #define TFT_CS              15
+  //VSPI default pins
+  #define TFT_MISO            19    //VSPI default
+  #define TFT_MOSI            23    //VSPI default
+  #define TFT_SCLK            18    //VSPI default
+  //#define TFT_CS               5    //VSPI default
+  #define TFT_CS              (wChipSelectPin)
+/*
+  //HSPI default pins
+  #define TFT_MISO            12    //HSPI default
+  #define TFT_MOSI            13    //HSPI default
+  #define TFT_SCLK            14    //HSPI default
+  #define TFT_CS              15    //HSPI default
+*/
+
   #define TFT_DC              14
   #define TFT_RST             12
   #define TFT_BL              27    // Display backlight control pin for Walmart ESP32-2432S0 32

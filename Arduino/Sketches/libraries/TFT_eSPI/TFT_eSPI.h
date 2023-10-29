@@ -1,3 +1,4 @@
+//Beck, 10/28/23b
 /***************************************************
   Arduino TFT graphics library targeted at ESP8266
   and ESP32 based boards.
@@ -26,6 +27,8 @@
 #include <Arduino.h>
 #include <Print.h>
 #include <SPI.h>
+
+extern int   wChipSelectPin;
 
 /***************************************************************************************
 **                         Section 2: Load library and processor specific header files

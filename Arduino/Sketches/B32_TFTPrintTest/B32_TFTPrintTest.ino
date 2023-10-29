@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TFTPrintTest.ino";
-const char szFileDate[]    = "10/28/23j";
+const char szFileDate[]    = "10/28/23n";
 
 //#define DO_ESP_LCD32
 //Make sure the pin connections are correct by
@@ -67,8 +67,15 @@ void loop() {
     wChipSelectPin= 15;
   }
 
+  Serial << "loop(): wChipSelectPin set equal to " << wChipSelectPin << endl;
   Serial << "loop(): Call Screen.init()" << endl;
   Screen.init();
+
+  //Set chip select so we are sure
+  Serial << "loop():  Call pinMode(TFT_CS, OUTPUT) and digitalWrite(TFT_CS, HIGH)" << endl;
+  Serial << "loop():  TFT_CS= " << TFT_CS << endl;
+  pinMode(TFT_CS, OUTPUT);
+  digitalWrite(TFT_CS, HIGH); // Chip select high (inactive)
 
   // Fill screen with grey so we can see the effect of printing with and without 
   // a background colour defined

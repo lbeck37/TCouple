@@ -1,4 +1,4 @@
-//Beck, 10/28/23b
+//Beck, 10/28/23c
 /***************************************************
   Arduino TFT graphics library targeted at 32 bit
   processors such as ESP32, ESP8266 and STM32.
@@ -303,12 +303,12 @@ void TFT_eSPI::init(uint8_t tc)
 
   spi.begin(); // This will set HMISO to input
 
-#else
+#else   //#if!defined(ESP32)&&!defined(TFT_PARALLEL_8_BIT)
   #if !defined(TFT_PARALLEL_8_BIT)
     #if defined (TFT_MOSI) && !defined (TFT_SPI_OVERLAP)
-  Serial << "init():  Call spi.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, -1)" << endl;
-  Serial << "init():  TFT_SCLK= " << TFT_SCLK << ", TFT_MISO= " << TFT_MISO <<
-      ", TFT_MOSI= " << TFT_MOSI << endl;
+      Serial << "init():  Call spi.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, -1)" << endl;
+      Serial << "init():  TFT_SCLK= " << TFT_SCLK << ", TFT_MISO= " << TFT_MISO <<
+                ", TFT_MOSI= " << TFT_MOSI << endl;
       spi.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, -1);
     #else
       spi.begin();

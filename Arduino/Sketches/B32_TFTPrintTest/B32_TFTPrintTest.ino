@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TFTPrintTest.ino";
-const char szFileDate[]    = "10/29/23h";
+const char szFileDate[]    = "10/29/23k";
 
 //#define DO_ESP_LCD32
 //Make sure the pin connections are correct by
@@ -95,16 +95,8 @@ void TryNextCSPin(void){
       wChipSelectPin= wNextPin;
     } //if(bSkipPin)else
   } //while
-/*
-  if (!bSkipPin){
-    //wChipSelectPin= ;
-    //Set chip select so we are sure
-    Serial << "TryNextCSPin():  Call pinMode(TFT_CS, OUTPUT) and digitalWrite(TFT_CS, HIGH)" << endl;
-    Serial << "TryNextCSPin():  TFT_CS= " << TFT_CS << endl;
-    pinMode(TFT_CS, OUTPUT);
-    digitalWrite(TFT_CS, HIGH); // Chip select high (inactive)
-  } //if (!bSkipPin)
-*/
+
+  Serial << "TryNextCSPin(): Call SetChipSelectHIGH() " << endl;
   SetChipSelectHIGH();
   return;
 } //TryNextCSPin
@@ -120,31 +112,13 @@ void SetChipSelectHIGH(void){
 
 
 void loop() {
-/*
-  static int wLoopCount= 0;
-  //Set Chip Select pin for this time thru loop()
-  if (((++wLoopCount) % 2) == 1){
-    wChipSelectPin= 5;
-  }
-  else{
-    wChipSelectPin= 15;
-  }
-  Serial << "loop(): wChipSelectPin set equal to " << wChipSelectPin << endl;
-*/
   TryNextCSPin();
   Serial << "loop(): Call Screen.init()" << endl;
   Screen.init();
 
   //Set chip select again for good measure
+  Serial << "loop(): Call SetChipSelectHIGH() for good measure" << endl;
   SetChipSelectHIGH();
-
-/*
-  //Set chip select so we are sure
-  Serial << "loop():  Call pinMode(TFT_CS, OUTPUT) and digitalWrite(TFT_CS, HIGH)" << endl;
-  Serial << "loop():  TFT_CS= " << TFT_CS << endl;
-  pinMode(TFT_CS, OUTPUT);
-  digitalWrite(TFT_CS, HIGH); // Chip select high (inactive)
-*/
 
   // Fill screen with grey so we can see the effect of printing with and without 
   // a background colour defined

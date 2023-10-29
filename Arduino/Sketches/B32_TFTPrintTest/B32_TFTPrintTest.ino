@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TFTPrintTest.ino";
-const char szFileDate[]    = "10/28/23n";
+const char szFileDate[]    = "10/29/23e";
 
 //#define DO_ESP_LCD32
 //Make sure the pin connections are correct by
@@ -57,8 +57,8 @@ void setup(void) {
 
 
 void loop() {
+/*
   static int wLoopCount= 0;
-
   //Set Chip Select pin for this time thru loop()
   if (((++wLoopCount) % 2) == 1){
     wChipSelectPin= 5;
@@ -66,8 +66,8 @@ void loop() {
   else{
     wChipSelectPin= 15;
   }
-
   Serial << "loop(): wChipSelectPin set equal to " << wChipSelectPin << endl;
+*/
   Serial << "loop(): Call Screen.init()" << endl;
   Screen.init();
 

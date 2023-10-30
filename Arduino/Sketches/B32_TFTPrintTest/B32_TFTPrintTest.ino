@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TFTPrintTest.ino";
-const char szFileDate[]    = "10/29/23k";
+const char szFileDate[]    = "10/30/23e";
 
 //#define DO_ESP_LCD32
 //Make sure the pin connections are correct by
@@ -27,15 +27,19 @@ void setup(void) {
 	delay(100);
 	Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
+  //LookForBacklight();
   TurnOnBacklight();
-/*
+
+  //Set which ESP32 pin is chip select
+  //wChipSelectPin= 15;
+  //wChipSelectPin= 5;
+  wChipSelectPin= 13;
 	Serial << "setup(): Call Screen.init()" << endl;
-	wChipSelectPin= 15;
 	Screen.init();
+
 	Serial << "setup(): Call setRotation(2)" << endl;
 	Screen.setRotation(2);
 
-	//LookForBacklight();
 	Serial << "setup(): Call fillScreen(TFT_GREY)" << endl;
   Screen.fillScreen(TFT_GREY);
 
@@ -53,65 +57,14 @@ void setup(void) {
   // We can now print text on screen using the "print" class
   Serial << "setup(): Call Screen.println(Hello World!)" << endl;
   Screen.println("Hello World!");
-*/
 	return;
 }//setup
 
 
-void TryNextCSPin(void){
-  bool                bPinOK;
-  bool                bSkipPin      = false;
-  static const int    wFirstPin     =  0;
-  static const int    wLastPin      = 33;
-  static int          wNextPin      = wFirstPin;
-  static int          awPinsToSkip[]= {3, 6, 7, 8, 9, 10, 11,
-                        TFT_MISO, TFT_MOSI, TFT_SCLK, TFT_DC, TFT_RST};
-
-  //Number of elements in an array is sizeof array divided by sizeof an element
-  int wNumPinsToSkip= (sizeof(awPinsToSkip) / sizeof(awPinsToSkip[0]));
-
-  //See if wNextPin is in list of pins to skip
-  bPinOK= false;
-  while (!bPinOK){
-    bSkipPin= false;
-    Serial << "TryNextCSPin(): See if pin " << wNextPin << " is OK to try" << endl;
-    for(int wArrayIndex= 0; (!bSkipPin && (wArrayIndex < wNumPinsToSkip)); wArrayIndex++){
-      if (wNextPin == awPinsToSkip[wArrayIndex]) {
-        bSkipPin= true;
-      } //if(wNextPin== ...
-    } //for(intwArrayIndex=0;...
-
-    if (bSkipPin){
-      wNextPin++;
-      //If past last pin to try, then roll back to first pin
-      if (wNextPin > wLastPin){
-        wNextPin= wFirstPin;
-      } //if(wNextPin>wLastPin)
-    } //if(bSkipPin)
-    else {
-      bPinOK= true;
-      Serial << "TryNextCSPin(): Pin " << wNextPin << " is OK to try for chip select" << endl;
-      //Set global value, wChipSelectPin, so TFT_CS returns new pin number
-      wChipSelectPin= wNextPin;
-    } //if(bSkipPin)else
-  } //while
-
-  Serial << "TryNextCSPin(): Call SetChipSelectHIGH() " << endl;
-  SetChipSelectHIGH();
-  return;
-} //TryNextCSPin
-
-
-void SetChipSelectHIGH(void){
-  Serial << "SetChipSelectHIGH():  Call pinMode(TFT_CS, OUTPUT) and digitalWrite(TFT_CS, HIGH)" << endl;
-  Serial << "SetChipSelectHIGH():  TFT_CS= " << TFT_CS << endl;
-  pinMode(TFT_CS, OUTPUT);
-  digitalWrite(TFT_CS, HIGH); // Chip select high (inactive)
-  return;
-} //SetChipSelectHIGH
-
-
 void loop() {
+  //Return w/o doing anything
+  return;
+
   TryNextCSPin();
   Serial << "loop(): Call Screen.init()" << endl;
   Screen.init();
@@ -166,6 +119,60 @@ void loop() {
   delay(10000);
   return;
 }//loop
+
+
+void TryNextCSPin(void){
+  bool                bPinOK;
+  bool                bSkipPin      = false;
+  static const int    wFirstPin     =  0;
+  static const int    wLastPin      = 33;
+  static int          wNextPin      = wFirstPin;
+  static int          awPinsToSkip[]= {3, 6, 7, 8, 9, 10, 11,
+      //TFT_MISO, TFT_MOSI, TFT_SCLK, TFT_DC, TFT_RST};
+        TFT_MISO, TFT_MOSI, TFT_SCLK};
+
+  //Number of elements in an array is sizeof array divided by sizeof an element
+  int wNumPinsToSkip= (sizeof(awPinsToSkip) / sizeof(awPinsToSkip[0]));
+
+  //See if wNextPin is in list of pins to skip
+  bPinOK= false;
+  while (!bPinOK){
+    bSkipPin= false;
+    Serial << "TryNextCSPin(): See if pin " << wNextPin << " is OK to try" << endl;
+    for(int wArrayIndex= 0; (!bSkipPin && (wArrayIndex < wNumPinsToSkip)); wArrayIndex++){
+      if (wNextPin == awPinsToSkip[wArrayIndex]) {
+        bSkipPin= true;
+      } //if(wNextPin== ...
+    } //for(intwArrayIndex=0;...
+
+    if (bSkipPin){
+      wNextPin++;
+      //If past last pin to try, then roll back to first pin
+      if (wNextPin > wLastPin){
+        wNextPin= wFirstPin;
+      } //if(wNextPin>wLastPin)
+    } //if(bSkipPin)
+    else {
+      bPinOK= true;
+      Serial << "TryNextCSPin(): Pin " << wNextPin << " is OK to try for chip select" << endl;
+      //Set global value, wChipSelectPin, so TFT_CS returns new pin number
+      wChipSelectPin= wNextPin;
+    } //if(bSkipPin)else
+  } //while
+
+  Serial << "TryNextCSPin(): Call SetChipSelectHIGH() " << endl;
+  SetChipSelectHIGH();
+  return;
+} //TryNextCSPin
+
+
+void SetChipSelectHIGH(void){
+  Serial << "SetChipSelectHIGH():  Call pinMode(TFT_CS, OUTPUT) and digitalWrite(TFT_CS, HIGH)" << endl;
+  Serial << "SetChipSelectHIGH():  TFT_CS= " << TFT_CS << endl;
+  pinMode(TFT_CS, OUTPUT);
+  digitalWrite(TFT_CS, HIGH); // Chip select high (inactive)
+  return;
+} //SetChipSelectHIGH
 
 
 void TurnOnBacklight(void){

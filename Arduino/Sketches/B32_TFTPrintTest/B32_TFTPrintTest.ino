@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TFTPrintTest.ino";
-const char szFileDate[]    = "11/1/23b";
+const char szFileDate[]    = "11/1/23e";
 
 //#define DO_ESP_LCD32
 //Make sure the pin connections are correct by
@@ -26,7 +26,7 @@ void setup(void) {
 	Serial.begin(115200);
 	delay(100);
 	Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
-	return;   //Testing by skipping everything
+	//return;   //Testing by skipping everything
 
   //LookForBacklight();
   TurnOnBacklight();
@@ -178,8 +178,14 @@ void SetChipSelectHIGH(void){
 
 void TurnOnBacklight(void){
   pinMode(TFT_BL, OUTPUT);
-  Serial << "TurnOnBacklight(): Set pin " << TFT_BL << " HIGH" << endl;
-  digitalWrite(TFT_BL, HIGH);
+  if (TFT_BACKLIGHT_ON == HIGH){
+    Serial << "TurnOnBacklight(): Set pin " << TFT_BL << " HIGH" << endl;
+    digitalWrite(TFT_BL, HIGH);
+  }
+  else{
+    Serial << "TurnOnBacklight(): Set pin " << TFT_BL << " LOW" << endl;
+    digitalWrite(TFT_BL, LOW);
+  }
   return;
 } //TurnOnBacklight
 

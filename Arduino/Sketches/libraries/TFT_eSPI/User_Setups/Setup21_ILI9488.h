@@ -1,4 +1,4 @@
-// Beck, 11/1/23c, Setup21_ILI9488.h
+// Beck, Setup21_ILI9488.h, 11/1/23d
 // Setup file for ESP32 and ILI9488 LCD driver
 // 320x480, 3.5" and 4" displays with resistive touchscreen
 // See SetupX_Template.h for all options available
@@ -14,6 +14,9 @@
 #define TFT_DC       2  // Data Command control pin
 #define TFT_RST      4  // Reset pin
 #define TFT_BL      22  // Backlight
+
+//#define TFT_BACKLIGHT_ON  HIGH    // HIGH or LOW are options
+#define TFT_BACKLIGHT_ON  LOW    // HIGH or LOW are options
 
 
 #define LOAD_GLCD   // Font 1. Original Adafruit 8 pixel font needs ~1820 bytes in FLASH

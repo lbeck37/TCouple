@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TFTPrintTest.ino";
-const char szFileDate[]    = "10/30/23e";
+const char szFileDate[]    = "11/1/23b";
 
 //#define DO_ESP_LCD32
 //Make sure the pin connections are correct by
@@ -11,7 +11,7 @@ const char szFileDate[]    = "10/30/23e";
 
 #define TFT_GREY 0x5AEB // New colour
 
-extern int   wChipSelectPin;
+//extern int   wChipSelectPin;
 
 TFT_eSPI Screen= TFT_eSPI();  // Invoke library
 
@@ -26,14 +26,15 @@ void setup(void) {
 	Serial.begin(115200);
 	delay(100);
 	Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
+	return;   //Testing by skipping everything
 
   //LookForBacklight();
   TurnOnBacklight();
 
   //Set which ESP32 pin is chip select
-  //wChipSelectPin= 15;
+  wChipSelectPin= 15;
   //wChipSelectPin= 5;
-  wChipSelectPin= 13;
+  //wChipSelectPin= 13;
 	Serial << "setup(): Call Screen.init()" << endl;
 	Screen.init();
 

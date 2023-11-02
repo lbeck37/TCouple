@@ -1,4 +1,4 @@
-// Setup1_ILI9341.h Beck 10/30/23b
+// Setup1_ILI9341.h Beck 10/30/23c
 //Included in User_Setup_Select.h
 #pragma once
 
@@ -43,6 +43,7 @@
     #define TFT_SCLK            18    //VSPI default
     //#define TFT_CS             5    //VSPI default
     #define TFT_CS              (wChipSelectPin)
+    #define TFT_DC               2
     #define TFT_BL              27    // Display backlight control pin for Walmart ESP32-2432S0 32
     #define TFT_BACKLIGHT_ON    HIGH    // HIGH or LOW are options
 /*
@@ -54,7 +55,6 @@
   */
 
   /*
-    #define TFT_DC              14
     #define TFT_RST             12
   */
   /*

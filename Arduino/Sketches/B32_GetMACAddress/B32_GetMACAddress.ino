@@ -1,5 +1,5 @@
-const char szFileName[]    = "Sketches\libraries\TFT_eSPI\User_Setup.h";
-const char szFileDate[]    = "10/13/23c";
+const char szSketchName[]  = "B32_GetMACAddress";
+const char szFileDate[]    = "11/1/23b";
 //Beck, 10-13-23b, B32_GetMACAddress.ino
 // Complete Instructions to Get and Change ESP MAC Address: https://RandomNerdTutorials.com/get-change-esp32-esp8266-mac-address-arduino/
 

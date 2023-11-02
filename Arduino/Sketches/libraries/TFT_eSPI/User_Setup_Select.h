@@ -1,4 +1,4 @@
-// Larry Beck, 10/24/23b
+// Larry Beck, 11/1/23c
 #pragma once
 #define DO_ESP_LCD32
 
@@ -28,7 +28,7 @@
 
 // #include <User_Setup.h>           // Default setup is root library folder
 
-#ifdef DO_ESP_LCD32
+#if 1
   #include <User_Setups/Setup1_ILI9341.h>  // Setup file configured for my ILI9341
 #endif
 //#include <User_Setups/Setup2_ST7735.h>   // Setup file configured for my ST7735
@@ -53,13 +53,14 @@
 //#include <User_Setups/Setup19_RM68140_Parallel.h>  // Setup file configured for RM68140 with parallel bus
 
 //#include <User_Setups/Setup20_ILI9488.h>           // Setup file for ESP8266 and ILI9488 SPI bus TFT
-//#include <User_Setups/Setup21_ILI9488.h>           // Setup file for ESP32 and ILI9488 SPI bus TFT
-
+#if 0
+  #include <User_Setups/Setup21_ILI9488.h>           // Setup file for ESP32 and ILI9488 SPI bus TFT
+#endif
 //#include <User_Setups/Setup22_TTGO_T4.h>           // Setup file for ESP32 and TTGO T4 version 1.2
 //#include <User_Setups/Setup22_TTGO_T4_v1.3.h>      // Setup file for ESP32 and TTGO T4 version 1.3
 //#include <User_Setups/Setup23_TTGO_TM.h>           // Setup file for ESP32 and TTGO TM ST7789 SPI bus TFT
 //#include <User_Setups/Setup24_ST7789.h>            // Setup file configured for ST7789 240 x 240
-#ifndef DO_ESP_LCD32
+#if 0
   #include <User_Setups/Setup25_TTGO_T_Display.h>    // Setup file for ESP32 and TTGO T-Display ST7789V SPI bus TFT
 #endif
 //#include <User_Setups/Setup26_TTGO_T_Wristband.h>  // Setup file for ESP32 and TTGO T-Wristband ST7735 SPI bus TFT

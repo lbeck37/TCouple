@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TFTPrintTest.ino";
-const char szFileDate[]    = "11/1/23e";
+const char szFileDate[]    = "11/1/23f";
 
 //#define DO_ESP_LCD32
 //Make sure the pin connections are correct by
@@ -64,15 +64,17 @@ void setup(void) {
 
 void loop() {
   //Return w/o doing anything
-  return;
+  //return;
 
-  TryNextCSPin();
+  //TryNextCSPin();
   Serial << "loop(): Call Screen.init()" << endl;
   Screen.init();
 
+/*
   //Set chip select again for good measure
   Serial << "loop(): Call SetChipSelectHIGH() for good measure" << endl;
   SetChipSelectHIGH();
+*/
 
   // Fill screen with grey so we can see the effect of printing with and without 
   // a background colour defined
@@ -117,7 +119,7 @@ void loop() {
   Screen.print("Float = "); Screen.println(fnumber);           // Print floating point number
   Screen.print("Binary = "); Screen.println((int)fnumber, BIN); // Print as integer value in binary
   Screen.print("Hexadecimal = "); Screen.println((int)fnumber, HEX); // Print as integer number in Hexadecimal
-  delay(10000);
+  delay(3000);
   return;
 }//loop
 

@@ -15,8 +15,8 @@
 #define TFT_RST      4  // Reset pin
 #define TFT_BL      22  // Backlight
 
-//#define TFT_BACKLIGHT_ON  HIGH    // HIGH or LOW are options
-#define TFT_BACKLIGHT_ON  LOW    // HIGH or LOW are options
+#define TFT_BACKLIGHT_ON  HIGH    // HIGH or LOW are options
+//#define TFT_BACKLIGHT_ON  LOW    // HIGH or LOW are options
 
 
 #define LOAD_GLCD   // Font 1. Original Adafruit 8 pixel font needs ~1820 bytes in FLASH

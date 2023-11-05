@@ -1,5 +1,3 @@
-const char szSketchName[]  = "B32_LCDWIKI_DisplayString.ino";
-const char szFileDate[]    = "11/4/23a";
 // IMPORTANT: LCDWIKI_SPI LIBRARY MUST BE SPECIFICALLY
 // CONFIGURED FOR EITHER THE TFT SHIELD OR THE BREAKOUT BOARD.
 
@@ -53,16 +51,6 @@ const char szFileDate[]    = "11/4/23a";
 #define MAGENTA 0xF81F
 #define YELLOW  0xFFE0
 #define WHITE   0xFFFF
-
-const int8_t    cChipSelectPin    = 16;
-const int8_t    cCommandDataPin   =  2;
-const int8_t    cMISOPin          = 19;
-const int8_t    cMOSIPin          = 23;
-const int8_t    cResetPin         =  4;
-const int8_t    cSCLKPin          = 18;
-const int8_t    cBacklightPin     = 22;
-
-LCDWIKI_SPI mylcd(130,130,A5,A3,-1,A2,A4,A1,A3);//software spi,model,cs,cd,miso,mosi,reset,clk
 
 void setup() 
 {

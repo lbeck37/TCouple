@@ -1,15 +1,13 @@
-const char szSketchName[]  = "B32_LCDWIKI_DisplayString.ino";
-const char szFileDate[]    = "11/4/23a";
 // IMPORTANT: LCDWIKI_SPI LIBRARY MUST BE SPECIFICALLY
 // CONFIGURED FOR EITHER THE TFT SHIELD OR THE BREAKOUT BOARD.
 
-//This program is a demo of displaying string
+//This program is a demo of clearing screen to display black,white,red,green,blue.
 
 //Set the pins to the correct ones for your development shield or breakout board.
 //when using the BREAKOUT BOARD only and using these software spi lines to the LCD,
 //there is no MISO pin and You can use any free pin to define the pins,for example
 //pin usage as follow:
-//             CS  CD  RST  MOSI  MISO  CLK  LED  
+//             CS  CD  RST  MOSI  MISO  CLK  LED 
 //Arduino Uno  A5  A3  A4   A2    NONE  A1   A3
 //Arduino Mega A5  A3  A4   A2    NONE  A1   A3
 
@@ -45,54 +43,29 @@ const char szFileDate[]    = "11/4/23a";
 //LCDWIKI_SPI mylcd(160,128,10,9,8,A3); //hardware spi,cs,cd,reset
 //LCDWIKI_SPI mylcd(130,130,10,9,8,A3); //hardware spi,cs,cd,reset
 
-#define  BLACK   0x0000
-#define BLUE    0x001F
-#define RED     0xF800
-#define GREEN   0x07E0
-#define CYAN    0x07FF
-#define MAGENTA 0xF81F
-#define YELLOW  0xFFE0
-#define WHITE   0xFFFF
-
-const int8_t    cChipSelectPin    = 16;
-const int8_t    cCommandDataPin   =  2;
-const int8_t    cMISOPin          = 19;
-const int8_t    cMOSIPin          = 23;
-const int8_t    cResetPin         =  4;
-const int8_t    cSCLKPin          = 18;
-const int8_t    cBacklightPin     = 22;
-
-LCDWIKI_SPI mylcd(130,130,A5,A3,-1,A2,A4,A1,A3);//software spi,model,cs,cd,miso,mosi,reset,clk
-
 void setup() 
 {
-  mylcd.Init_LCD();
-  mylcd.Fill_Screen(BLACK);
+    mylcd.Init_LCD();
+    mylcd.Fill_Screen(0x0000);
+    mylcd.Fill_Screen(0xFFFF);
 }
 
 void loop() 
-{
-  mylcd.Set_Text_Mode(0);
-  
-  mylcd.Fill_Screen(0x0000);
-  mylcd.Set_Text_colour(RED);
-  mylcd.Set_Text_Back_colour(BLACK);
-  mylcd.Set_Text_Size(1);
-  mylcd.Print_String("Hello World!", 0, 0);
-  mylcd.Print_Number_Float(01234.56789, 2, 0, 8, '.', 0, ' ');  
-  mylcd.Print_Number_Int(0xDEADBEF, 0, 16, 0, ' ',16);
-
-  mylcd.Set_Text_colour(GREEN);
-  mylcd.Set_Text_Size(2);
-  mylcd.Print_String("Hello", 0, 32);
-  mylcd.Print_Number_Float(01234.56789, 2, 0, 48, '.', 0, ' ');  
-  mylcd.Print_Number_Int(0xDEADBEF, 0, 64, 0, ' ',16);
-
-  mylcd.Set_Text_colour(BLUE);
-  mylcd.Set_Text_Size(3);
-  mylcd.Print_String("Hello", 0, 86);
-  mylcd.Print_Number_Float(01234.56789, 2, 0, 110, '.', 0, ' ');  
-  mylcd.Print_Number_Int(0xDEADBEF, 0, 134, 0, ' ',16);
-
-  delay(3000);
+{    
+    mylcd.Fill_Screen(0,0,0);
+    mylcd.Fill_Screen(255,255,255);
+    mylcd.Fill_Screen(255,0,0); 
+    mylcd.Fill_Screen(0,255,0);
+    mylcd.Fill_Screen(0,0,255);
+    delay(3000);
+    mylcd.Fill_Screen(0,0,0);
+    delay(1000);
+    mylcd.Fill_Screen(255,255,255);
+    delay(1000);
+    mylcd.Fill_Screen(0xF800);
+    delay(1000);
+    mylcd.Fill_Screen(0x07E0);
+   delay(1000);
+   mylcd.Fill_Screen(0x001F);
+   delay(3000);
 }

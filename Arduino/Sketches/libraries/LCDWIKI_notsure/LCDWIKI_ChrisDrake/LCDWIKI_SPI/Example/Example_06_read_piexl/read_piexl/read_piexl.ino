@@ -1,15 +1,13 @@
-const char szSketchName[]  = "B32_LCDWIKI_DisplayString.ino";
-const char szFileDate[]    = "11/4/23a";
 // IMPORTANT: LCDWIKI_SPI LIBRARY MUST BE SPECIFICALLY
 // CONFIGURED FOR EITHER THE TFT SHIELD OR THE BREAKOUT BOARD.
 
-//This program is a demo of displaying string
+//This program is a demo of how to read color value from GRAM.
 
 //Set the pins to the correct ones for your development shield or breakout board.
 //when using the BREAKOUT BOARD only and using these software spi lines to the LCD,
 //there is no MISO pin and You can use any free pin to define the pins,for example
 //pin usage as follow:
-//             CS  CD  RST  MOSI  MISO  CLK  LED  
+//             CS  CD  RST  MOSI  MISO  CLK  LED
 //Arduino Uno  A5  A3  A4   A2    NONE  A1   A3
 //Arduino Mega A5  A3  A4   A2    NONE  A1   A3
 
@@ -54,45 +52,69 @@ const char szFileDate[]    = "11/4/23a";
 #define YELLOW  0xFFE0
 #define WHITE   0xFFFF
 
-const int8_t    cChipSelectPin    = 16;
-const int8_t    cCommandDataPin   =  2;
-const int8_t    cMISOPin          = 19;
-const int8_t    cMOSIPin          = 23;
-const int8_t    cResetPin         =  4;
-const int8_t    cSCLKPin          = 18;
-const int8_t    cBacklightPin     = 22;
-
-LCDWIKI_SPI mylcd(130,130,A5,A3,-1,A2,A4,A1,A3);//software spi,model,cs,cd,miso,mosi,reset,clk
-
-void setup() 
+void color_dump(uint16_t x,uint16_t y)
 {
-  mylcd.Init_LCD();
-  mylcd.Fill_Screen(BLACK);
+    uint8_t buf[30] = {0},pbuf[10] = {0};
+    uint8_t wd = (my_lcd.Get_Display_Width() - 9 * 6)/ (5 * 6);
+    uint8_t hi = (my_lcd.Get_Display_Height() / 8) - 1;
+    uint16_t pixel = 0;
+    //set white
+    my_lcd.Set_Text_colour(WHITE);
+    //set text size 1
+    my_lcd.Set_Text_Size(1);
+    for(int j = 0;j< hi;j++)
+    {
+      sprintf(buf,"%3d,%3d:",x,y+j);
+      my_lcd.Print_String(buf, 0, 8*(j+1)*my_lcd.Get_Text_Size());
+      for(int i=0;i<wd;i++)
+      {          
+//          my_lcd.Print_String(buf, 0, line+8);
+        //read pixel
+          pixel = my_lcd.Read_Pixel(x+i,y+j);
+
+        // if white set green
+          if(WHITE == pixel)
+          {
+             my_lcd.Set_Text_colour(GREEN); 
+           }
+           sprintf(pbuf,"%04X ",pixel); 
+           my_lcd.Print_String(pbuf,(strlen(buf)+strlen(pbuf)*i)*6*my_lcd.Get_Text_Size(),8*(j+1)*my_lcd.Get_Text_Size());
+        //set white
+           my_lcd.Set_Text_colour(WHITE);
+        } 
+     }
+}   
+
+uint8_t aspect;
+char *aspectname[] = {"PORTRAIT", "LANDSCAPE", "PORTRAIT_REV", "LANDSCAPE_REV"};
+uint16_t colors[] = {BLACK, BLUE};
+
+void setup()
+{
+  my_lcd.Init_LCD();
+//my_lcd.Set_Text_Back_colour(BLACK);
 }
 
 void loop() 
 {
-  mylcd.Set_Text_Mode(0);
-  
-  mylcd.Fill_Screen(0x0000);
-  mylcd.Set_Text_colour(RED);
-  mylcd.Set_Text_Back_colour(BLACK);
-  mylcd.Set_Text_Size(1);
-  mylcd.Print_String("Hello World!", 0, 0);
-  mylcd.Print_Number_Float(01234.56789, 2, 0, 8, '.', 0, ' ');  
-  mylcd.Print_Number_Int(0xDEADBEF, 0, 16, 0, ' ',16);
+  uint16_t iter, color;
+    char buf[80];
+    aspect = (aspect + 1) & 3;
+    my_lcd.Set_Rotation(aspect);
+ //color_dump(36,0);
+ 
+    for (iter = 0; iter < sizeof(colors) / sizeof(uint16_t); iter++) 
+    {
+        color = colors[iter];
+        my_lcd.Fill_Screen(color);
+        my_lcd.Set_Text_Back_colour(color);
+        my_lcd.Set_Text_colour(WHITE);
+        my_lcd.Set_Text_Size(1);
+     sprintf(buf, " ID=0x%04X Background=%04X %s", my_lcd.Read_ID(), color, aspectname[aspect]);
+      my_lcd.Print_String(buf,0,0);
+        color_dump(36,0);
+        delay(3000);
+       
+    } 
 
-  mylcd.Set_Text_colour(GREEN);
-  mylcd.Set_Text_Size(2);
-  mylcd.Print_String("Hello", 0, 32);
-  mylcd.Print_Number_Float(01234.56789, 2, 0, 48, '.', 0, ' ');  
-  mylcd.Print_Number_Int(0xDEADBEF, 0, 64, 0, ' ',16);
-
-  mylcd.Set_Text_colour(BLUE);
-  mylcd.Set_Text_Size(3);
-  mylcd.Print_String("Hello", 0, 86);
-  mylcd.Print_Number_Float(01234.56789, 2, 0, 110, '.', 0, ' ');  
-  mylcd.Print_Number_Int(0xDEADBEF, 0, 134, 0, ' ',16);
-
-  delay(3000);
 }

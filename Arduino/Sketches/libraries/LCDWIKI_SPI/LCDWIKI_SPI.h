@@ -1,3 +1,4 @@
+//Beck, LCDWIKI_SPI.h, 11/4/23b
 // Lcdwiki GUI library with init code from Rossum
 // MIT license
 
@@ -104,9 +105,12 @@ class LCDWIKI_SPI:public LCDWIKI_GUI
 	private:
 	uint16_t XC,YC,CC,RC,SC1,SC2,MD,VL,R24BIT,MODEL;
  
-		 volatile uint8_t *spicsPort, *spicdPort, *spimisoPort , *spimosiPort, *spiclkPort;
-			      uint8_t  spicsPinSet, spicdPinSet  ,spimisoPinSet , spimosiPinSet , spiclkPinSet,
-						   spicsPinUnset, spicdPinUnset, spimisoPinUnset,  spimosiPinUnset,spiclkPinUnset;
-				  int8_t   _cs,_cd,_miso,_mosi,_clk,_reset,_led;
+  //volatile uint8_t *spicsPort, *spicdPort, *spimisoPort , *spimosiPort, *spiclkPort;
+  volatile uint32_t *spicsPort, *spicdPort, *spimisoPort , *spimosiPort, *spiclkPort;
+
+	uint8_t  spicsPinSet, spicdPinSet  ,spimisoPinSet , spimosiPinSet , spiclkPinSet,
+					spicsPinUnset, spicdPinUnset, spimisoPinUnset,  spimosiPinUnset,spiclkPinUnset;
+
+	int8_t   _cs,_cd,_miso,_mosi,_clk,_reset,_led;
 };
 #endif

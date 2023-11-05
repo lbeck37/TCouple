@@ -1,9 +1,9 @@
+//Beck, LCDWIKI_SPI.cpp, 11/4/23b
 // IMPORTANT: LIBRARY MUST BE SPECIFICALLY CONFIGURED FOR EITHER TFT SHIELD
 // OR BREAKOUT BOARD USAGE.
 
 // Lcdwiki GUI library with init code from Rossum
 // MIT license
-
 
 #if defined(__SAM3X8E__)
 	#include <include/pio.h>
@@ -697,6 +697,7 @@ void LCDWIKI_SPI::Set_Addr_Window(int16_t x1, int16_t y1, int16_t x2, int16_t y2
 	{
 		return;
 	}
+/*
 	else if(lcd_driver == ID_7735_128)
 	{
 		uint8_t x_buf[] = {(x1+xoffset)>>8,(x1+xoffset)&0xFF,(x2+xoffset)>>8,(x2+xoffset)&0xFF};
@@ -704,16 +705,21 @@ void LCDWIKI_SPI::Set_Addr_Window(int16_t x1, int16_t y1, int16_t x2, int16_t y2
 		Push_Command(XC, x_buf, 4);
 		Push_Command(YC, y_buf, 4);
 	}
+*/
 	else
 	{
-		uint8_t x_buf[] = {x1>>8,x1&0xFF,x2>>8,x2&0xFF};
-		uint8_t y_buf[] = {y1>>8,y1&0xFF,y2>>8,y2&0xFF};
+    //uint8_t x_buf[] = {x1>>8,x1&0xFF,x2>>8,x2&0xFF};
+    uint8_t x_buf[]= {(uint8_t)(x1 >> 8), (uint8_t)(x1 & 0xFF), (uint8_t)(x2 >> 8), (uint8_t)(x2 & 0xFF)};
+
+    //uint8_t y_buf[] = {y1>>8,y1&0xFF,y2>>8,y2&0xFF};
+    uint8_t y_buf[]= {(uint8_t)(y1 >> 8), (uint8_t)(y1 & 0xFF), (uint8_t)(y2 >> 8), (uint8_t)(y2 & 0xFF)};
 	
 		Push_Command(XC, x_buf, 4);
 		Push_Command(YC, y_buf, 4);
 	}
 	CS_IDLE;		
-}
+} //Set_Addr_Window
+
 
 // Unlike the 932X drivers that set the address window to the full screen
 // by default (using the address counter for drawPixel operations), the
@@ -1397,7 +1403,8 @@ void LCDWIKI_SPI::SH1106_Draw_Bitmap(uint8_t x,uint8_t y,uint8_t width, uint8_t 
 
 void LCDWIKI_SPI::SH1106_Display(void)
 {
-	u8 i,n;	
+  //u8 i,n;
+  int i,n;
 	CS_ACTIVE;
 	for(i=0;i<8;i++)  
 	{  

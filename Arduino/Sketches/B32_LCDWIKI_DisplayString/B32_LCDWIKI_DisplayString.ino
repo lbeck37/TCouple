@@ -54,15 +54,18 @@ const char szFileDate[]    = "11/4/23a";
 #define YELLOW  0xFFE0
 #define WHITE   0xFFFF
 
-const int8_t    cChipSelectPin    = 16;
-const int8_t    cCommandDataPin   =  2;
-const int8_t    cMISOPin          = 19;
-const int8_t    cMOSIPin          = 23;
-const int8_t    cResetPin         =  4;
-const int8_t    cSCLKPin          = 18;
-const int8_t    cBacklightPin     = 22;
+const uint16_t  usLCDInfoIndex    =  6;   //Model index into current_lcd_info array for hex model (0x9486), width and height
 
-LCDWIKI_SPI mylcd(130,130,A5,A3,-1,A2,A4,A1,A3);//software spi,model,cs,cd,miso,mosi,reset,clk
+const int8_t    cCommandDataPin   =  2;
+const int8_t    cResetPin         =  4;
+const int8_t    cChipSelectPin    = 16;
+const int8_t    cSCLKPin          = 18;
+const int8_t    cMISOPin          = 19;
+const int8_t    cBacklightPin     = 22;
+const int8_t    cMOSIPin          = 23;
+
+//Construct with software SPI constructor w/firts param being the index into current_lcd_info[] array to get 0x9486 as model
+LCDWIKI_SPI mylcd(usLCDInfoIndex, cChipSelectPin, cCommandDataPin, cMISOPin, cMOSIPin, cResetPin, cSCLKPin, cBacklightPin);
 
 void setup() 
 {

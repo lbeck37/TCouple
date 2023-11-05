@@ -1,3 +1,4 @@
+//Beck, mcu_spi_magic.h, 11/4/23b
 #ifndef _mcu_spi_magic_
 #define _mcu_spi_magic_
 
@@ -8,9 +9,11 @@
 #define setReadDir()  
 
 #define RD_ACTIVE   0
-#define RD_IDLE     0
+//#define RD_IDLE     0
+#define RD_IDLE     //
 #define WR_ACTIVE   0
-#define WR_IDLE     0
+//#define WR_IDLE     0
+#define WR_IDLE     //
 #if defined(__AVR__)
 #define CD_COMMAND  *spicdPort &= spicdPinUnset     
 #define CD_DATA     *spicdPort |= spicdPinSet
@@ -21,17 +24,19 @@
 #define MOSI_HIGH   *spimosiPort |= spimosiPinSet
 #define CLK_LOW  *spiclkPort &= spiclkPinUnset
 #define CLK_HIGH    *spiclkPort |= spiclkPinSet
+#endif
 
-#elif defined(ARDUINO_ARCH_ESP8266)
-#define CD_COMMAND  (digitalWrite(_cd,LOW))    
-#define CD_DATA     (digitalWrite(_cd,HIGH)) 
-#define CS_ACTIVE   (digitalWrite(_cs,LOW)) 
-#define CS_IDLE     (digitalWrite(_cs,HIGH)) 
-#define MISO_STATE(x) { x = digitalRead(_miso);}
-#define MOSI_LOW    (digitalWrite(_mosi,LOW)) 
-#define MOSI_HIGH   (digitalWrite(_mosi,HIGH)) 
-#define CLK_LOW     (digitalWrite(_clk,LOW)) 
-#define CLK_HIGH    (digitalWrite(_clk,HIGH)) 
+//#elif defined(ARDUINO_ARCH_ESP8266)
+#if 1
+  #define CD_COMMAND  (digitalWrite(_cd,LOW))
+  #define CD_DATA     (digitalWrite(_cd,HIGH))
+  #define CS_ACTIVE   (digitalWrite(_cs,LOW))
+  #define CS_IDLE     (digitalWrite(_cs,HIGH))
+  #define MISO_STATE(x) { x = digitalRead(_miso);}
+  #define MOSI_LOW    (digitalWrite(_mosi,LOW))
+  #define MOSI_HIGH   (digitalWrite(_mosi,HIGH))
+  #define CLK_LOW     (digitalWrite(_clk,LOW))
+  #define CLK_HIGH    (digitalWrite(_clk,HIGH))
 #endif
 
 #define WR_STROBE { }
@@ -53,11 +58,13 @@
 #define writeData18(x)  CD_DATA; write8((x>>8)&0xF8);write8((x>>3)&0xFC);write8(x<<3)
 
 
+/*
 //#define writeCmdData8(a, d) { CD_COMMAND; write8(a); CD_DATA; write8(d); }
 //#define writeCmdData16(a, d) { \
   //uint8_t hi, lo; \
  // hi = (a) >> 8; lo = (a); CD_COMMAND; write8(hi); write8(lo); \
  // hi = (d) >> 8; lo = (d); CD_DATA   ; write8(hi); write8(lo); }
+*/
 
 #define writeCmdData8(a, d) CD_COMMAND; write8(a); CD_DATA; write8(d)
 #define writeCmdData16(a, d)  CD_COMMAND; write8(a>>8); write8(a); CD_DATA; write8(d>>8); write8(d)

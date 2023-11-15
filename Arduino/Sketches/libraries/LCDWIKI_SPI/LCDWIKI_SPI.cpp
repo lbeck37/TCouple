@@ -1,4 +1,4 @@
-//Beck, LCDWIKI_SPI.cpp, 11/4/23b
+//Beck, LCDWIKI_SPI.cpp, 11/4/23c
 // IMPORTANT: LIBRARY MUST BE SPECIFICALLY CONFIGURED FOR EITHER TFT SHIELD
 // OR BREAKOUT BOARD USAGE.
 
@@ -709,9 +709,9 @@ void LCDWIKI_SPI::Set_Addr_Window(int16_t x1, int16_t y1, int16_t x2, int16_t y2
 	else
 	{
     //uint8_t x_buf[] = {x1>>8,x1&0xFF,x2>>8,x2&0xFF};
-    uint8_t x_buf[]= {(uint8_t)(x1 >> 8), (uint8_t)(x1 & 0xFF), (uint8_t)(x2 >> 8), (uint8_t)(x2 & 0xFF)};
-
     //uint8_t y_buf[] = {y1>>8,y1&0xFF,y2>>8,y2&0xFF};
+
+    uint8_t x_buf[]= {(uint8_t)(x1 >> 8), (uint8_t)(x1 & 0xFF), (uint8_t)(x2 >> 8), (uint8_t)(x2 & 0xFF)};
     uint8_t y_buf[]= {(uint8_t)(y1 >> 8), (uint8_t)(y1 & 0xFF), (uint8_t)(y2 >> 8), (uint8_t)(y2 & 0xFF)};
 	
 		Push_Command(XC, x_buf, 4);

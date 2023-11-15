@@ -1,51 +1,46 @@
 const char szSketchName[]  = "B32_LCDWIKI_DisplayString.ino";
-const char szFileDate[]    = "11/4/23a";
-// IMPORTANT: LCDWIKI_SPI LIBRARY MUST BE SPECIFICALLY
-// CONFIGURED FOR EITHER THE TFT SHIELD OR THE BREAKOUT BOARD.
-
+const char szFileDate[]    = "11/5/23a";
 //This program is a demo of displaying string
 
-//Set the pins to the correct ones for your development shield or breakout board.
-//when using the BREAKOUT BOARD only and using these software spi lines to the LCD,
-//there is no MISO pin and You can use any free pin to define the pins,for example
-//pin usage as follow:
-//             CS  CD  RST  MOSI  MISO  CLK  LED  
-//Arduino Uno  A5  A3  A4   A2    NONE  A1   A3
-//Arduino Mega A5  A3  A4   A2    NONE  A1   A3
-
 //when using the BREAKOUT BOARD only and using these hardware spi lines to the LCD,
-//there is no MISO pin 
-//the MOSI pin and CLK pin is defined by the system and can't be modified.
+//the SDA pin and SCK pin is defined by the system and can't be modified.
+//if you don't need to control the LED pin,you can set it to 3.3V and set the pin definition to -1.
 //other pins can be defined by youself,for example
 //pin usage as follow:
-//             CS  CD  RST  MOSI  MISO  CLK  LED  
-//Arduino Uno  10  9   8    11    NONE  13   A3
-//Arduino Mega 10  9   8    51    NONE  52   A3
+//                  CS  DC/RS  RESET  SDI/MOSI  SDO/MISO  SCK  LED    VCC     GND    
+//Arduino Mega2560  A5   A3     A4      51        50      52   A0   5V/3.3V   GND
 
 //Remember to set the pins to suit your display module!
 
+/***********************************************************************************
+* @attention
+*
+* THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+* WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
+* TIME. AS A RESULT, QD electronic SHALL NOT BE HELD LIABLE FOR ANY
+* DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
+* FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE 
+* CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+**********************************************************************************/
 #include <LCDWIKI_GUI.h> //Core graphics library
 #include <LCDWIKI_SPI.h> //Hardware-specific library
+#include <Streaming.h>
 
-//the definiens of software spi mode as follow:
-//if the IC model is known or the modules is unreadable,you can use this constructed function
-//LCDWIKI_SPI mylcd(ST7735S,A5,A3,-1,A2,A4,A1,A3);//software spi,model,cs,cd,miso,mosi,reset,clk,led
-//LCDWIKI_SPI mylcd(SSD1283A,A5,A3,-1,A2,A4,A1,A3);//software spi,model,cs,cd,miso,mosi,reset,clk,led
-
-//if the IC model is not known and the modules is readable,you can use this constructed function
-//LCDWIKI_SPI mylcd(160,128,A5,A3,-1,A2,A4,A1,A3);//software spi,model,cs,cd,miso,mosi,reset,clk
-//LCDWIKI_SPI mylcd(130,130,A5,A3,-1,A2,A4,A1,A3);//software spi,model,cs,cd,miso,mosi,reset,clk
+//paramters define
+//#define MODEL ILI9486_18
+#define MODEL   ILI9486
+#define CS      A5
+#define CD      A3
+#define RST     A4
+#define LED     -1   //if you don't need to control the LED pin,you should set it to -1 and set it to 3.3V
 
 //the definiens of hardware spi mode as follow:
 //if the IC model is known or the modules is unreadable,you can use this constructed function
-//LCDWIKI_SPI mylcd(ST7735S,10,9,8,A3); //hardware spi,cs,cd,reset
-//LCDWIKI_SPI mylcd(SSD1283A,10,9,8,A3); //hardware spi,cs,cd,reset
+LCDWIKI_SPI mylcd(MODEL,CS,CD,RST,LED); //model,cs,dc,reset,led
 
-//if the IC model is not known and the modules is readable,you can use this constructed function
-//LCDWIKI_SPI mylcd(160,128,10,9,8,A3); //hardware spi,cs,cd,reset
-//LCDWIKI_SPI mylcd(130,130,10,9,8,A3); //hardware spi,cs,cd,reset
 
-#define  BLACK   0x0000
+//define some colour values
+#define BLACK   0x0000
 #define BLUE    0x001F
 #define RED     0xF800
 #define GREEN   0x07E0
@@ -54,29 +49,20 @@ const char szFileDate[]    = "11/4/23a";
 #define YELLOW  0xFFE0
 #define WHITE   0xFFFF
 
-const uint16_t  usLCDInfoIndex    =  6;   //Model index into current_lcd_info array for hex model (0x9486), width and height
-
-const int8_t    cCommandDataPin   =  2;
-const int8_t    cResetPin         =  4;
-const int8_t    cChipSelectPin    = 16;
-const int8_t    cSCLKPin          = 18;
-const int8_t    cMISOPin          = 19;
-const int8_t    cBacklightPin     = 22;
-const int8_t    cMOSIPin          = 23;
-
-//Construct with software SPI constructor w/firts param being the index into current_lcd_info[] array to get 0x9486 as model
-LCDWIKI_SPI mylcd(usLCDInfoIndex, cChipSelectPin, cCommandDataPin, cMISOPin, cMOSIPin, cResetPin, cSCLKPin, cBacklightPin);
-
-void setup() 
-{
+void setup() {
+  Serial.begin(115200);
+  delay(100);
+  Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
   mylcd.Init_LCD();
   mylcd.Fill_Screen(BLACK);
-}
+  return;
+} //setup
+
 
 void loop() 
 {
   mylcd.Set_Text_Mode(0);
-  
+  //display 1 times string
   mylcd.Fill_Screen(0x0000);
   mylcd.Set_Text_colour(RED);
   mylcd.Set_Text_Back_colour(BLACK);
@@ -84,18 +70,39 @@ void loop()
   mylcd.Print_String("Hello World!", 0, 0);
   mylcd.Print_Number_Float(01234.56789, 2, 0, 8, '.', 0, ' ');  
   mylcd.Print_Number_Int(0xDEADBEF, 0, 16, 0, ' ',16);
+  //mylcd.Print_String("DEADBEF", 0, 16);
 
+  //display 2 times string
   mylcd.Set_Text_colour(GREEN);
   mylcd.Set_Text_Size(2);
-  mylcd.Print_String("Hello", 0, 32);
-  mylcd.Print_Number_Float(01234.56789, 2, 0, 48, '.', 0, ' ');  
-  mylcd.Print_Number_Int(0xDEADBEF, 0, 64, 0, ' ',16);
+  mylcd.Print_String("Hello World!", 0, 40);
+  mylcd.Print_Number_Float(01234.56789, 2, 0, 56, '.', 0, ' ');  
+  mylcd.Print_Number_Int(0xDEADBEF, 0, 72, 0, ' ',16);
+  //mylcd.Print_String("DEADBEEF", 0, 72);
 
+  //display 3 times string
   mylcd.Set_Text_colour(BLUE);
   mylcd.Set_Text_Size(3);
-  mylcd.Print_String("Hello", 0, 86);
-  mylcd.Print_Number_Float(01234.56789, 2, 0, 110, '.', 0, ' ');  
-  mylcd.Print_Number_Int(0xDEADBEF, 0, 134, 0, ' ',16);
+  mylcd.Print_String("Hello World!", 0, 104);
+  mylcd.Print_Number_Float(01234.56789, 2, 0, 128, '.', 0, ' ');  
+  mylcd.Print_Number_Int(0xDEADBEF, 0, 152, 0, ' ',16);
+ // mylcd.Print_String("DEADBEEF", 0, 152);
+
+  //display 4 times string
+  mylcd.Set_Text_colour(WHITE);
+  mylcd.Set_Text_Size(4);
+  mylcd.Print_String("Hello!", 0, 192);
+
+  //display 5 times string
+  mylcd.Set_Text_colour(YELLOW);
+  mylcd.Set_Text_Size(5);
+  mylcd.Print_String("Hello!", 0, 224);
+
+  //display 6 times string
+  mylcd.Set_Text_colour(RED);
+  mylcd.Set_Text_Size(6);
+  mylcd.Print_String("Hello!", 0, 266);
 
   delay(3000);
-}
+}//loop
+//Last line.

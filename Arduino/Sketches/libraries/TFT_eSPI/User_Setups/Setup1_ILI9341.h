@@ -1,4 +1,4 @@
-// Setup1_ILI9341.h Beck 10/30/23c
+// Setup1_ILI9341.h Beck 11/14/23b
 //Included in User_Setup_Select.h
 #pragma once
 
@@ -35,7 +35,7 @@
   #define TFT_BACKLIGHT_ON  HIGH    // HIGH or LOW are options
 #endif
 
-#if 1
+#if 0
   //Modified from https://github.com/mstrens/grbl_controller_esp32
   //VSPI default pins
     #define TFT_MISO            19    //VSPI default
@@ -72,18 +72,18 @@
   //#define TFT_RST  -1    // Set TFT_RST to -1 if the display RESET is connected to NodeMCU RST or 3.3V
 #endif
 
-#if 0
+#if 1
 //From ElectroDragon Wiki "ESP-LCD32
-  #define TFT_MOSI            15
-  //#define TFT_MOSI            14
+  #define TFT_MOSI            23
   #define TFT_SCLK            18
   #define TFT_CS              27
   #define TFT_DC              32
   #define TFT_RST              5
   //#define TFT_BL             4    // Display backlight control pin
   //#define TFT_BL            32    // Display backlight control pin
-  //#define TFT_BACKLIGHT_ON  HIGH    // HIGH or LOW are options
-  #define TFT_BACKLIGHT_ON  LOW   // HIGH or LOW are options
+  #define TFT_BL              19    // Display backlight control pin
+  //#define TFT_BACKLIGHT_ON    HIGH    // HIGH or LOW are options
+  #define TFT_BACKLIGHT_ON    LOW   // HIGH or LOW are options
 #endif
 
 #if 0

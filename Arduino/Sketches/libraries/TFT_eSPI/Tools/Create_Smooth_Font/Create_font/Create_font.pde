@@ -134,10 +134,16 @@ String fontType = ".ttf";
 
 
 // Define the font size in points for the TFT_eSPI font file
-int  fontSize = 20;
+int  fontSize = 28;
 
 // Font size to use in the Processing sketch display window that pops up (can be different to above)
 int displayFontSize = 28;
+
+// Create a C header (.h file) ready to be used or copied in your sketch folder
+boolean createHeaderFile = true;
+
+// Automaticely open the folder with created files when done
+boolean openFolder = true;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Next we specify which unicode blocks from the the Basic Multilingual Plane (BMP) are included in the final font file. //
@@ -147,7 +153,7 @@ int displayFontSize = 28;
 static final int[] unicodeBlocks = {
   // The list below has been created from the table here: https://en.wikipedia.org/wiki/Unicode_block
   // Remove // at start of lines below to include that unicode block, different code ranges can also be specified by
-  // editting the start and end-of-range values. Multiple lines from the list below can be included, limited only by
+  // editing the start and end-of-range values. Multiple lines from the list below can be included, limited only by
   // the final font file size!
 
   // Block range,   //Block name, Code points, Assigned characters, Scripts
@@ -392,7 +398,7 @@ void setup() {
   // Set the fontName from the array number or the defined fontName
   if (fontNumber >= 0)
   {
-    fontName = fontList[fontNumber];
+//    fontName = fontList[fontNumber];
     fontType = "";
   }
 
@@ -499,11 +505,13 @@ void setup() {
 
   println("Created font " + fontName + str(fontSize) + ".vlw");
 
+  String fontFileName = "FontFiles/" + fontName + str(fontSize) + ".vlw";
+
   // creating file
   try {
     print("Saving to sketch FontFiles folder... ");
 
-    OutputStream output = createOutput("FontFiles/" + fontName + str(fontSize) + ".vlw");
+    OutputStream output = createOutput(fontFileName);
     font.save(output);
     output.close();
 
@@ -513,11 +521,50 @@ void setup() {
 
     // Open up the FontFiles folder to access the saved file
     String path = sketchPath();
-    Desktop.getDesktop().open(new File(path+"/FontFiles"));
+    if(openFolder){
+      Desktop.getDesktop().open(new File(path+"/FontFiles"));
+    }
 
     System.err.println("All done! Note: Rectangles are displayed for non-existant characters.");
   }
   catch(IOException e) {
     println("Doh! Failed to create the file");
+  }
+
+  if(!createHeaderFile) return;
+  // Now creating header file if the option was specified.
+  try{
+    print("saving header file to FontFile folder...");
+
+    InputStream input = createInputRaw(fontFileName);
+    PrintWriter output = createWriter("FontFiles/" + fontName + str(fontSize) + ".h");
+
+    output.println("#include <pgmspace.h>");
+    output.println();
+    output.println("const uint8_t " + fontName + str(fontSize) + "[] PROGMEM = {");
+
+    int i = 0;
+    int data = input.read();
+    while(data != -1){
+      output.print("0x");
+      output.print(hex(data, 2));
+      if(i++ < 15){
+        output.print(", ");
+      } else {
+        output.println(",");
+        i = 0;
+      }
+      data = input.read();
+    }
+//    font.save(output);
+    output.println("\n};");
+
+    output.close();
+    input.close();
+
+    println("C header file created.");
+
+  } catch(IOException e){
+    println("Failed to create C header file");
   }
 }

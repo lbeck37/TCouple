@@ -1,9 +1,9 @@
 const char szSketchName[]  = "B32_TFTPrintTest.ino";
-const char szFileDate[]    = "11/1/23f";
+const char szFileDate[]    = "11/14/23d";
 
-//#define DO_ESP_LCD32
-//Make sure the pin connections are correct by
-//editing TFT_eSPI_ESP32.h (included from User_Setup_Select.h)
+//Make sure the pin connections for the larger displays are correct by editing:
+//  Sketches/libraries/TFT_eSPI/User_Setups/Setup1_ILI9341.h
+//    (included from Sketches/libraries/TFT_eSPI/User_Setup_Select.h)
 
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
 #include <SPI.h>
@@ -11,14 +11,14 @@ const char szFileDate[]    = "11/1/23f";
 
 #define TFT_GREY 0x5AEB // New colour
 
-//extern int   wChipSelectPin;
-
 TFT_eSPI Screen= TFT_eSPI();  // Invoke library
 
 void setup				      (void);
 void loop				        (void);
+/*
 void TryNextCSPin       (void);
 void SetChipSelectHIGH  (void);
+*/
 void TurnOnBacklight    (void);
 void LookForBacklight	  (void);
 
@@ -26,15 +26,11 @@ void setup(void) {
 	Serial.begin(115200);
 	delay(100);
 	Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
-	//return;   //Testing by skipping everything
 
+	/*
   //LookForBacklight();
   TurnOnBacklight();
 
-  //Set which ESP32 pin is chip select
-  wChipSelectPin= 15;
-  //wChipSelectPin= 5;
-  //wChipSelectPin= 13;
 	Serial << "setup(): Call Screen.init()" << endl;
 	Screen.init();
 
@@ -52,33 +48,28 @@ void setup(void) {
 
   // Set the font colour to be white with a black background, set text size multiplier to 1
   Serial << "setup(): Call setTextColor(TFT_WHITE,TFT_BLACK) and setTextSize(1)" << endl;
-  Screen.setTextColor(TFT_WHITE,TFT_BLACK);
+  Screen.setTextColor(TFT_WHITE, TFT_BLACK);
   Screen.setTextSize(1);
 
   // We can now print text on screen using the "print" class
   Serial << "setup(): Call Screen.println(Hello World!)" << endl;
   Screen.println("Hello World!");
+*/
 	return;
 }//setup
 
 
 void loop() {
-  //Return w/o doing anything
-  //return;
-
-  //TryNextCSPin();
+  static int wRotation= 0;
   Serial << "loop(): Call Screen.init()" << endl;
   Screen.init();
-
-/*
-  //Set chip select again for good measure
-  Serial << "loop(): Call SetChipSelectHIGH() for good measure" << endl;
-  SetChipSelectHIGH();
-*/
+  //Screen.setRotation(2);
+  Screen.setRotation(wRotation++ % 4);    //Roll through the rotations
 
   // Fill screen with grey so we can see the effect of printing with and without 
   // a background colour defined
-  Screen.fillScreen(TFT_GREY);
+  //Screen.fillScreen(TFT_GREY);
+  Screen.fillScreen(TFT_BLACK);
   
   // Set "cursor" at top left corner of display (0,0) and select font 2
   // (cursor will move to next line automatically during printing with 'Screen.println'
@@ -87,7 +78,10 @@ void loop() {
   // Set the font colour to be white with a black background, set text size multiplier to 1
   Screen.setTextColor(TFT_WHITE,TFT_BLACK);  Screen.setTextSize(1);
   // We can now plot text on screen using the "print" class
-  Screen.println("Hello World!");
+  //Screen.println("Hello World!");
+  //Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
+
+  Screen << "Hello World!!!" << endl;
   
   // Set the font colour to be yellow with no background, set to font 7
   Screen.setTextColor(TFT_YELLOW); Screen.setTextFont(7);
@@ -124,6 +118,7 @@ void loop() {
 }//loop
 
 
+/*
 void TryNextCSPin(void){
   bool                bPinOK;
   bool                bSkipPin      = false;
@@ -176,6 +171,7 @@ void SetChipSelectHIGH(void){
   digitalWrite(TFT_CS, HIGH); // Chip select high (inactive)
   return;
 } //SetChipSelectHIGH
+*/
 
 
 void TurnOnBacklight(void){
@@ -237,6 +233,3 @@ void LookForBacklight(void){
 	return;
 }//LookForBacklight
 //Last line.
-
-
-

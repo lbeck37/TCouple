@@ -1,9 +1,10 @@
-// Larry Beck, 11/1/23c
+// Larry Beck, 11/14/23c
 #pragma once
-#define DO_ESP_LCD32
+
+#define DO_ESP_LCD32      true
+#define DO_TTGO_DISPLAY   false
 
 // 10/24/23 Larry Beck, ElectroDragon ESP32 with 3.2" display
-//BADCODE put in to fail compile if this file is even used!
 
 // This header file contains a list of user setup files and defines which one the
 // compiler uses when the IDE performs a Verify/Compile or Upload.
@@ -28,9 +29,9 @@
 
 // #include <User_Setup.h>           // Default setup is root library folder
 
-#if 1
+#if DO_ESP_LCD32
   #include <User_Setups/Setup1_ILI9341.h>  // Setup file configured for my ILI9341
-#endif
+#endif  //DO_ESP_LCD32
 //#include <User_Setups/Setup2_ST7735.h>   // Setup file configured for my ST7735
 //#include <User_Setups/Setup3_ILI9163.h>  // Setup file configured for my ILI9163
 //#include <User_Setups/Setup4_S6D02A1.h>  // Setup file configured for my S6D02A1
@@ -60,9 +61,11 @@
 //#include <User_Setups/Setup22_TTGO_T4_v1.3.h>      // Setup file for ESP32 and TTGO T4 version 1.3
 //#include <User_Setups/Setup23_TTGO_TM.h>           // Setup file for ESP32 and TTGO TM ST7789 SPI bus TFT
 //#include <User_Setups/Setup24_ST7789.h>            // Setup file configured for ST7789 240 x 240
-#if 0
+
+#if DO_TTGO_DISPLAY
   #include <User_Setups/Setup25_TTGO_T_Display.h>    // Setup file for ESP32 and TTGO T-Display ST7789V SPI bus TFT
-#endif
+#endif  //DO_TTGO_DISPLAY
+
 //#include <User_Setups/Setup26_TTGO_T_Wristband.h>  // Setup file for ESP32 and TTGO T-Wristband ST7735 SPI bus TFT
 
 //#include <User_Setups/Setup27_RPi_ST7796_ESP32.h>    // ESP32   RPi MHS-4.0 inch Display-B

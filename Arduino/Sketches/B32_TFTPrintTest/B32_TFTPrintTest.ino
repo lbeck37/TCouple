@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TFTPrintTest.ino";
-const char szFileDate[]    = "11/14/23g";
+const char szFileDate[]    = "11/14/23m";
 
 //Make sure the pin connections for the larger displays are correct by editing:
 //  Sketches/libraries/TFT_eSPI/User_Setups/Setup1_ILI9341.h
@@ -7,35 +7,36 @@ const char szFileDate[]    = "11/14/23g";
 
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
 #include <SPI.h>
+#include <WiFi.h>
+#include <B32_TCoupleLib.h>
 #include <Streaming.h>
 
 #define TFT_GREY 0x5AEB // New colour
 
-TFT_eSPI Screen= TFT_eSPI();  // Invoke library
+//TFT_eSPI Screen= TFT_eSPI();  // Invoke library
+
+stMessageStructure   stDummyReadings;
 
 void setup				      (void);
 void loop				        (void);
-/*
-void TryNextCSPin       (void);
-void SetChipSelectHIGH  (void);
-void TurnOnBacklight    (void);
-void LookForBacklight	  (void);
-*/
 
 
 void setup(void) {
 	Serial.begin(115200);
 	delay(100);
 	Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
+	WiFi.mode(WIFI_MODE_STA);
 	return;
 }//setup
 
 
 void loop() {
-  static int wRotation= 0;
+  static int  wCount= 0;
+  float       fDummyDegF;
+  static int  wFraction    = 0;
+
   Serial << "loop(): Call Screen.init()" << endl;
-  Screen.init();
-  //Screen.setRotation(wRotation++ % 4);    //Roll through the rotations
+  Screen.init         ();
   Screen.setRotation  (3);                    //USB at lower right
   Screen.fillScreen   (TFT_BLACK);
   
@@ -45,8 +46,19 @@ void loop() {
   Screen.setCursor    (0, 0, 2);
   Screen.setTextColor (TFT_WHITE, TFT_BLACK);    //White on black
   Screen.setTextSize  (1);
+  //Screen.setTextSize  (2);
   Screen << "Sketch: " << szSketchName << ", " << szFileDate << endl;
+  Screen << "My MAC address is- " << WiFi.macAddress() << endl;
   
+  for (int wTCoupleNum=0; wTCoupleNum < wNumTCouples; wTCoupleNum++) {
+    float fFraction= ((float)(wFraction++ % 100) / 100.0);
+    fDummyDegF= (float)((wTCoupleNum * 100) + (wCount % 100)) + fFraction;
+    stDummyReadings.adTCoupleDegF[wTCoupleNum]= fDummyDegF;
+  } //for(int wTCoupleNum=0;wTCoupleNum<wNumTCouples;wTCoupleNum++)
+
+  UpdateScreen(stDummyReadings);
+
+/*
   // Set the font colour to be yellow with no background, set to font 7
   Screen.setTextColor (TFT_YELLOW); Screen.setTextFont(7);
   double dNumber= 1234.56;
@@ -81,123 +93,8 @@ void loop() {
   Screen.println((int)fnumber, BIN); // Print as integer value in binary
   Screen.print("Hexadecimal = ");
   Screen.println((int)fnumber, HEX); // Print as integer number in Hexadecimal
+*/
   delay(3000);
   return;
 }//loop
-
-
-/*
-void TryNextCSPin(void){
-  bool                bPinOK;
-  bool                bSkipPin      = false;
-  static const int    wFirstPin     =  0;
-  static const int    wLastPin      = 33;
-  static int          wNextPin      = wFirstPin;
-  static int          awPinsToSkip[]= {3, 6, 7, 8, 9, 10, 11,
-      //TFT_MISO, TFT_MOSI, TFT_SCLK, TFT_DC, TFT_RST};
-        TFT_MISO, TFT_MOSI, TFT_SCLK};
-
-  //Number of elements in an array is sizeof array divided by sizeof an element
-  int wNumPinsToSkip= (sizeof(awPinsToSkip) / sizeof(awPinsToSkip[0]));
-
-  //See if wNextPin is in list of pins to skip
-  bPinOK= false;
-  while (!bPinOK){
-    bSkipPin= false;
-    Serial << "TryNextCSPin(): See if pin " << wNextPin << " is OK to try" << endl;
-    for(int wArrayIndex= 0; (!bSkipPin && (wArrayIndex < wNumPinsToSkip)); wArrayIndex++){
-      if (wNextPin == awPinsToSkip[wArrayIndex]) {
-        bSkipPin= true;
-      } //if(wNextPin== ...
-    } //for(intwArrayIndex=0;...
-
-    if (bSkipPin){
-      wNextPin++;
-      //If past last pin to try, then roll back to first pin
-      if (wNextPin > wLastPin){
-        wNextPin= wFirstPin;
-      } //if(wNextPin>wLastPin)
-    } //if(bSkipPin)
-    else {
-      bPinOK= true;
-      Serial << "TryNextCSPin(): Pin " << wNextPin << " is OK to try for chip select" << endl;
-      //Set global value, wChipSelectPin, so TFT_CS returns new pin number
-      wChipSelectPin= wNextPin;
-    } //if(bSkipPin)else
-  } //while
-
-  Serial << "TryNextCSPin(): Call SetChipSelectHIGH() " << endl;
-  SetChipSelectHIGH();
-  return;
-} //TryNextCSPin
-
-
-void SetChipSelectHIGH(void){
-  Serial << "SetChipSelectHIGH():  Call pinMode(TFT_CS, OUTPUT) and digitalWrite(TFT_CS, HIGH)" << endl;
-  Serial << "SetChipSelectHIGH():  TFT_CS= " << TFT_CS << endl;
-  pinMode(TFT_CS, OUTPUT);
-  digitalWrite(TFT_CS, HIGH); // Chip select high (inactive)
-  return;
-} //SetChipSelectHIGH
-
-
-void TurnOnBacklight(void){
-  pinMode(TFT_BL, OUTPUT);
-  if (TFT_BACKLIGHT_ON == HIGH){
-    Serial << "TurnOnBacklight(): Set pin " << TFT_BL << " HIGH" << endl;
-    digitalWrite(TFT_BL, HIGH);
-  }
-  else{
-    Serial << "TurnOnBacklight(): Set pin " << TFT_BL << " LOW" << endl;
-    digitalWrite(TFT_BL, LOW);
-  }
-  return;
-} //TurnOnBacklight
-
-
-void LookForBacklight(void){
-	int wPin;
-	while(true){
-		wPin= 2;
-		pinMode(wPin, OUTPUT);
-		Serial << "LookForBackLight(): Set pin " << wPin << " HIGH" << endl;
-		digitalWrite(wPin, HIGH);
-		delay(1000);
-		Serial << "LookForBackLight(): Set pin " << wPin << " LOW" << endl;
-		digitalWrite(wPin, LOW);
-		delay(1000);
-
-		wPin= 4;
-		pinMode(wPin, OUTPUT);
-		Serial << "LookForBackLight(): Set pin " << wPin << " HIGH" << endl;
-		digitalWrite(wPin, HIGH);
-		delay(1000);
-		Serial << "LookForBackLight(): Set pin " << wPin << " LOW" << endl;
-		digitalWrite(wPin, LOW);
-		delay(1000);
-
-		wPin= 5;
-		pinMode(wPin, OUTPUT);
-		Serial << "LookForBackLight(): Set pin " << wPin << " HIGH" << endl;
-		digitalWrite(wPin, HIGH);
-		delay(1000);
-		Serial << "LookForBackLight(): Set pin " << wPin << " LOW" << endl;
-		digitalWrite(wPin, LOW);
-		delay(1000);
-
-		for(int wPin= 12; wPin <= 33; wPin++){
-		//for(int wPin= 22; wPin <= 30; wPin++){
-		//for(int wPin= 27; wPin <= 27; wPin++){
-			pinMode(wPin, OUTPUT);
-			Serial << "LookForBackLight(): Set pin " << wPin << " HIGH" << endl;
-			digitalWrite(wPin, HIGH);
-			delay(1000);
-			Serial << "LookForBackLight(): Set pin " << wPin << " LOW" << endl;
-			digitalWrite(wPin, LOW);
-			delay(1000);
-		}	//for(int wPin=12;wPin<=33;wPin++)
-	}	//while
-	return;
-}//LookForBacklight
-*/
 //Last line.

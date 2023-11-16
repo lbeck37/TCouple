@@ -1,26 +1,36 @@
-
-#ifndef Meter_h
-#define Meter_h
-
+//Beck, 11/15/23b
+#pragma once
 #include "Arduino.h"
 #include "TFT_eSPI.h"
 
-// Meter boarder colour
+//Meter boarder colour
 #define TFT_GREY 0x5AEB
 
-// Meter class
+//Meter class
 class MeterWidget
 {
   public:
     MeterWidget(TFT_eSPI* tft);
 
-    // Set red, orange, yellow and green start+end zones as a percentage of full scale
-    void setZones(uint16_t rs, uint16_t re, uint16_t os, uint16_t oe, uint16_t ys, uint16_t ye, uint16_t gs, uint16_t ge);
-    // Draw meter meter at x, y and define full scale range plus the scale labels
-    void analogMeter(uint16_t x, uint16_t y, float fullScale, const char *units, const char *s0, const char *s1, const char *s2, const char *s3, const char *s4);
-    // Draw meter meter at x, y and define full scale range plus the scale labels
-    void analogMeter(uint16_t x, uint16_t y, float startScale, float endScale, const char *units, const char *s0, const char *s1, const char *s2, const char *s3, const char *s4);
-    // Move needle to new position
+    //Set red, orange, yellow and green start+end zones as a percentage of full scale
+/*
+    void setZones(uint16_t rs, uint16_t re, uint16_t os, uint16_t oe,
+                  uint16_t ys, uint16_t ye, uint16_t gs, uint16_t ge);
+*/
+    void setZones(uint16_t usRedStart,    uint16_t usRedEnd,
+                  uint16_t usOrangeStart, uint16_t usOrangeEnd,
+                  uint16_t usYellowStart, uint16_t usYellowEnd,
+                  uint16_t usGreenStart,  uint16_t usGreenEnd);
+
+    //Draw meter at x, y and define full scale range plus the scale labels
+    void analogMeter(uint16_t x, uint16_t y, float fullScale, const char *units,
+                     const char *s0, const char *s1, const char *s2, const char *s3, const char *s4);
+
+    //Draw meter meter at x, y and define full scale range plus the scale labels
+    void analogMeter(uint16_t x, uint16_t y, float startScale, float endScale, const char *units,
+                     const char *s0, const char *s1, const char *s2, const char *s3, const char *s4);
+
+    //Move needle to new position
     void updateNeedle(float value, uint32_t ms_delay);
 
   private:
@@ -60,5 +70,4 @@ class MeterWidget
     int16_t greenStart;
     int16_t greenEnd;
 };
-
-#endif
+//Last line.

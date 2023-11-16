@@ -1,3 +1,4 @@
+//Beck, 11/16/23b
 /***************************************************************************************
 
   TFT display Widget library comprising following classes:
@@ -23,7 +24,7 @@
 #if defined (ARDUINO_ARCH_ESP8266) || defined (ESP32)
   #include <pgmspace.h>
   #include <FS.h>
-//  #include <LittleFS.h>   //commented out 11/15/23, Beck
+  #include <LittleFS.h>   //tried commented out 11/15/23, Beck
 #endif
 
 #include <TFT_eSPI.h>

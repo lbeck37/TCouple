@@ -1,5 +1,5 @@
 const char szSketchName[]  = "BeckE32_TTGO_PrintTest.ino";
-const char szFileDate[]    = "11/16/23c";
+const char szFileDate[]    = "11/16/23b";
 //Was BeckE32_TTGO_PrintTest.ino 3/23/21d
 /*Test the tft.print() viz embedded tft.write() function
  This sketch used font 2, 4, 7
@@ -28,13 +28,10 @@ void setup(void) {
   // 1 is USB right   Landscape
   // 2 is USB bottom  Portrait
   // 3 is USB left    Landscape
-  bLandscape= false;
+  bLandscape= true;
 	tft.init();
 	if(bLandscape){
-    tft.setRotation(1);
-	}
-	else{
-    tft.setRotation(0);
+	  tft.setRotation(1);
 	}
 	return;
 }	//setup

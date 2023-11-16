@@ -1,5 +1,5 @@
 const char szSketchName[]  = "BeckE32_TTGO_PrintTest.ino";
-const char szFileDate[]    = "11/16/23b";
+const char szFileDate[]    = "11/16/23d";
 //Was BeckE32_TTGO_PrintTest.ino 3/23/21d
 /*Test the tft.print() viz embedded tft.write() function
  This sketch used font 2, 4, 7
@@ -18,7 +18,6 @@ const char szFileDate[]    = "11/16/23b";
 TFT_eSPI tft = TFT_eSPI();  // Invoke library
 
 void setup(void) {
-  bool bLandscape= true;
 	Serial.begin(115200);
 	delay(500);
 	//Serial.println("\nBeckE32_TTGO_PrintTest, 3/23/21d: setup(): Begin");
@@ -28,11 +27,14 @@ void setup(void) {
   // 1 is USB right   Landscape
   // 2 is USB bottom  Portrait
   // 3 is USB left    Landscape
-  bLandscape= true;
+  bool bLandscape= false;
 	tft.init();
 	if(bLandscape){
 	  tft.setRotation(1);
 	}
+ else{
+    tft.setRotation(2);
+ }
 	return;
 }	//setup
 

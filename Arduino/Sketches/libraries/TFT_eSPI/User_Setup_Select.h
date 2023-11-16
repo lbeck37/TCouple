@@ -1,4 +1,4 @@
-//Beck, 11/16/23b
+//Beck, 11/16/23d
 // This header file contains a list of user setup files and defines which one the
 // compiler uses when the IDE performs a Verify/Compile or Upload.
 //
@@ -25,7 +25,10 @@
 
 // Only ONE line below should be uncommented to define your setup.  Add extra lines and files as needed.
 
-#include <User_Setup.h>           // Default setup is root library folder
+#if 0     //Beck, 11/16/23, this is useless and buggy and apparantly obsolete and not needed.
+  #include <User_Setup.h>           // Default setup is root library folder
+#endif
+
 #if 0
   #include <User_Setups/Setup1_ILI9341.h>  // Setup file for ESP8266 configured for my ILI9341
 #endif

@@ -1,5 +1,5 @@
 const char szSketchName[]  = "BeckE32_TTGO_PrintTest.ino";
-const char szFileDate[]    = "11/16/23c";
+const char szFileDate[]    = "11/16/23d";
 //Was BeckE32_TTGO_PrintTest.ino 3/23/21d
 /*Test the tft.print() viz embedded tft.write() function
  This sketch used font 2, 4, 7
@@ -34,7 +34,7 @@ void setup(void) {
     tft.setRotation(1);
 	}
 	else{
-    tft.setRotation(0);
+    tft.setRotation(2);
 	}
 	return;
 }	//setup

@@ -1,4 +1,6 @@
 //Beck, 11/16/23c
+//This file has hard code stuff in it and is left over and obsolete.
+
 //                            USER DEFINED SETTINGS
 //   Set driver type, fonts to be loaded, pins used and SPI control method etc
 //

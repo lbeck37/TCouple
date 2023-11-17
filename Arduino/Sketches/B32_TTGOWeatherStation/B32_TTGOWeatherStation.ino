@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TTGOWeather.ino";
-const char szFileDate[]    = "11/17/23d";
+const char szFileDate[]    = "11/17/23h";
 
 #include <Streaming.h>
 #include "ani.h"
@@ -12,19 +12,18 @@ const char szFileDate[]    = "11/17/23d";
 #include <WiFiUdp.h>
 #include <HTTPClient.h>
 
+#define DO_OTA      true
+#if DO_OTA
+  #include <BeckE32_OTALib.h>
+#endif
+
 TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
 
-#define TFT_GREY 0x5AEB
-#define lightblue 0x01E9
-#define darkred 0xA041
-#define blue 0x5D9B
-/*
-#include "Orbitron_Medium_20.h"
-#include <WiFi.h>
+#define TFT_GREY    0x5AEB
+#define lightblue   0x01E9
+#define darkred     0xA041
+#define blue        0x5D9B
 
-#include <WiFiUdp.h>
-#include <HTTPClient.h>
-*/
 
 const int pwmFreq           = 5000;
 const int pwmResolution     = 8;
@@ -35,11 +34,16 @@ const int pwmLedChannelTFT  = 0;
 const char* ssid     = "IGKx20";       ///EDIIIT
 const char* password = "1804672019"; //EDI8IT
 */
+/*
 const char* ssid     = "Aspot24b";       ///EDIIIT
 const char* password = "Qazqaz11"; //EDI8IT
+*/
+const char* szRouterName    = "Aspot24b";
+const char* szRouterPW      = "Qazqaz11";
+const char* szWebHostName   = "WeatherStation";
 
-String town="Paris";              //EDDIT
-String Country="FR";                //EDDIT
+String town     ="Paris";              //EDDIT
+String Country  ="FR";                //EDDIT
 const String endpoint = "http://api.openweathermap.org/data/2.5/weather?q="+town+","+Country+"&units=metric&APPID=";
 const String key      = "d0d0bf1bb7xxxx2e5dce67c95f4fd0800"; /*EDDITT                     */
 
@@ -82,27 +86,28 @@ void setup(void) {
 
   //beck Serial.begin(115200);
   tft.print("Connecting to ");
-  tft.println(ssid);
+  tft.println(szRouterName);
 
-  Serial << "setup(): Sketch: Call WiFi.begin(" << ssid << ", " << password << ")" << endl;
-  WiFi.begin(ssid, password);
+  Serial << "setup(): Sketch: Call WiFi.begin(" << szRouterName << ", "
+         << szRouterPW << ")" << endl;
+  WiFi.begin(szRouterName, szRouterPW);
   
   while (WiFi.status() != WL_CONNECTED) {
     delay(300);
     tft.print(".");
   }
+  Serial << endl << "setup(): Connected to " << szRouterName
+         << ", IP address to connect to is " << WiFi.localIP() << endl;
   
   tft.println("");
   tft.println("WiFi connected.");
   tft.println("IP address: ");
   tft.println(WiFi.localIP());
   delay(3000);
+
   tft.setTextColor(TFT_WHITE,TFT_BLACK);  tft.setTextSize(1);
     tft.fillScreen(TFT_BLACK);
     tft.setSwapBytes(true);
-  
-
-        
           tft.setCursor(2, 232, 1);
           tft.println(WiFi.localIP());
            tft.setCursor(80, 204, 1);
@@ -140,28 +145,29 @@ void setup(void) {
   timeClient.setTimeOffset(3600);   /*EDDITTTTTTTTTTTTTTTTTTTTTTTT                      */
   getData();
   delay(500);
-}
-int i=0;
-String tt="";
-int count=0;
-bool inv=1;
-int press1=0; 
-int press2=0;////
+#if DO_OTA
+  Serial << "setup(): Call SetupWebServer(" << szWebHostName << ")" << endl;
+  SetupWebserver(szWebHostName);
+#endif
+  return;
+}   //setup
+
+
+int     i       = 0;
+String  tt      = "";
+int     count   = 0;
+bool    inv     = 1;
+int     press1  = 0;
+int     press2  = 0;
 
 int frame=0;
 String curSeconds="";
 
 void loop() {
-
-  
-  
-
   tft.pushImage(0, 88,  135, 65, ani[frame]);
    frame++;
    if(frame>=10)
    frame=0;
-  
- 
 
    if(digitalRead(35)==0){
    if(press2==0)
@@ -236,9 +242,12 @@ void loop() {
           tft.println(timeStamp.substring(0,5));
           tt=timeStamp.substring(0,5);
          }
-  
   delay(80);
-}
+#if DO_OTA
+  HandleOTAWebserver();
+#endif
+  return;
+}   //loop
 
 
 void getData()
@@ -246,25 +255,19 @@ void getData()
     tft.fillRect(1,170,64,20,TFT_BLACK);
     tft.fillRect(1,210,64,20,TFT_BLACK);
    if ((WiFi.status() == WL_CONNECTED)) { //Check the current connection status
- 
-    HTTPClient http;
- 
-    http.begin(endpoint + key); //Specify the URL
-    int httpCode = http.GET();  //Make the request
- 
-    if (httpCode > 0) { //Check for the returning code
- 
-         payload = http.getString();
-       // Serial.println(httpCode);
-        Serial.println(payload);
-        
+      HTTPClient http;
+      http.begin(endpoint + key); //Specify the URL
+      int httpCode = http.GET();  //Make the request
+
+      if (httpCode > 0) { //Check for the returning code
+           payload = http.getString();
+         // Serial.println(httpCode);
+          Serial.println(payload);
+        }
+      else {
+        Serial.println("Error on HTTP request");
       }
- 
-    else {
-      Serial.println("Error on HTTP request");
-    }
- 
-    http.end(); //Free the resources
+      http.end(); //Free the resources
   }
  char inp[1000];
  payload.toCharArray(inp,1000);
@@ -279,8 +282,6 @@ void getData()
    Serial.println("Temperature"+String(tmp));
    Serial.println("Humidity"+hum);
    Serial.println(town);
-   
- }
-         
-
-     
+   return;
+ }    //getData
+ //Last line.

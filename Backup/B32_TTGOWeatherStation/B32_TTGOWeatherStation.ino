@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TTGOWeather.ino";
-const char szFileDate[]    = "11/17/23j";
+const char szFileDate[]    = "11/17/23h";
 
 #include <Streaming.h>
 #include "ani.h"
@@ -25,28 +25,33 @@ TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
 #define blue        0x5D9B
 
 
-const int   pwmFreq           = 5000;
-const int   pwmResolution     = 8;
-const int   pwmLedChannelTFT  = 0;
+const int pwmFreq           = 5000;
+const int pwmResolution     = 8;
+const int pwmLedChannelTFT  = 0;
 
-const char* szRouterName      = "Aspot24b";
-const char* szRouterPW        = "Qazqaz11";
-const char* szWebHostName     = "WeatherStation";
-
-const String town           ="Paris";
-const String Country        ="FR";
-const String endpoint       = "http://api.openweathermap.org/data/2.5/weather?q=" +
-                               town + "," + Country + "&units=metric&APPID=";
-const String key            = "d0d0bf1bb7xxxx2e5dce67c95f4fd0800"; /*EDDITT                     */
 
 /*
-String town           ="Paris";
-String Country        ="FR";
+const char* ssid     = "IGKx20";       ///EDIIIT
+const char* password = "1804672019"; //EDI8IT
 */
+/*
+const char* ssid     = "Aspot24b";       ///EDIIIT
+const char* password = "Qazqaz11"; //EDI8IT
+*/
+const char* szRouterName    = "Aspot24b";
+const char* szRouterPW      = "Qazqaz11";
+const char* szWebHostName   = "WeatherStation";
+
+String town     ="Paris";              //EDDIT
+String Country  ="FR";                //EDDIT
+const String endpoint = "http://api.openweathermap.org/data/2.5/weather?q="+town+","+Country+"&units=metric&APPID=";
+const String key      = "d0d0bf1bb7xxxx2e5dce67c95f4fd0800"; /*EDDITT                     */
+
 String payload        =""; //whole json
 String tmp            ="" ; //temperatur
 String hum            ="" ; //humidity
   
+
 StaticJsonDocument<1000>  doc;
 
 // Define NTP Client to get time
@@ -60,12 +65,6 @@ String timeStamp;
 
 int backlight[5] = {10,30,60,120,220};
 byte b=1;
-
-//Func protos
-void setup      (void);
-void loop       (void);
-void getData    (void);
-
 
 void setup(void) {
   Serial.begin(115200);
@@ -85,7 +84,8 @@ void setup(void) {
   ledcAttachPin(TFT_BL, pwmLedChannelTFT);
   ledcWrite(pwmLedChannelTFT, backlight[b]);
 
-  tft.print("Connecting to ");    //This goes to the display
+  //beck Serial.begin(115200);
+  tft.print("Connecting to ");
   tft.println(szRouterName);
 
   Serial << "setup(): Sketch: Call WiFi.begin(" << szRouterName << ", "
@@ -95,43 +95,45 @@ void setup(void) {
   while (WiFi.status() != WL_CONNECTED) {
     delay(300);
     tft.print(".");
-  } //while
+  }
   Serial << endl << "setup(): Connected to " << szRouterName
          << ", IP address to connect to is " << WiFi.localIP() << endl;
   
-  tft.println       ("");
-  tft.println       ("WiFi connected.");
-  tft.println        ("IP address: ");
-  tft.println       (WiFi.localIP());
+  tft.println("");
+  tft.println("WiFi connected.");
+  tft.println("IP address: ");
+  tft.println(WiFi.localIP());
   delay(3000);
 
-  tft.setTextColor  (TFT_WHITE,TFT_BLACK);  tft.setTextSize(1);
-  tft.fillScreen    (TFT_BLACK);
-  tft.setSwapBytes  (true);
-  tft.setCursor     (2, 232, 1);
-  tft.println       (WiFi.localIP());
-  tft.setCursor     (80, 204, 1);
-  tft.println       ("BRIGHT:");
+  tft.setTextColor(TFT_WHITE,TFT_BLACK);  tft.setTextSize(1);
+    tft.fillScreen(TFT_BLACK);
+    tft.setSwapBytes(true);
+          tft.setCursor(2, 232, 1);
+          tft.println(WiFi.localIP());
+           tft.setCursor(80, 204, 1);
+           tft.println("BRIGHT:");
 
-  tft.setCursor     (80, 152, 2);
-  tft.println       ("SEC:");
-  tft.setTextColor  (TFT_WHITE,lightblue);
-  tft.setCursor     (4, 152, 2);
-  tft.println       ("TEMP:");
+           
 
-  tft.setCursor     (4, 192, 2);
-  tft.println       ("HUM: ");
-  tft.setTextColor  (TFT_WHITE,TFT_BLACK);
+          
+          tft.setCursor(80, 152, 2);
+          tft.println("SEC:");
+          tft.setTextColor(TFT_WHITE,lightblue);
+           tft.setCursor(4, 152, 2);
+          tft.println("TEMP:");
 
-  tft.setFreeFont   (&Orbitron_Medium_20);
-  tft.setCursor     (6, 82);
-  tft.println       (town);
+          tft.setCursor(4, 192, 2);
+          tft.println("HUM: ");
+          tft.setTextColor(TFT_WHITE,TFT_BLACK);
 
-  tft.fillRect      (68,152,1,74,TFT_GREY);
+            tft.setFreeFont(&Orbitron_Medium_20);
+            tft.setCursor(6, 82);
+           tft.println(town);
 
-  for(int i=0;i<b+1;i++){
-    tft.fillRect(78+(i*7),216,3,10,blue);
-  } //for
+           tft.fillRect(68,152,1,74,TFT_GREY);
+
+           for(int i=0;i<b+1;i++)
+           tft.fillRect(78+(i*7),216,3,10,blue);
 
 // Initialize a NTPClient to get time
   timeClient.begin(); 
@@ -161,7 +163,7 @@ int     press2  = 0;
 int frame=0;
 String curSeconds="";
 
-void loop(void) {
+void loop() {
   tft.pushImage(0, 88,  135, 65, ani[frame]);
    frame++;
    if(frame>=10)
@@ -248,7 +250,8 @@ void loop(void) {
 }   //loop
 
 
-void getData(){
+void getData()
+{
     tft.fillRect(1,170,64,20,TFT_BLACK);
     tft.fillRect(1,210,64,20,TFT_BLACK);
    if ((WiFi.status() == WL_CONNECTED)) { //Check the current connection status

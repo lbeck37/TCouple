@@ -1,8 +1,9 @@
 const char szSketchName[]  = "B32_TTGO_tutorial.ino";
-const char szFileDate[]    = "11/16/23L";
-#include<TFT_eSPI.h>
-#include<SPI.h>
-#include<Streaming.h>
+const char szFileDate[]    = "11/16/23M";
+#include <TFT_eSPI.h>
+#include <SPI.h>
+#include <Streaming.h>
+#include "HousePic128x128.h"
 
 //Global values
 const uint8_t   ucFont2         =  2;   //16 pixels
@@ -10,16 +11,18 @@ const uint8_t   ucFont4         =  4;   //16 pixels
 const uint8_t   ucFont7         =  7;   //48 pixel, 7-segment
 const uint8_t   ucPortrait      =  2;   //Portrait : USB Top
 const uint8_t   ucLandscape     =  1;   //Landscape: USB Right
-const int       wTutorialNumber =  2;
+const int       wTutorialNumber =  3;
 
 TFT_eSPI  tft= TFT_eSPI();
 
 void setup            (void);
 void loop             (void);
 void Tutorial1Setup   (void);
-void Tutorial2Setup   (void);
 void Tutorial1Loop    (void);
+void Tutorial2Setup   (void);
 void Tutorial2Loop    (void);
+void Tutorial3Setup   (void);
+void Tutorial3Loop    (void);
 
 void setup() {
   // 0 is USB bottom  Portrait (Default)
@@ -38,6 +41,9 @@ void setup() {
     case 2:
       Tutorial2Setup();
       break;
+    case 3:
+      Tutorial3Setup();
+      break;
     default:
       Serial << "setup(): Bad switch = " << wTutorialNumber << endl;
   }//switch
@@ -52,6 +58,9 @@ void loop() {
       break;
     case 2:
       Tutorial2Loop();
+      break;
+    case 3:
+      Tutorial3Loop();
       break;
     default:
       Serial << "loop(): Bad switch = " << wTutorialNumber << endl;
@@ -79,8 +88,19 @@ void Tutorial1Setup(void){
 } //Tutorial1Setup
 
 
+void Tutorial1Loop() {
+  static int  wNumber   =  0;
+  int32_t     wXPos     =  0;
+  int32_t     wYPos     = 60;
+
+  tft.setTextColor(TFT_YELLOW, TFT_BLUE);
+  tft.drawString(String(wNumber++), wXPos, wYPos, ucFont7);
+  return;
+} //Tutorial1Loop
+
+
 void Tutorial2Setup(void){
-  int32_t         wXPos       = 10;
+  int32_t         wXPos       =  0;
   int32_t         wYPos       =  0;
 
   tft.init();
@@ -105,26 +125,35 @@ void Tutorial2Setup(void){
 } //Tutorial2Setup
 
 
-void Tutorial1Loop() {
-  static int  wNumber   =  0;
-  int32_t     wXPos     =  0;
-  int32_t     wYPos     = 60;
-
-  tft.setTextColor(TFT_YELLOW, TFT_BLUE);
-  tft.drawString(String(wNumber++), wXPos, wYPos, ucFont7);
-  return;
-} //Tutorial1Loop
-
-
 void Tutorial2Loop() {
-/*
-  static int  wNumber   =  0;
-  int32_t     wXPos     = 30;
-  int32_t     wYPos     = 60;
-
-  tft.setTextColor(TFT_YELLOW, TFT_BLUE);
-  tft.drawString(String(wNumber++), wXPos, wYPos, ucFont7);
-*/
   return;
 } //Tutorial2Loop
+
+
+void Tutorial3Setup(void){
+  int32_t         wXPos       =  0;
+  int32_t         wYPos       =  0;
+
+  tft.init();
+  tft.fillScreen  (TFT_BLACK);
+  tft.setRotation (ucPortrait);
+
+  tft.setTextColor(TFT_WHITE);
+  tft.drawString  (szSketchName, wXPos, (wYPos +=  0), ucFont2);
+
+  tft.setTextColor(TFT_GREEN);
+  tft.drawString  (szFileDate  , wXPos, (wYPos += 15), ucFont2);
+
+  tft.setSwapBytes(true);
+  wYPos= 40;
+  tft.pushImage(wXPos, wYPos, 128, 128, HousePic128x128);
+
+  return;
+} //Tutorial3Setup
+
+
+void Tutorial3Loop() {
+
+  return;
+} //Tutorial3Loop
 //Last line.

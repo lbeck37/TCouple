@@ -17,8 +17,12 @@ const char szFileDate[]    = "11/16/23d";
 
 TFT_eSPI tft = TFT_eSPI();  // Invoke library
 
+//Func protos
+void setup  (void);
+void loop   (void);
+
 void setup(void) {
-  bool bLandscape= true;
+  bool bLandscape= false;
 	Serial.begin(115200);
 	delay(500);
 	//Serial.println("\nBeckE32_TTGO_PrintTest, 3/23/21d: setup(): Begin");
@@ -28,7 +32,6 @@ void setup(void) {
   // 1 is USB right   Landscape
   // 2 is USB bottom  Portrait
   // 3 is USB left    Landscape
-  bLandscape= false;
 	tft.init();
 	if(bLandscape){
     tft.setRotation(1);

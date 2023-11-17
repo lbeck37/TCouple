@@ -1,9 +1,10 @@
 const char szSketchName[]  = "B32_TTGO_tutorial.ino";
-const char szFileDate[]    = "11/16/23M";
+const char szFileDate[]    = "11/16/23N";
 #include <TFT_eSPI.h>
 #include <SPI.h>
 #include <Streaming.h>
 #include "HousePic128x128.h"
+#include "Rock_Salt_Regular_20.h"
 
 //Global values
 const uint8_t   ucFont2         =  2;   //16 pixels
@@ -140,13 +141,16 @@ void Tutorial3Setup(void){
 
   tft.setTextColor(TFT_WHITE);
   tft.drawString  (szSketchName, wXPos, (wYPos +=  0), ucFont2);
-
   tft.setTextColor(TFT_GREEN);
   tft.drawString  (szFileDate  , wXPos, (wYPos += 15), ucFont2);
 
   tft.setSwapBytes(true);
   wYPos= 40;
   tft.pushImage(wXPos, wYPos, 128, 128, HousePic128x128);
+
+  tft.setFreeFont(&Rock_Salt_Regular_20);
+  tft.drawString  ("House of", 6, 165);
+  tft.drawString  ("  Cards", 6, 190);
 
   return;
 } //Tutorial3Setup

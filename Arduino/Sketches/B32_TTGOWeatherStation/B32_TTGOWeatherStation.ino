@@ -1,7 +1,6 @@
 const char szSketchName[]  = "B32_TTGOWeather.ino";
-const char szFileDate[]    = "11/17/23v";
+const char szFileDate[]    = "11/18/23b";
 
-#include <Streaming.h>
 #include "Animation.h"
 #include <SPI.h>
 #include <TFT_eSPI.h>           // Hardware-specific library
@@ -11,6 +10,7 @@ const char szFileDate[]    = "11/17/23v";
 #include <WiFi.h>
 #include <WiFiUdp.h>
 #include <HTTPClient.h>
+#include <Streaming.h>
 
 #define DO_OTA      true
 #if DO_OTA

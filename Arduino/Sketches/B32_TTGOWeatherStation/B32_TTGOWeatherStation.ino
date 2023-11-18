@@ -1,8 +1,8 @@
 const char szSketchName[]  = "B32_TTGOWeather.ino";
-const char szFileDate[]    = "11/17/23p";
+const char szFileDate[]    = "11/17/23v";
 
 #include <Streaming.h>
-#include "ani.h"
+#include "Animation.h"
 #include <SPI.h>
 #include <TFT_eSPI.h>           // Hardware-specific library
 #include <ArduinoJson.h>        //https://github.com/bblanchon/ArduinoJson.git
@@ -30,11 +30,12 @@ const char* szRouterName      = "Aspot24b";
 const char* szRouterPW        = "Qazqaz11";
 const char* szWebHostName     = "WeatherStation";
 
-const String town             ="Paris";
-const String Country          ="FR";
+const String town             = "Paris";
+const String Country          = "FR";
 const String endpoint         = "http://api.openweathermap.org/data/2.5/weather?q=" +
                                  town + "," + Country + "&units=metric&APPID=";
-const String key              = "d0d0bf1bb7xxxx2e5dce67c95f4fd0800"; /*EDDITT                     */
+
+const String key              = "d0d0bf1bb7xxxx2e5dce67c95f4fd0800";  //EDDITT
 
 String payload                = ""; //whole json
 String tmp                    = "" ; //temperatur
@@ -55,6 +56,10 @@ String      timeStamp;
 
 int         backlight[5]    = {10,30,60,120,220};
 byte        b               = 1;
+
+long        lPrintInterval  = 5000;
+long        lCurrentMsec    = 0;
+long        lNextMsec       = 0;
 
 //Func protos
 void setup      (void);
@@ -136,7 +141,7 @@ void setup(void) {
   // GMT +8 = 28800
   // GMT -1 = -3600
   // GMT 0 = 0
-  timeClient.setTimeOffset(3600);   /*EDDITTTTTTTTTTTTTTTTTTTTTTTT                      */
+  timeClient.setTimeOffset(3600);   /*EDDIT                  */
   getData();
   delay(500);
 #if DO_OTA
@@ -154,26 +159,26 @@ bool    inv         = 1;
 int     press1      = 0;
 int     press2      = 0;
 
-int     frame       = 0;
 String  curSeconds  = "";
 
 void loop(void){
-   tft.pushImage  (0, 88,  135, 65, ani[frame]);
+   static int     wFrame= 0;
+   tft.pushImage  (0, 88,  135, 65, ausAnimation[wFrame]);
 
-   frame++;
-   if(frame>=10){
-     frame=0;
-   }
+   //Cycle through the 10 frames of animation
+   wFrame= ((wFrame + 1) % 10);
 
    if(digitalRead(35) == 0){
      if(press2 == 0){
        press2= 1;
        tft.fillRect   (78,216,44,12,TFT_BLACK);
 
+       //Not sure what b is
        b++;
-       if(b>=5){
+       if(b >= 5){
          b=0;
        }  //if(b>=5)
+       wFrame= ((wFrame + 1) % 10);
 
        for(int i=0;i<b+1;i++){
          tft.fillRect (78+(i*7),216,3,10,blue);
@@ -227,7 +232,11 @@ void loop(void){
   // 2018-05-28T16:00:13Z
   // We need to extract date and time
   formattedDate = timeClient.getFormattedDate();
-  Serial.println(formattedDate);
+  if (millis() > lNextMsec){
+    //Serial.println(formattedDate);
+    Serial << "loop(): Formatted Date= " << formattedDate << endl;
+    lNextMsec= (millis() + lPrintInterval);
+  }
 
   int splitT  = formattedDate.indexOf("T");
   dayStamp    = formattedDate.substring(0, splitT);
@@ -250,7 +259,7 @@ void loop(void){
     tft.fillRect    (3,8,120,30,TFT_BLACK);
     tft.setCursor   (5, 34);
     tft.println     (timeStamp.substring(0,5));
-    tt=timeStamp.substring(0,5);
+    tt= timeStamp.substring(0,5);
   }  //if(current!=tt)
 
   delay(80);

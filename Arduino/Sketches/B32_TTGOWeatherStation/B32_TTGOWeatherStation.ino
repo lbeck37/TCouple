@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TTGOWeather.ino";
-const char szFileDate[]    = "11/18/23y";
+const char szFileDate[]    = "11/18/23z";
 
 #include "Animation.h"
 #include <SPI.h>
@@ -34,7 +34,11 @@ const char*     szWebHostName = "WeatherStation";
 
 const String szCity           = "Paris";
 const String szCountry        = "FR";
+/*
 const String szEndpoint       = "http://api.openweathermap.org/data/2.5/weather?q=" +
+                                 szCity + "," + szCountry + "&units=metric&APPID=";
+*/
+const String szEndpoint       = "http://api.openweathermap.org/data/3.0/weather?q=" +
                                  szCity + "," + szCountry + "&units=metric&APPID=";
 
 //const String szKey            = "d0d0bf1bb7xxxx2e5dce67c95f4fd0800";

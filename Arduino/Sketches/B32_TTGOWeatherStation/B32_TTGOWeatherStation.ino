@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TTGOWeather.ino";
-const char szFileDate[]    = "11/18/23b";
+const char szFileDate[]    = "11/18/23k";
 
 #include "Animation.h"
 #include <SPI.h>
@@ -22,13 +22,15 @@ const char szFileDate[]    = "11/18/23b";
 #define darkred     0xA041
 #define blue        0x5D9B
 
-const int   pwmFreq           = 5000;
-const int   pwmResolution     = 8;
-const int   pwmLedChannelTFT  = 0;
+const double    dPWMFreq            = 5000.0;
+const uint8_t   ucPWMResolution     =  8;
+const uint8_t   ucPWMLedChannelTFT  =  0;
+const uint8_t   ucLeftButtonPin     =  0;
+const uint8_t   ucRightButtonPin    = 35;
 
-const char* szRouterName      = "Aspot24b";
-const char* szRouterPW        = "Qazqaz11";
-const char* szWebHostName     = "WeatherStation";
+const char*     szRouterName        = "Aspot24b";
+const char*     szRouterPW          = "Qazqaz11";
+const char*     szWebHostName       = "WeatherStation";
 
 const String town             = "Paris";
 const String Country          = "FR";
@@ -36,6 +38,9 @@ const String endpoint         = "http://api.openweathermap.org/data/2.5/weather?
                                  town + "," + Country + "&units=metric&APPID=";
 
 const String key              = "d0d0bf1bb7xxxx2e5dce67c95f4fd0800";  //EDDITT
+
+const uint32_t    uwBufSize     = 1000;
+char acBuffer[uwBufSize];
 
 String payload                = ""; //whole json
 String tmp                    = "" ; //temperatur
@@ -54,9 +59,16 @@ String      formattedDate;
 String      dayStamp;
 String      timeStamp;
 
-int         backlight[5]    = {10,30,60,120,220};
-byte        b               = 1;
+int         awBacklight[5]  = {10, 30, 60, 120, 220};
+uint32_t    uwBacklightDuty = 1;
 
+// Set offset time in seconds to adjust for your timezone, for example:
+const int   wGMTplus1       =   3600;
+const int   wGMTminus1      =  -3600;
+const int   wGMTplus8       =  28800;
+const int   wGMTminus8      = -28800;
+
+//Set up millisecond wait routine
 long        lPrintInterval  = 5000;
 long        lCurrentMsec    = 0;
 long        lNextMsec       = 0;
@@ -64,7 +76,7 @@ long        lNextMsec       = 0;
 //Func protos
 void setup      (void);
 void loop       (void);
-void getData    (void);
+void GetData    (void);
 
 
 void setup(void) {
@@ -72,8 +84,8 @@ void setup(void) {
   delay(500);
   Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
-  pinMode(0,INPUT_PULLUP);
-  pinMode(35,INPUT);
+  pinMode(0, INPUT_PULLUP);
+  pinMode(ucRightButtonPin, INPUT);
   Serial << "setup(): Sketch: Call tft.init()" << endl;
   tft.init            ();
   tft.setRotation     (0);
@@ -82,9 +94,9 @@ void setup(void) {
   tft.setTextSize     (1);
 
   Serial << "setup(): Sketch: Call ledcSetup()" << endl;
-  ledcSetup           (pwmLedChannelTFT, pwmFreq, pwmResolution);
-  ledcAttachPin       (TFT_BL, pwmLedChannelTFT);
-  ledcWrite           (pwmLedChannelTFT, backlight[b]);
+  ledcSetup           (ucPWMLedChannelTFT, dPWMFreq, ucPWMResolution);
+  ledcAttachPin       (TFT_BL, ucPWMLedChannelTFT);
+  ledcWrite           (ucPWMLedChannelTFT, awBacklight[uwBacklightDuty]);
 
   tft.print           ("Connecting to ");    //This goes to the display
   tft.println         (szRouterName);
@@ -128,22 +140,19 @@ void setup(void) {
   tft.setCursor     (6, 82);
   tft.println       (town);
 
-  tft.fillRect      (68,152,1,74,TFT_GREY);
+  tft.fillRect      (68, 152, 1, 74, TFT_GREY);
 
-  for(int i=0;i<b+1;i++){
-    tft.fillRect(78+(i*7),216,3,10,blue);
+  for(int i= 0;i < (uwBacklightDuty + 1);i++){
+    tft.fillRect((78 + (i*7)), 216, 3, 10, blue);
   } //for
 
 // Initialize a NTPClient to get time
   timeClient.begin();
-  // Set offset time in seconds to adjust for your timezone, for example:
-  // GMT +1 = 3600
-  // GMT +8 = 28800
-  // GMT -1 = -3600
-  // GMT 0 = 0
-  timeClient.setTimeOffset(3600);   /*EDDIT                  */
-  getData();
+
+  timeClient.setTimeOffset(wGMTplus1);
+  GetData();
   delay(500);
+
 #if DO_OTA
   Serial << "setup(): Call SetupWebServer(" << szWebHostName << ")" << endl;
   SetupWebserver(szWebHostName);
@@ -152,58 +161,86 @@ void setup(void) {
 }   //setup
 
 
+/*
 int     i           = 0;
 String  tt          = "";
 int     count       = 0;
 bool    inv         = 1;
 int     press1      = 0;
 int     press2      = 0;
+*/
 
-String  curSeconds  = "";
+//String  curSeconds  = "";
 
 void loop(void){
-   static int     wFrame= 0;
+   static int     wFrame          = 0;
+   int            i               = 0;
+   String         tt              = "";
+   int            count           = 0;
+   static bool    bInvertDisplay  = true;
+   static int     wPress1         = 0;
+   //bool    bPress1                = false;
+   static int     wPress2         = 0;
+   static String  szCurrentSecs   = "";
+
    tft.pushImage  (0, 88,  135, 65, ausAnimation[wFrame]);
 
    //Cycle through the 10 frames of animation
    wFrame= ((wFrame + 1) % 10);
 
-   if(digitalRead(35) == 0){
-     if(press2 == 0){
-       press2= 1;
+   //Handle TTGO button on the right of the USB connector
+   //Cycles through 5 levels of the LED backlight to the LCD screen
+   if(digitalRead(ucRightButtonPin) == 0){
+     if(wPress2 == 0){
+       wPress2= 1;
        tft.fillRect   (78,216,44,12,TFT_BLACK);
 
-       //Not sure what b is
-       b++;
-       if(b >= 5){
-         b=0;
-       }  //if(b>=5)
+       uwBacklightDuty++;
+       if(uwBacklightDuty >= 5){
+         uwBacklightDuty= 0;
+       }  //if(uwBacklightDuty>=5)
        wFrame= ((wFrame + 1) % 10);
 
-       for(int i=0;i<b+1;i++){
-         tft.fillRect (78+(i*7),216,3,10,blue);
+       for(int i= 0;i < (uwBacklightDuty + 1);i++){
+         tft.fillRect (78 + (i*7), 216, 3, 10, blue);
        }  //for
 
-       ledcWrite(pwmLedChannelTFT, backlight[b]);
-     }  //if(press2==0)
-   }  //if(digitalRead(35)==0)
+       //uwBacklightDuty ranges from 10 to 220
+       ledcWrite(ucPWMLedChannelTFT, awBacklight[uwBacklightDuty]);
+     }  //if(wPress2==0)
+   }  //if(digitalRead(ucRightButtonPin)==0)
    else{
-     press2= 0;
-   }  //if(digitalRead(35)==0)else
+     wPress2= 0;
+   }  //if(digitalRead(ucRightButtonPin)==0)else
 
-   if(digitalRead(0) == 0){
-     if(press1 == 0){
-       press1 = 1;
-       inv    = !inv;
-       tft.invertDisplay  (inv);
-     }  //if(press1==0)
-   }  //if(digitalRead(0)==0)
+   //Handle TTGO button on the left of the USB connector
+   //Left button toggles between black background and inverted
+   if(digitalRead(ucLeftButtonPin) == 0){
+     if(wPress1 == 0){
+       wPress1 = 1;
+       bInvertDisplay= !bInvertDisplay;
+       tft.invertDisplay(bInvertDisplay);
+     }  //if(wPress1==0)
+   }  //if(digitalRead(ucLeftButtonPin)==0)
    else{
-     press1= 0;
-   }  //if(digitalRead(0)==0)else
+     wPress1= 0;
+   }  //if(digitalRead(ucLeftButtonPin)==0)else
+/*
+   if(digitalRead(ucLeftButtonPin) == 0){
+     if(!bPress1){
+       bPress1= true;
+       bInvertDisplay= !bInvertDisplay;
+       tft.invertDisplay(bInvertDisplay);
+     }  //if(!bPress1)
+   }  //if(digitalRead(ucLeftButtonPin)==0)
+   else{
+     bPress1= false;
+   }  //if(digitalRead(ucLeftButtonPin)==0)else
+*/
 
    if(count == 0){
-     getData();
+     Serial << "loop(): Skip call to GetData() for debugging stutter" << endl;
+     //GetData();
    }  //if(count==0)
 
    count++;
@@ -222,7 +259,7 @@ void loop(void){
   tft.setTextFont   (2);
   tft.setCursor     (6, 44);
   tft.println       (dayStamp);
-  tft.setTextColor    (TFT_WHITE, TFT_BLACK);
+  tft.setTextColor  (TFT_WHITE, TFT_BLACK);
 
   while(!timeClient.update()) {
     timeClient.forceUpdate();
@@ -241,16 +278,15 @@ void loop(void){
   int splitT  = formattedDate.indexOf("T");
   dayStamp    = formattedDate.substring(0, splitT);
 
-
   timeStamp   = formattedDate.substring(splitT+1, formattedDate.length()-1);
 
-  if(curSeconds != timeStamp.substring(6, 8)){
+  if(szCurrentSecs != timeStamp.substring(6, 8)){
     tft.fillRect    (78,170,48,28,darkred);
     tft.setFreeFont (&Orbitron_Light_24);
     tft.setCursor   (81, 192);
     tft.println     (timeStamp.substring(6,8));
-    curSeconds= timeStamp.substring(6,8);
-  }   //if(curSeconds!=timeStamp.substring(6,8))
+    szCurrentSecs= timeStamp.substring(6,8);
+  }   //if(szCurrentSecs!=timeStamp.substring(6,8))
 
   tft.setFreeFont   (&Orbitron_Light_32);
   String current= timeStamp.substring(0,5);
@@ -270,7 +306,7 @@ void loop(void){
 }   //loop
 
 
-void getData(){
+void GetData(){
   tft.fillRect    (1, 170, 64,20, TFT_BLACK);
   tft.fillRect    (1, 210, 64,20, TFT_BLACK);
   if ((WiFi.status() == WL_CONNECTED)) { //Check the current connection status
@@ -290,9 +326,13 @@ void getData(){
     http.end(); //Free the resources
   } //if((WiFi.status()==WL_CONNECTED))
 
+/*
   char inp[1000];
-  payload.toCharArray(inp,1000);
-  deserializeJson(doc,inp);
+  payload.toCharArray(inp, 1000);
+  deserializeJson(doc, inp);
+*/
+  payload.toCharArray(acBuffer, uwBufSize);
+  deserializeJson(doc, acBuffer);
 
   String tmp2  = doc["main"]["temp"];
   String hum2  = doc["main"]["humidity"];
@@ -304,5 +344,5 @@ void getData(){
   Serial.println("Humidity" + hum);
   Serial.println(town);
   return;
- }    //getData
+ }  //GetData
  //Last line.

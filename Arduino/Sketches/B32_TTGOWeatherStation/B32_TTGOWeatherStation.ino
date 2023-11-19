@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TTGOWeather.ino";
-const char szFileDate[]    = "11/18/23x";
+const char szFileDate[]    = "11/18/23y";
 
 #include "Animation.h"
 #include <SPI.h>
@@ -37,7 +37,8 @@ const String szCountry        = "FR";
 const String szEndpoint       = "http://api.openweathermap.org/data/2.5/weather?q=" +
                                  szCity + "," + szCountry + "&units=metric&APPID=";
 
-const String szKey            = "d0d0bf1bb7xxxx2e5dce67c95f4fd0800";  //EDDITT
+//const String szKey            = "d0d0bf1bb7xxxx2e5dce67c95f4fd0800";
+const String szKey            = "82c0b2df6c96557fa90c5f42d705ca0f";
 
 const uint32_t    uwBufSize   = 1000;
 char acBuffer[uwBufSize];
@@ -325,5 +326,6 @@ void GetData(){
 /*Receiving this message:
   {"cod":401, "message": "Invalid API key.
   Please see https://openweathermap.org/faq#error401 for more info."}
+  I think this is my new key "82c0b2df6c96557fa90c5f42d705ca0f", 11/18/23
 */
  //Last line.

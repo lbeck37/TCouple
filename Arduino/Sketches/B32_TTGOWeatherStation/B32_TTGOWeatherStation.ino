@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TTGOWeather.ino";
-const char szFileDate[]    = "11/18/23v";
+const char szFileDate[]    = "11/18/23x";
 
 #include "Animation.h"
 #include <SPI.h>
@@ -151,7 +151,7 @@ void setup(void) {
 // Initialize a NTPClient to get time
   NTPTimeClient.begin();
 
-  NTPTimeClient.setTimeOffset(wGMTplus1);
+  NTPTimeClient.setTimeOffset(wGMTminus8);
   GetData();
   delay(500);
 
@@ -287,22 +287,29 @@ void GetData(){
   tft.fillRect    (1, 210, 64,20, TFT_BLACK);
   if ((WiFi.status() == WL_CONNECTED)) { //Check the current connection status
     HTTPClient    http;
+    Serial << "GetData(): Call http.begin()" << endl;
     http.begin(szEndpoint + szKey); //Specify the URL
+    Serial << "GetData(): Call http.GET()" << endl;
     int httpCode= http.GET();  //Make the request
+    Serial << "GetData(): After the call to http.GET()" << endl;
 
     if (httpCode > 0){ //Check for the returning code
-         szPayload= http.getString();
-       // Serial.println(httpCode);
-        Serial.println(szPayload);
-      } //if(httpCode>0)
+      Serial << "GetData(): Call http.getString()" << endl;
+      szPayload= http.getString();
+      Serial << "GetData(): After call to http.getString()" << endl;
+      // Serial.println(httpCode);
+      Serial.println(szPayload);
+    } //if(httpCode>0)
     else {
       Serial.println("Error on HTTP request");
     } //if(httpCode>0)else
 
+    Serial << "GetData(): Call http.end()" << endl;
     http.end(); //Free the resources
   } //if((WiFi.status()==WL_CONNECTED))
 
   szPayload.toCharArray(acBuffer, uwBufSize);
+  Serial << "GetData(): Call deserializeJson()" << endl;
   deserializeJson(JsonDoc, acBuffer);
 
   String szNewTemperature = JsonDoc["main"]["temp"];

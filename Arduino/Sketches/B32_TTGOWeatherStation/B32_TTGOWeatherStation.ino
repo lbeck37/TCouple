@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TTGOWeather.ino";
-const char szFileDate[]    = "11/18/23q";
+const char szFileDate[]    = "11/18/23v";
 
 #include "Animation.h"
 #include <SPI.h>
@@ -12,25 +12,25 @@ const char szFileDate[]    = "11/18/23q";
 #include <HTTPClient.h>
 #include <Streaming.h>
 
-#define DO_OTA      true
+#define DO_OTA  true
 #if DO_OTA
   #include <BeckE32_OTALib.h>
 #endif
 
-#define TFT_GREY    0x5AEB
-#define lightblue   0x01E9
-#define darkred     0xA041
-#define blue        0x5D9B
+const double    dPWMFreq          = 5000.0;
+const uint8_t   ucPWMResolution   =  8;
+const uint8_t   ucPWMLedChannel   =  0;
+const uint8_t   ucLeftButtonPin   =  0;
+const uint8_t   ucRightButtonPin  = 35;
 
-const double    dPWMFreq            = 5000.0;
-const uint8_t   ucPWMResolution     =  8;
-const uint8_t   ucPWMLedChannelTFT  =  0;
-const uint8_t   ucLeftButtonPin     =  0;
-const uint8_t   ucRightButtonPin    = 35;
+const uint16_t  usTFT_Grey    = 0x5AEB;
+const uint16_t  usLightBlue   = 0x01E9;
+const uint16_t  usDarkRed     = 0xA041;
+const uint16_t  usBlue        = 0x5D9B;
 
-const char*     szRouterName        = "Aspot24b";
-const char*     szRouterPW          = "Qazqaz11";
-const char*     szWebHostName       = "WeatherStation";
+const char*     szRouterName  = "Aspot24b";
+const char*     szRouterPW    = "Qazqaz11";
+const char*     szWebHostName = "WeatherStation";
 
 const String szCity           = "Paris";
 const String szCountry        = "FR";
@@ -46,18 +46,19 @@ String szPayload              = ""; //whole json
 String szTemperature          = "" ;
 String szHumidity             = "" ;
 
-StaticJsonDocument<1000>  doc;
+const int   wDocCapacity      = 1000;
+StaticJsonDocument<wDocCapacity>  JsonDoc;
 
-TFT_eSPI    tft             = TFT_eSPI();       // Invoke graphics library
+TFT_eSPI    tft               = TFT_eSPI();       // Invoke graphics library
 
 // Define NTP Client to get time
 WiFiUDP     ntpUDP;
-NTPClient   timeClient(ntpUDP);
+NTPClient   NTPTimeClient(ntpUDP);
 
 // Variables to save date and time
-String      formattedDate;
-String      dayStamp;
-String      timeStamp;
+String      szFormattedDate;
+String      szDayStamp;
+String      szTimeStamp;
 
 int         awBacklight[5]  = {10, 30, 60, 120, 220};
 uint32_t    uwBacklightDuty = 1;
@@ -91,13 +92,13 @@ void setup(void) {
   tft.init            ();
   tft.setRotation     (0);
   tft.fillScreen      (TFT_BLACK);
-  tft.setTextColor    (TFT_WHITE,TFT_BLACK);
+  tft.setTextColor    (TFT_WHITE, TFT_BLACK);
   tft.setTextSize     (1);
 
   Serial << "setup(): Sketch: Call ledcSetup()" << endl;
-  ledcSetup           (ucPWMLedChannelTFT, dPWMFreq, ucPWMResolution);
-  ledcAttachPin       (TFT_BL, ucPWMLedChannelTFT);
-  ledcWrite           (ucPWMLedChannelTFT, awBacklight[uwBacklightDuty]);
+  ledcSetup           (ucPWMLedChannel, dPWMFreq, ucPWMResolution);
+  ledcAttachPin       (TFT_BL, ucPWMLedChannel);
+  ledcWrite           (ucPWMLedChannel, awBacklight[uwBacklightDuty]);
 
   tft.print           ("Connecting to ");    //This goes to the display
   tft.println         (szRouterName);
@@ -129,7 +130,7 @@ void setup(void) {
 
   tft.setCursor     (80, 152, 2);
   tft.println       ("SEC:");
-  tft.setTextColor  (TFT_WHITE,lightblue);
+  tft.setTextColor  (TFT_WHITE,usLightBlue);
   tft.setCursor     (4, 152, 2);
   tft.println       ("TEMP:");
 
@@ -141,16 +142,16 @@ void setup(void) {
   tft.setCursor     (6, 82);
   tft.println       (szCity);
 
-  tft.fillRect      (68, 152, 1, 74, TFT_GREY);
+  tft.fillRect      (68, 152, 1, 74, usTFT_Grey);
 
   for(int i= 0;i < (uwBacklightDuty + 1);i++){
-    tft.fillRect((78 + (i*7)), 216, 3, 10, blue);
+    tft.fillRect((78 + (i*7)), 216, 3, 10, usBlue);
   } //for
 
 // Initialize a NTPClient to get time
-  timeClient.begin();
+  NTPTimeClient.begin();
 
-  timeClient.setTimeOffset(wGMTplus1);
+  NTPTimeClient.setTimeOffset(wGMTplus1);
   GetData();
   delay(500);
 
@@ -162,28 +163,13 @@ void setup(void) {
 }   //setup
 
 
-/*
-int     i           = 0;
-String  tt          = "";
-int     count       = 0;
-bool    inv         = 1;
-int     press1      = 0;
-int     press2      = 0;
-*/
-
-//String  curSeconds  = "";
-
 void loop(void){
-   static int     wFrame          = 0;
-   //int            i               = 0;
-   String         szPreviousTime  = "";
-   int            count           = 0;
-   static bool    bInvertDisplay  = true;
-   //static int     wPress1         = 0;
-   //static int     wPress2         = 0;
-   static bool    bPress1         = false;
-   static bool    bPress2         = false;
-   static String  szCurrentSecs   = "";
+  static int     wFrame          = 0;
+  String         szPreviousTime  = "";
+  static bool    bInvertDisplay  = true;
+  static bool    bPress1         = false;
+  static bool    bPress2         = false;
+  static String  szCurrentSecs   = "";
 
    tft.pushImage  (0, 88,  135, 65, ausAnimation[wFrame]);
 
@@ -201,49 +187,42 @@ void loop(void){
        if(uwBacklightDuty >= 5){
          uwBacklightDuty= 0;
        }  //if(uwBacklightDuty>=5)
-       //wFrame cycles from 0 to 9
+
+       //wFrame cycles from 0 to 9, why?
        wFrame= ((wFrame + 1) % 10);
 
+       //Display number of bars to indicate brightness
        for(int wLevel= 0;wLevel < (uwBacklightDuty + 1);wLevel++){
-         tft.fillRect (78 + (wLevel * 7), 216, 3, 10, blue);
+         tft.fillRect (78 + (wLevel * 7), 216, 3, 10, usBlue);
        }  //for
 
        //uwBacklightDuty ranges from 10 to 220
-       ledcWrite(ucPWMLedChannelTFT, awBacklight[uwBacklightDuty]);
+       ledcWrite(ucPWMLedChannel, awBacklight[uwBacklightDuty]);
      }  //if(!bPress2)
    }  //if(digitalRead(ucRightButtonPin)==0)
    else{
      bPress2= false;
    }  //if(digitalRead(ucRightButtonPin)==0)else
 
-   //Handle TTGO button on the left of the USB connector
-   //Left button toggles between black background and inverted
-   if(digitalRead(ucLeftButtonPin) == 0){
+  //Handle TTGO button on the left of the USB connector
+  //Left button toggles between black background and inverted
+  if(digitalRead(ucLeftButtonPin) == 0){
      if(!bPress1){
        bPress1= true;
        bInvertDisplay= !bInvertDisplay;
        tft.invertDisplay(bInvertDisplay);
      }  //if(!bPress1)
-   }  //if(digitalRead(ucLeftButtonPin)==0)
-   else{
+  }  //if(digitalRead(ucLeftButtonPin)==0)
+  else{
      bPress1= false;
-   }  //if(digitalRead(ucLeftButtonPin)==0)else
+  }  //if(digitalRead(ucLeftButtonPin)==0)else
 
-/*
-   if(count == 0){
-     Serial << "loop(): Skip call to GetData() for debugging stutter" << endl;
-     //GetData();
-   }  //if(count==0)
-   count++;
-   if(count > 2000){
-     count= 0;
-   }  //if(count>2000)
-*/
-   if (millis() > lNextReadMsec){
-     Serial << "loop(): Skip call to GetData() for debugging stutter" << endl;
+  if (millis() > lNextReadMsec){
+     //Serial << "loop(): Skip call to GetData() for debugging stutter" << endl;
+     Serial << "loop(): Call GetData()" << endl;
      GetData();
      lNextReadMsec= (millis() + lReadInterval);
-   }  //if(millis()>lNextReadMsec)
+  }  //if(millis()>lNextReadMsec)
 
   tft.setFreeFont   (&Orbitron_Medium_20);
   tft.setCursor     (2, 187);
@@ -255,45 +234,44 @@ void loop(void){
   tft.setTextColor  (TFT_ORANGE, TFT_BLACK);
   tft.setTextFont   (2);
   tft.setCursor     (6, 44);
-  tft.println       (dayStamp);
+  tft.println       (szDayStamp);
   tft.setTextColor  (TFT_WHITE, TFT_BLACK);
 
-  while(!timeClient.update()) {
-    timeClient.forceUpdate();
+  while(!NTPTimeClient.update()) {
+    NTPTimeClient.forceUpdate();
   }   //while
 
-  // The formattedDate comes with the following format:
+  // The szFormattedDate comes with the following format:
   // 2018-05-28T16:00:13Z
   // We need to extract date and time
-  formattedDate = timeClient.getFormattedDate();
+  szFormattedDate = NTPTimeClient.getFormattedDate();
   if (millis() > lNextPrintMsec){
     //Serial.println(formattedDate);
-    Serial << "loop(): Formatted Date= " << formattedDate << endl;
+    Serial << "loop(): Formatted Date= " << szFormattedDate << endl;
     lNextPrintMsec= (millis() + lPrintInterval);
   }
 
-  int splitT  = formattedDate.indexOf("T");
-  dayStamp    = formattedDate.substring(0, splitT);
+  int splitT  = szFormattedDate.indexOf("T");
+  szDayStamp  = szFormattedDate.substring(0, splitT);
 
-  timeStamp   = formattedDate.substring(splitT+1, formattedDate.length()-1);
+  szTimeStamp = szFormattedDate.substring((splitT + 1), (szFormattedDate.length() - 1));
 
-  if(szCurrentSecs != timeStamp.substring(6, 8)){
-    tft.fillRect    (78,170,48,28,darkred);
+  if(szCurrentSecs != szTimeStamp.substring(6, 8)){
+    tft.fillRect    (78, 170, 48, 28, usDarkRed);
     tft.setFreeFont (&Orbitron_Light_24);
     tft.setCursor   (81, 192);
-    tft.println     (timeStamp.substring(6,8));
-    szCurrentSecs= timeStamp.substring(6,8);
-  }   //if(szCurrentSecs!=timeStamp.substring(6,8))
+    tft.println     (szTimeStamp.substring(6, 8));
+    szCurrentSecs=   szTimeStamp.substring(6, 8);
+  }   //if(szCurrentSecs!=szTimeStamp.substring(6,8))
 
   tft.setFreeFont   (&Orbitron_Light_32);
-  //String current= timeStamp.substring(0,5);
-  String    szNewTime= timeStamp.substring(0,5);
+  String    szNewTime= szTimeStamp.substring(0, 5);
 
   if(szNewTime != szPreviousTime){
-    tft.fillRect    (3,8,120,30,TFT_BLACK);
+    tft.fillRect    (3, 8, 120, 30, TFT_BLACK);
     tft.setCursor   (5, 34);
-    tft.println     (timeStamp.substring(0,5));
-    szPreviousTime= timeStamp.substring(0,5);
+    tft.println     (szTimeStamp.substring(0, 5));
+    szPreviousTime= szTimeStamp.substring(0, 5);
   }  //if(szNewTime!=szPreviousTime)
 
   delay(80);
@@ -324,23 +302,21 @@ void GetData(){
     http.end(); //Free the resources
   } //if((WiFi.status()==WL_CONNECTED))
 
-/*
-  char inp[1000];
-  payload.toCharArray(inp, 1000);
-  deserializeJson(doc, inp);
-*/
   szPayload.toCharArray(acBuffer, uwBufSize);
-  deserializeJson(doc, acBuffer);
+  deserializeJson(JsonDoc, acBuffer);
 
-  String tmp2  = doc["main"]["temp"];
-  String hum2  = doc["main"]["humidity"];
-  String town2 = doc["name"];
-  szTemperature= tmp2;
-  szHumidity= hum2;
+  String szNewTemperature = JsonDoc["main"]["temp"];
+  String szNewHumidity    = JsonDoc["main"]["humidity"];
+  szTemperature = szNewTemperature;
+  szHumidity    = szNewHumidity;
 
   Serial.println("Temperature" + String(szTemperature));
   Serial.println("Humidity" + szHumidity);
   Serial.println(szCity);
   return;
  }  //GetData
+/*Receiving this message:
+  {"cod":401, "message": "Invalid API key.
+  Please see https://openweathermap.org/faq#error401 for more info."}
+*/
  //Last line.

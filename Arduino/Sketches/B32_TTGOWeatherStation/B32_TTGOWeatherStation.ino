@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TTGOWeather.ino";
-const char szFileDate[]    = "11/20/23K";
+const char szFileDate[]    = "11/20/23N";
 
 #include "Animation.h"
 #include <SPI.h>
@@ -41,8 +41,13 @@ const char*     szRouterName  = "Aspot24b";
 const char*     szRouterPW    = "Qazqaz11";
 const char*     szWebHostName = "WeatherStation";
 
+/*
 const String szCity           = "Paris";
 const String szCountry        = "FR";
+*/
+const String szCity           = "SLO";
+const String szCountry        = "US";
+
 String szTemperature          = "" ;
 String szHumidity             = "" ;
 #if DO_RAWJASON
@@ -67,13 +72,27 @@ StaticJsonDocument<wDocCapacity>  JsonDoc;
 
 #if DO_OPENWEATHER
 const String  szAPIKey         = "82c0b2df6c96557fa90c5f42d705ca0f";
-//const time_t  ulTimeZoneOffset = (-8 * 3600);
-const time_t  ulTimeZoneOffset = 0;
 
 //Set both longitude and latitude to at least 4 decimal places
-String        szLatitude       = "27.9881";   // 90.0000 to -90.0000 negative for Southern hemisphere
-String        szLongitude      = "86.9250";   // 180.000 to -180.000 negative for West
+//  90.0000 to  -90.0000 negative for Southern hemisphere/*
+// 180.0000 to -180.0000 negative for West
+const String  szBoiseLatitude   =   "43.6150";
+const String  szBoiseLongitude  = "-116.2023";
 
+const String  szSLOLatitude     =   "35.2828";
+const String  szSLOLongitude    = "-120.6596";
+
+const int     wSecPerHour       = 3600;
+
+const int     wBoiseTimeZone    = -7;
+const int     wSLOTimeZone      = -8;
+const time_t  ulBoiseSecOffset  = (wBoiseTimeZone * wSecPerHour);
+const time_t  ulSLOSecOffset    = (wSLOTimeZone   * wSecPerHour);
+
+time_t        ulTimeZoneOffset;
+
+String        szLatitude;
+String        szLongitude;
 String        szUnits          = "imperial";  //"metric" or "imperial"
 String        szLanguage       = "en";
 
@@ -132,11 +151,15 @@ void ReadOpenWeather(void){
 
   Serial.print("\nRequesting weather information from OpenWeather... ");
 
-  OpenWeather.getForecast(pForecast, szAPIKey, szLatitude, szLongitude, szUnits, szLanguage);
+  ulTimeZoneOffset= ulSLOSecOffset;
+//OpenWeather.getForecast(pForecast, szAPIKey, szLatitude, szLongitude, szUnits, szLanguage);
+  //OpenWeather.getForecast(pForecast, szAPIKey, szBoiseLatitude, szBoiseLongitude, szUnits, szLanguage);
+  OpenWeather.getForecast(pForecast, szAPIKey, szSLOLatitude  , szSLOLongitude  , szUnits, szLanguage);
 
   Serial.println("Weather from OpenWeather\n");
 
   Serial.print("city_name           : "); Serial.println          (pForecast->city_name);
+  //Serial.print("sunrise             : "); Serial.println(strTime  (pForecast->sunrise));
   Serial.print("sunrise             : "); Serial.println(strTime  (pForecast->sunrise));
   Serial.print("sunset              : "); Serial.println(strTime  (pForecast->sunset));
   Serial.print("Latitude            : "); Serial.println          (OpenWeather.lat);

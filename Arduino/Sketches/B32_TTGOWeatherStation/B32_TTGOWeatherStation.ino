@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TTGOWeather.ino";
-const char szFileDate[]    = "11/20/23H";
+const char szFileDate[]    = "11/20/23K";
 
 #include "Animation.h"
 #include <SPI.h>
@@ -23,6 +23,7 @@ const char szFileDate[]    = "11/20/23H";
 #endif
 #if DO_OPENWEATHER
   #include <OpenWeather.h>
+  #include <Time.h>     //Just using this library for unix time conversion
 #endif
 
 const double    dPWMFreq          = 5000.0;
@@ -64,7 +65,22 @@ const int   wDocCapacity      = 1000;
 StaticJsonDocument<wDocCapacity>  JsonDoc;
 #endif  //DO_RAWJASON
 
-TFT_eSPI    tft               = TFT_eSPI();       // Invoke graphics library
+#if DO_OPENWEATHER
+const String  szAPIKey         = "82c0b2df6c96557fa90c5f42d705ca0f";
+//const time_t  ulTimeZoneOffset = (-8 * 3600);
+const time_t  ulTimeZoneOffset = 0;
+
+//Set both longitude and latitude to at least 4 decimal places
+String        szLatitude       = "27.9881";   // 90.0000 to -90.0000 negative for Southern hemisphere
+String        szLongitude      = "86.9250";   // 180.000 to -180.000 negative for West
+
+String        szUnits          = "imperial";  //"metric" or "imperial"
+String        szLanguage       = "en";
+
+OW_Weather    OpenWeather;                    //Weather pForecast library instance
+#endif
+
+TFT_eSPI      tft              = TFT_eSPI();  // Invoke graphics library
 
 // Define NTP Client to get time
 WiFiUDP     ntpUDP;
@@ -97,8 +113,61 @@ void loop                   (void);
   void GetData              (void);
 #endif
 #if DO_OPENWEATHER
-  void ReadOpenWeather      (void);
+  void    ReadOpenWeather   (void);
+  String  strTime           (time_t unixTime);
 #endif
+
+#if DO_OPENWEATHER
+void ReadOpenWeather(void){
+  tft.fillRect    (1, 170, 64,20, TFT_BLACK);
+  tft.fillRect    (1, 210, 64,20, TFT_BLACK);
+  if ((WiFi.status() != WL_CONNECTED)) { //Check the current connection status
+    //Return without doing anything.
+    Serial << "ReadOpenWeather(): ERROR: WiFi is not connected" << endl;
+  } //if((WiFi.status()==WL_CONNECTED))
+
+  //Create the structures that hold the retrieved weather
+  //OW_current, OW_hourly, OW_daily and OW_forecast are structs defined in Data_Point_Set.h
+  OW_forecast  *pForecast = new OW_forecast;
+
+  Serial.print("\nRequesting weather information from OpenWeather... ");
+
+  OpenWeather.getForecast(pForecast, szAPIKey, szLatitude, szLongitude, szUnits, szLanguage);
+
+  Serial.println("Weather from OpenWeather\n");
+
+  Serial.print("city_name           : "); Serial.println          (pForecast->city_name);
+  Serial.print("sunrise             : "); Serial.println(strTime  (pForecast->sunrise));
+  Serial.print("sunset              : "); Serial.println(strTime  (pForecast->sunset));
+  Serial.print("Latitude            : "); Serial.println          (OpenWeather.lat);
+  Serial.print("Longitude           : "); Serial.println          (OpenWeather.lon);
+  Serial.print("Timezone            : "); Serial.println          (pForecast->timezone);
+  Serial.println();
+
+  szTemperature = String(pForecast->temp[0]);
+  //szHumidity = pForecast->humidity[0];
+  //szHumidity    = ??;
+
+  Serial.println("Temperature" + String(szTemperature));
+  Serial.println("Humidity" + szHumidity);
+  Serial.println(szCity);
+  // Delete to free up space and prevent fragmentation as strings change in length
+  delete pForecast;
+  return;
+} //ReadOpenWeather
+#endif  //DO_OPENWEATHER
+
+
+/***************************************************************************************
+**                          Convert unix time to a time string
+***************************************************************************************/
+String strTime(time_t unixTime)
+{
+  //unixTime += TIME_OFFSET;
+  unixTime += ulTimeZoneOffset;
+  return ctime(&unixTime);
+} //strTime
+
 
 void setup(void) {
   Serial.begin(115200);
@@ -313,26 +382,6 @@ void loop(void){
 #endif
   return;
 }   //loop
-
-
-#if DO_OPENWEATHER
-void ReadOpenWeather(void){
-  tft.fillRect    (1, 170, 64,20, TFT_BLACK);
-  tft.fillRect    (1, 210, 64,20, TFT_BLACK);
-  if ((WiFi.status() == WL_CONNECTED)) { //Check the current connection status
-
-  } //if((WiFi.status()==WL_CONNECTED))
-
-
-  //szTemperature = ??;
-  //szHumidity    = ??;
-
-  Serial.println("Temperature" + String(szTemperature));
-  Serial.println("Humidity" + szHumidity);
-  Serial.println(szCity);
-  return;
-} //ReadOpenWeather
-#endif  //DO_OPENWEATHER
 
 
 #if DO_RAWJASON

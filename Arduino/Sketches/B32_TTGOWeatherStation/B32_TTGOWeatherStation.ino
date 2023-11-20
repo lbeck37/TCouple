@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TTGOWeather.ino";
-const char szFileDate[]    = "11/18/23z";
+const char szFileDate[]    = "11/20/23c";
 
 #include "Animation.h"
 #include <SPI.h>
@@ -12,9 +12,14 @@ const char szFileDate[]    = "11/18/23z";
 #include <HTTPClient.h>
 #include <Streaming.h>
 
-#define DO_OTA  true
+#define DO_OTA            true
+#define DO_OPENWEATHER    true
+
 #if DO_OTA
   #include <BeckE32_OTALib.h>
+#endif
+#if DO_OPENWEATHER
+  #include <OpenWeather.h>
 #endif
 
 const double    dPWMFreq          = 5000.0;
@@ -303,6 +308,7 @@ void GetData(){
       szPayload= http.getString();
       Serial << "GetData(): After call to http.getString()" << endl;
       // Serial.println(httpCode);
+      //Error code gets printed here
       Serial.println(szPayload);
     } //if(httpCode>0)
     else {

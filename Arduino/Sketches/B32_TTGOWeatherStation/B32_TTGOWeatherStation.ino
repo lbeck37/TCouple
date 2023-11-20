@@ -1,22 +1,25 @@
 const char szSketchName[]  = "B32_TTGOWeather.ino";
-const char szFileDate[]    = "11/20/23c";
+const char szFileDate[]    = "11/20/23H";
 
 #include "Animation.h"
 #include <SPI.h>
 #include <TFT_eSPI.h>           // Hardware-specific library
-#include <ArduinoJson.h>        //https://github.com/bblanchon/ArduinoJson.git
 #include <NTPClient.h>          //https://github.com/taranais/NTPClient
 #include "Orbitron_Medium_20.h"
 #include <WiFi.h>
 #include <WiFiUdp.h>
-#include <HTTPClient.h>
 #include <Streaming.h>
 
 #define DO_OTA            true
 #define DO_OPENWEATHER    true
+#define DO_RAWJASON       false
 
 #if DO_OTA
   #include <BeckE32_OTALib.h>
+#endif
+#if DO_RAWJASON
+  #include <ArduinoJson.h>        //https://github.com/bblanchon/ArduinoJson.git
+  #include <HTTPClient.h>
 #endif
 #if DO_OPENWEATHER
   #include <OpenWeather.h>
@@ -39,6 +42,9 @@ const char*     szWebHostName = "WeatherStation";
 
 const String szCity           = "Paris";
 const String szCountry        = "FR";
+String szTemperature          = "" ;
+String szHumidity             = "" ;
+#if DO_RAWJASON
 /*
 const String szEndpoint       = "http://api.openweathermap.org/data/2.5/weather?q=" +
                                  szCity + "," + szCountry + "&units=metric&APPID=";
@@ -53,11 +59,10 @@ const uint32_t    uwBufSize   = 1000;
 char acBuffer[uwBufSize];
 
 String szPayload              = ""; //whole json
-String szTemperature          = "" ;
-String szHumidity             = "" ;
 
 const int   wDocCapacity      = 1000;
 StaticJsonDocument<wDocCapacity>  JsonDoc;
+#endif  //DO_RAWJASON
 
 TFT_eSPI    tft               = TFT_eSPI();       // Invoke graphics library
 
@@ -86,10 +91,14 @@ long        lNextPrintMsec  = 0;
 long        lNextReadMsec   = 0;
 
 //Func protos
-void setup      (void);
-void loop       (void);
-void GetData    (void);
-
+void setup                  (void);
+void loop                   (void);
+#if DO_RAWJASON
+  void GetData              (void);
+#endif
+#if DO_OPENWEATHER
+  void ReadOpenWeather      (void);
+#endif
 
 void setup(void) {
   Serial.begin(115200);
@@ -128,7 +137,11 @@ void setup(void) {
   tft.println       ("WiFi connected.");
   tft.println       ("IP address: ");
   tft.println       (WiFi.localIP());
-  delay(3000);
+
+  tft.print         ("setup(): Sketch: ");
+  tft.println       (szSketchName);
+  tft.println       (szFileDate);
+  delay(3000);    //Delay long enough to read screen
 
   tft.setTextColor  (TFT_WHITE,TFT_BLACK);  tft.setTextSize(1);
   tft.fillScreen    (TFT_BLACK);
@@ -162,8 +175,14 @@ void setup(void) {
   NTPTimeClient.begin();
 
   NTPTimeClient.setTimeOffset(wGMTminus8);
+#if DO_RAWJASON
   GetData();
   delay(500);
+#endif
+
+#if DO_OPENWEATHER
+  ReadOpenWeather();
+#endif
 
 #if DO_OTA
   Serial << "setup(): Call SetupWebServer(" << szWebHostName << ")" << endl;
@@ -228,9 +247,13 @@ void loop(void){
   }  //if(digitalRead(ucLeftButtonPin)==0)else
 
   if (millis() > lNextReadMsec){
-     //Serial << "loop(): Skip call to GetData() for debugging stutter" << endl;
      Serial << "loop(): Call GetData()" << endl;
+#if DO_RAWJASON
      GetData();
+#endif
+#if DO_OPENWEATHER
+     ReadOpenWeather();
+#endif
      lNextReadMsec= (millis() + lReadInterval);
   }  //if(millis()>lNextReadMsec)
 
@@ -292,6 +315,27 @@ void loop(void){
 }   //loop
 
 
+#if DO_OPENWEATHER
+void ReadOpenWeather(void){
+  tft.fillRect    (1, 170, 64,20, TFT_BLACK);
+  tft.fillRect    (1, 210, 64,20, TFT_BLACK);
+  if ((WiFi.status() == WL_CONNECTED)) { //Check the current connection status
+
+  } //if((WiFi.status()==WL_CONNECTED))
+
+
+  //szTemperature = ??;
+  //szHumidity    = ??;
+
+  Serial.println("Temperature" + String(szTemperature));
+  Serial.println("Humidity" + szHumidity);
+  Serial.println(szCity);
+  return;
+} //ReadOpenWeather
+#endif  //DO_OPENWEATHER
+
+
+#if DO_RAWJASON
 void GetData(){
   tft.fillRect    (1, 170, 64,20, TFT_BLACK);
   tft.fillRect    (1, 210, 64,20, TFT_BLACK);
@@ -333,6 +377,7 @@ void GetData(){
   Serial.println(szCity);
   return;
  }  //GetData
+#endif  //DO_RAWJASON
 /*Receiving this message:
   {"cod":401, "message": "Invalid API key.
   Please see https://openweathermap.org/faq#error401 for more info."}

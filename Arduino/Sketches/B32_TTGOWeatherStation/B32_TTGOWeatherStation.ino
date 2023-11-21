@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TTGOWeather.ino";
-const char szFileDate[]    = "11/20/23N";
+const char szFileDate[]    = "11/20/23X";
 
 #include "Animation.h"
 #include <SPI.h>
@@ -9,22 +9,17 @@ const char szFileDate[]    = "11/20/23N";
 #include <WiFi.h>
 #include <WiFiUdp.h>
 #include <Streaming.h>
+#include <Arduino_FreeRTOS.h>
+//#include <FreeRTOS.h>
 
 #define DO_OTA            true
 #define DO_OPENWEATHER    true
-#define DO_RAWJASON       false
 
 #if DO_OTA
   #include <BeckE32_OTALib.h>
 #endif
-#if DO_RAWJASON
-  #include <ArduinoJson.h>        //https://github.com/bblanchon/ArduinoJson.git
-  #include <HTTPClient.h>
-#endif
-#if DO_OPENWEATHER
-  #include <OpenWeather.h>
-  #include <Time.h>     //Just using this library for unix time conversion
-#endif
+#include <OpenWeather.h>
+#include <Time.h>     //Just using this library for unix time conversion
 
 const double    dPWMFreq          = 5000.0;
 const uint8_t   ucPWMResolution   =  8;
@@ -41,37 +36,13 @@ const char*     szRouterName  = "Aspot24b";
 const char*     szRouterPW    = "Qazqaz11";
 const char*     szWebHostName = "WeatherStation";
 
-/*
-const String szCity           = "Paris";
-const String szCountry        = "FR";
-*/
 const String szCity           = "SLO";
 const String szCountry        = "US";
 
-String szTemperature          = "" ;
-String szHumidity             = "" ;
-#if DO_RAWJASON
-/*
-const String szEndpoint       = "http://api.openweathermap.org/data/2.5/weather?q=" +
-                                 szCity + "," + szCountry + "&units=metric&APPID=";
-*/
-const String szEndpoint       = "http://api.openweathermap.org/data/3.0/weather?q=" +
-                                 szCity + "," + szCountry + "&units=metric&APPID=";
+float         fTemperature    = 0.00;
+uint8_t       ucHumidity      = 0;
 
-//const String szKey            = "d0d0bf1bb7xxxx2e5dce67c95f4fd0800";
-const String szKey            = "82c0b2df6c96557fa90c5f42d705ca0f";
-
-const uint32_t    uwBufSize   = 1000;
-char acBuffer[uwBufSize];
-
-String szPayload              = ""; //whole json
-
-const int   wDocCapacity      = 1000;
-StaticJsonDocument<wDocCapacity>  JsonDoc;
-#endif  //DO_RAWJASON
-
-#if DO_OPENWEATHER
-const String  szAPIKey         = "82c0b2df6c96557fa90c5f42d705ca0f";
+const String  szAPIKey        = "82c0b2df6c96557fa90c5f42d705ca0f";
 
 //Set both longitude and latitude to at least 4 decimal places
 //  90.0000 to  -90.0000 negative for Southern hemisphere/*
@@ -89,7 +60,8 @@ const int     wSLOTimeZone      = -8;
 const time_t  ulBoiseSecOffset  = (wBoiseTimeZone * wSecPerHour);
 const time_t  ulSLOSecOffset    = (wSLOTimeZone   * wSecPerHour);
 
-time_t        ulTimeZoneOffset;
+//time_t        ulTimeZoneOffset;
+uint32_t      uwTimeZoneOffset;
 
 String        szLatitude;
 String        szLongitude;
@@ -97,7 +69,6 @@ String        szUnits          = "imperial";  //"metric" or "imperial"
 String        szLanguage       = "en";
 
 OW_Weather    OpenWeather;                    //Weather pForecast library instance
-#endif
 
 TFT_eSPI      tft              = TFT_eSPI();  // Invoke graphics library
 
@@ -126,70 +97,14 @@ long        lNextPrintMsec  = 0;
 long        lNextReadMsec   = 0;
 
 //Func protos
-void setup                  (void);
-void loop                   (void);
-#if DO_RAWJASON
-  void GetData              (void);
-#endif
-#if DO_OPENWEATHER
-  void    ReadOpenWeather   (void);
-  String  strTime           (time_t unixTime);
-#endif
-
-#if DO_OPENWEATHER
-void ReadOpenWeather(void){
-  tft.fillRect    (1, 170, 64,20, TFT_BLACK);
-  tft.fillRect    (1, 210, 64,20, TFT_BLACK);
-  if ((WiFi.status() != WL_CONNECTED)) { //Check the current connection status
-    //Return without doing anything.
-    Serial << "ReadOpenWeather(): ERROR: WiFi is not connected" << endl;
-  } //if((WiFi.status()==WL_CONNECTED))
-
-  //Create the structures that hold the retrieved weather
-  //OW_current, OW_hourly, OW_daily and OW_forecast are structs defined in Data_Point_Set.h
-  OW_forecast  *pForecast = new OW_forecast;
-
-  Serial.print("\nRequesting weather information from OpenWeather... ");
-
-  ulTimeZoneOffset= ulSLOSecOffset;
-//OpenWeather.getForecast(pForecast, szAPIKey, szLatitude, szLongitude, szUnits, szLanguage);
-  //OpenWeather.getForecast(pForecast, szAPIKey, szBoiseLatitude, szBoiseLongitude, szUnits, szLanguage);
-  OpenWeather.getForecast(pForecast, szAPIKey, szSLOLatitude  , szSLOLongitude  , szUnits, szLanguage);
-
-  Serial.println("Weather from OpenWeather\n");
-
-  Serial.print("city_name           : "); Serial.println          (pForecast->city_name);
-  //Serial.print("sunrise             : "); Serial.println(strTime  (pForecast->sunrise));
-  Serial.print("sunrise             : "); Serial.println(strTime  (pForecast->sunrise));
-  Serial.print("sunset              : "); Serial.println(strTime  (pForecast->sunset));
-  Serial.print("Latitude            : "); Serial.println          (OpenWeather.lat);
-  Serial.print("Longitude           : "); Serial.println          (OpenWeather.lon);
-  Serial.print("Timezone            : "); Serial.println          (pForecast->timezone);
-  Serial.println();
-
-  szTemperature = String(pForecast->temp[0]);
-  //szHumidity = pForecast->humidity[0];
-  //szHumidity    = ??;
-
-  Serial.println("Temperature" + String(szTemperature));
-  Serial.println("Humidity" + szHumidity);
-  Serial.println(szCity);
-  // Delete to free up space and prevent fragmentation as strings change in length
-  delete pForecast;
-  return;
-} //ReadOpenWeather
-#endif  //DO_OPENWEATHER
-
-
-/***************************************************************************************
-**                          Convert unix time to a time string
-***************************************************************************************/
-String strTime(time_t unixTime)
-{
-  //unixTime += TIME_OFFSET;
-  unixTime += ulTimeZoneOffset;
-  return ctime(&unixTime);
-} //strTime
+void    setup               (void);
+void    loop                (void);
+void    HandleRightButton   (void);
+void    HandleLeftButton    (void);
+void    ReadOpenWeather     (void);
+void    DisplayTempHumidity (void);
+void    DisplayTimeStamp    (void);
+String  strTime             (time_t unixTime);
 
 
 void setup(void) {
@@ -263,70 +178,61 @@ void setup(void) {
     tft.fillRect((78 + (i*7)), 216, 3, 10, usBlue);
   } //for
 
-// Initialize a NTPClient to get time
+//Initialize a NTPClient to get time
   NTPTimeClient.begin();
-
   NTPTimeClient.setTimeOffset(wGMTminus8);
-#if DO_RAWJASON
-  GetData();
-  delay(500);
-#endif
 
-#if DO_OPENWEATHER
   ReadOpenWeather();
-#endif
 
 #if DO_OTA
-  Serial << "setup(): Call SetupWebServer(" << szWebHostName << ")" << endl;
+  Serial << "setup(): Call SetupWebServer(" << szWebHostName << ") for OTA updates" << endl;
   SetupWebserver(szWebHostName);
 #endif
   return;
 }   //setup
 
 
-void loop(void){
-  static int     wFrame          = 0;
-  String         szPreviousTime  = "";
-  static bool    bInvertDisplay  = true;
-  static bool    bPress1         = false;
+void HandleRightButton(void){
+  //Handle TTGO button on the right of the USB connector
+  //Cycles through 5 levels of the LED backlight to the LCD screen
   static bool    bPress2         = false;
-  static String  szCurrentSecs   = "";
+  //static int     wFrame          = 0;
 
-   tft.pushImage  (0, 88,  135, 65, ausAnimation[wFrame]);
+  if(digitalRead(ucRightButtonPin) == 0){
+    if(!bPress2){
+      bPress2= true;
+      tft.fillRect   (78,216,44,12,TFT_BLACK);
 
-   //Cycle through the 10 frames of animation
-   wFrame= ((wFrame + 1) % 10);
+      uwBacklightDuty++;
+      if(uwBacklightDuty >= 5){
+        uwBacklightDuty= 0;
+      }  //if(uwBacklightDuty>=5)
 
-   //Handle TTGO button on the right of the USB connector
-   //Cycles through 5 levels of the LED backlight to the LCD screen
-   if(digitalRead(ucRightButtonPin) == 0){
-     if(!bPress2){
-       bPress2= true;
-       tft.fillRect   (78,216,44,12,TFT_BLACK);
+      //wFrame cycles from 0 to 9, why?
+      //wFrame= ((wFrame + 1) % 10);
 
-       uwBacklightDuty++;
-       if(uwBacklightDuty >= 5){
-         uwBacklightDuty= 0;
-       }  //if(uwBacklightDuty>=5)
+      //Display number of bars to indicate brightness
+      for(int wLevel= 0;wLevel < (uwBacklightDuty + 1);wLevel++){
+        tft.fillRect (78 + (wLevel * 7), 216, 3, 10, usBlue);
+      }  //for
 
-       //wFrame cycles from 0 to 9, why?
-       wFrame= ((wFrame + 1) % 10);
+      //uwBacklightDuty ranges from 10 to 220
+      ledcWrite(ucPWMLedChannel, awBacklight[uwBacklightDuty]);
+    }  //if(!bPress2)
+  }  //if(digitalRead(ucRightButtonPin)==0)
+  else{
+    bPress2= false;
+  }  //if(digitalRead(ucRightButtonPin)==0)else
+  return;
+} //HandleRightButton
 
-       //Display number of bars to indicate brightness
-       for(int wLevel= 0;wLevel < (uwBacklightDuty + 1);wLevel++){
-         tft.fillRect (78 + (wLevel * 7), 216, 3, 10, usBlue);
-       }  //for
 
-       //uwBacklightDuty ranges from 10 to 220
-       ledcWrite(ucPWMLedChannel, awBacklight[uwBacklightDuty]);
-     }  //if(!bPress2)
-   }  //if(digitalRead(ucRightButtonPin)==0)
-   else{
-     bPress2= false;
-   }  //if(digitalRead(ucRightButtonPin)==0)else
-
+void HandleLeftButton(void){
   //Handle TTGO button on the left of the USB connector
   //Left button toggles between black background and inverted
+  static bool    bPress1          = false;
+  static bool    bInvertDisplay   = true;
+
   if(digitalRead(ucLeftButtonPin) == 0){
      if(!bPress1){
        bPress1= true;
@@ -337,31 +243,32 @@ void loop(void){
   else{
      bPress1= false;
   }  //if(digitalRead(ucLeftButtonPin)==0)else
+  return;
+} //HandleLeftButton
 
-  if (millis() > lNextReadMsec){
-     Serial << "loop(): Call GetData()" << endl;
-#if DO_RAWJASON
-     GetData();
-#endif
-#if DO_OPENWEATHER
-     ReadOpenWeather();
-#endif
-     lNextReadMsec= (millis() + lReadInterval);
-  }  //if(millis()>lNextReadMsec)
 
+void DisplayTempHumidity(void){
   tft.setFreeFont   (&Orbitron_Medium_20);
   tft.setCursor     (2, 187);
-  tft.println       (szTemperature.substring(0, 3));
+  //tft.println       (szTemperature.substring(0, 3));
+  tft.println       (fTemperature);
 
   tft.setCursor     (2, 227);
-  tft.println       (szHumidity + "%");
+  tft.print         (ucHumidity);
+  tft.println       ("%");
 
   tft.setTextColor  (TFT_ORANGE, TFT_BLACK);
   tft.setTextFont   (2);
   tft.setCursor     (6, 44);
   tft.println       (szDayStamp);
   tft.setTextColor  (TFT_WHITE, TFT_BLACK);
+  return;
+} //DisplayTempHumidity
 
+
+void DisplayTimeStamp(void){
+  String         szPreviousTime  = "";
+  static String  szCurrentSecs   = "";
   while(!NTPTimeClient.update()) {
     NTPTimeClient.forceUpdate();
   }   //while
@@ -371,7 +278,6 @@ void loop(void){
   // We need to extract date and time
   szFormattedDate = NTPTimeClient.getFormattedDate();
   if (millis() > lNextPrintMsec){
-    //Serial.println(formattedDate);
     Serial << "loop(): Formatted Date= " << szFormattedDate << endl;
     lNextPrintMsec= (millis() + lPrintInterval);
   }
@@ -400,6 +306,23 @@ void loop(void){
   }  //if(szNewTime!=szPreviousTime)
 
   delay(80);
+  return;
+} //DisplayTimeStamp
+
+
+void loop(void){
+  static int     wFrame          = 0;
+
+  //Display the next frame of 10 of animation
+  wFrame= ((wFrame + 1) % 10);
+  tft.pushImage  (0, 88,  135, 65, ausAnimation[wFrame]);
+
+  HandleRightButton();
+  HandleLeftButton();
+  ReadOpenWeather();
+  DisplayTempHumidity();
+  DisplayTimeStamp();
+
 #if DO_OTA
   HandleOTAWebserver();
 #endif
@@ -407,52 +330,64 @@ void loop(void){
 }   //loop
 
 
-#if DO_RAWJASON
-void GetData(){
+void ReadOpenWeather(void){
+  if (millis() < lNextReadMsec){
+    return;
+  }
+  else{
+    //Set next time to execute this routine.
+    //After setting next time, run this routine.
+    lNextReadMsec= (millis() + lReadInterval);
+  }  //if(millis()>lNextReadMsec)
+
+  Serial << endl << "ReadOpenWeather(): Begin" << endl;
   tft.fillRect    (1, 170, 64,20, TFT_BLACK);
   tft.fillRect    (1, 210, 64,20, TFT_BLACK);
-  if ((WiFi.status() == WL_CONNECTED)) { //Check the current connection status
-    HTTPClient    http;
-    Serial << "GetData(): Call http.begin()" << endl;
-    http.begin(szEndpoint + szKey); //Specify the URL
-    Serial << "GetData(): Call http.GET()" << endl;
-    int httpCode= http.GET();  //Make the request
-    Serial << "GetData(): After the call to http.GET()" << endl;
-
-    if (httpCode > 0){ //Check for the returning code
-      Serial << "GetData(): Call http.getString()" << endl;
-      szPayload= http.getString();
-      Serial << "GetData(): After call to http.getString()" << endl;
-      // Serial.println(httpCode);
-      //Error code gets printed here
-      Serial.println(szPayload);
-    } //if(httpCode>0)
-    else {
-      Serial.println("Error on HTTP request");
-    } //if(httpCode>0)else
-
-    Serial << "GetData(): Call http.end()" << endl;
-    http.end(); //Free the resources
+  if ((WiFi.status() != WL_CONNECTED)) { //Check the current connection status
+    //Return without doing anything.
+    Serial << "ReadOpenWeather(): ERROR: WiFi is not connected" << endl;
   } //if((WiFi.status()==WL_CONNECTED))
 
-  szPayload.toCharArray(acBuffer, uwBufSize);
-  Serial << "GetData(): Call deserializeJson()" << endl;
-  deserializeJson(JsonDoc, acBuffer);
+  //Create the structures that hold the retrieved weather
+  //OW_current, OW_hourly, OW_daily and OW_forecast are structs defined in Data_Point_Set.h
+  OW_current    *pCurrent     = new OW_current;
+  OW_hourly     *pHourly      = new OW_hourly;
+  OW_daily      *pDaily       = new OW_daily;
+  OW_forecast   *pForecast    = new OW_forecast;
 
-  String szNewTemperature = JsonDoc["main"]["temp"];
-  String szNewHumidity    = JsonDoc["main"]["humidity"];
-  szTemperature = szNewTemperature;
-  szHumidity    = szNewHumidity;
+  uwTimeZoneOffset= ulSLOSecOffset;
+  Serial << "ReadOpenWeather(): Call OneCall OpenWeather.getForecast()" << endl;
+  OpenWeather.getForecast(pCurrent, pHourly, pDaily, szAPIKey, szSLOLatitude, szSLOLongitude,
+                          szUnits, szLanguage);
+  fTemperature  = pCurrent->temp;
+  ucHumidity    = pCurrent->humidity;
 
-  Serial.println("Temperature" + String(szTemperature));
-  Serial.println("Humidity" + szHumidity);
-  Serial.println(szCity);
+  Serial << "ReadOpenWeather(): dt          : " << (strTime(pCurrent->dt));
+  Serial << "ReadOpenWeather(): Sunrise     : " << (strTime(pCurrent->sunrise));
+  Serial << "ReadOpenWeather(): Sunset      : " << (strTime(pCurrent->sunset));
+  Serial << "ReadOpenWeather(): main        : " << pCurrent->main << endl;
+  Serial << "ReadOpenWeather(): description : " << pCurrent->description << endl;
+  Serial << "ReadOpenWeather(): icon        : " << pCurrent->icon << endl;
+
+  Serial << "ReadOpenWeather(): Latitude    :   " << (OpenWeather.lat) << endl;
+  Serial << "ReadOpenWeather(): Longitude   : " << (OpenWeather.lon) << endl;
+  //Serial << "ReadOpenWeather(): Temperature : " << fTemperature << " DegF" << endl;
+  Serial << "ReadOpenWeather(): Temperature : " << fTemperature << "\370" << "F" << endl;
+  Serial << "ReadOpenWeather(): Humidity    : " << ucHumidity << "%" << endl;
+
+  // Delete to free up space and prevent fragmentation as strings change in length
+  delete pCurrent;
+  delete pHourly;
+  delete pDaily;
+  delete pForecast;
+
   return;
- }  //GetData
-#endif  //DO_RAWJASON
-/*Receiving this message:
-  {"cod":401, "message": "Invalid API key.
-  Please see https://openweathermap.org/faq#error401 for more info."}
-  I think this is my new key "82c0b2df6c96557fa90c5f42d705ca0f", 11/18/23
-*/
- //Last line.
+} //ReadOpenWeather
+
+
+String strTime(time_t unixTime){
+  //Convert unix time to a time string
+  unixTime += uwTimeZoneOffset;
+  return ctime(&unixTime);
+} //strTime
+//Last line.

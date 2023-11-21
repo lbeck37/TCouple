@@ -1,4 +1,4 @@
-
+//Beck, 11/20/23b
 // Configuration settings for OpenWeather library
 
 
@@ -15,7 +15,7 @@
 //#define SHOW_HEADER   // Debug only - for checking response header via serial message
 //#define SHOW_JSON     // Debug only - simple serial output formatting of whole JSON message
 //#define SHOW_CALLBACK // Debug only to show the decode tree
-#define OW_STATUS_ON    // Debug only - turn on/off progress and status messages
+//#define OW_STATUS_ON    // Debug only - turn on/off progress and status messages
 
 
 // ###############################################################################

@@ -141,7 +141,7 @@ bool OW_Weather::parseRequest(String url) {
   int ccount = 0;
 #endif
   // Send GET request
-  Serial.println();
+  //Serial.println();
   OW_STATUS_PRINT("Sending GET request to "); OW_STATUS_PRINT(host); OW_STATUS_PRINT(" port "); OW_STATUS_PRINT(port); OW_STATUS_PRINTF("\n");
   client.print(String("GET ") + url + " HTTP/1.1\r\n" + "Host: " + host + "\r\n" + "Connection: close\r\n\r\n");
 
@@ -192,7 +192,7 @@ bool OW_Weather::parseRequest(String url) {
   }
 
   OW_STATUS_PRINTF("\nDone in "); OW_STATUS_PRINT(millis()-dt); OW_STATUS_PRINTF(" ms\n");
-  Serial.println();
+  //Serial.println();
 
   parser.reset();
 
@@ -871,7 +871,9 @@ void OW_Weather::partialDataSet(const char *val) {
     
     if (arrayIndex >= MAX_DAYS) return;
     
-    if (currentKey == "dt") daily->dt[arrayIndex] = (uint32_t)value.toInt();
+    if (currentKey == "dt"){
+      daily->dt[arrayIndex]= (uint32_t)value.toInt();
+    }
     else
     //if (currentKey == "sunrise") daily->sunrise[arrayIndex] = (uint32_t)value.toInt();
     //else
@@ -927,8 +929,8 @@ void OW_Weather::partialDataSet(const char *val) {
       //else
       //if (currentKey == "night") daily->feels_like_night[arrayIndex] = value.toFloat();
     //}
-
     return;
-  }
-
-}
+  } //if(currentParent=="daily")
+  return;
+} //partialDataSet
+//Last line.

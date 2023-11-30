@@ -1,11 +1,11 @@
-#if 1
+#if 0
   #include <stdio.h>
   #include <stdbool.h>
   #include <unistd.h>
   void app_main(void)
   {
     while (true) {
-      printf("Hello World 11/28/23m, from app_main!\n");
+      printf("Hello World 11/29/23c, from app_main()!\n");
       sleep(1);
     }
   } //app_main
@@ -19,7 +19,8 @@
   #include "esp_flash.h"
   void app_main(void)
   {
-    printf("Hello world!\n");
+    //printf("Hello world!\n");
+    printf("Hello World 11/29/23d, from app_main()!\n");
 
     /* Print chip information */
     esp_chip_info_t chip_info;
@@ -46,6 +47,7 @@
 
     printf("Minimum free heap size: %" PRIu32 " bytes\n", esp_get_minimum_free_heap_size());
 
+/*
     for (int i = 10; i >= 0; i--) {
       printf("Restarting in %d seconds...\n", i);
       vTaskDelay(1000 / portTICK_PERIOD_MS);
@@ -53,5 +55,6 @@
     printf("Restarting now.\n");
     fflush(stdout);
     esp_restart();
+*/
   }
 #endif

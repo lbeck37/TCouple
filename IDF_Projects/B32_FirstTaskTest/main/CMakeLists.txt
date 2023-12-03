@@ -1,2 +1,2 @@
-idf_component_register(SRCS "B32_FirstTaskTest.cpp"
+idf_component_register(SRCS "main.c"
                        INCLUDE_DIRS ".")

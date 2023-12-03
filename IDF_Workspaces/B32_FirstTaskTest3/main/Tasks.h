@@ -1,7 +1,7 @@
-//Beck, Tasks.h, 12/2/23d
+//Beck, Tasks.h, 12/2/23e
 #pragma once
 
-#if 1
+#if 0
 #ifdef __cplusplus
 	extern "C" {
 #endif

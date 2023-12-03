@@ -5,7 +5,7 @@
 #include "esp_system.h"
 #include "Tasks.h"
 
-#if 1
+#if 0
 	void app_main()
 	{
 		xTaskCreate(&Task1, "Task_1", 2048, NULL, 5, NULL);

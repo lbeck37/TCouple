@@ -8,7 +8,7 @@ void setup() {
 
   Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
   Serial << "setup(): Hello World! (from Larry Beck)"<< endl;
-  
+
   return;
 } //setup
 
@@ -18,6 +18,12 @@ void loop() {
 } //loop
 
 /*
+  If you create a new sketch in c:\_Repos\TCouple\Arduino\Sketches\KCB_FirstExamples\KCB_FirstExamples.ino, then
+  you could then check it in to TCouple repository. I installed "Git for Windows" from https://git-scm.com/download/win 
+  and I was then able to open a terminal window , cd to c:\_Repos\TCouple\, and type "git gui" to bring up the Git Gui window
+  where I type in a "Commit Message" describing what is being Comitted to my local repository and Pushed up to github.
+  It may be easier, especially for the future, to use your own github account and create your own repository. This can be done later
+
   Put the text between the quotes in File>Preferences>Additional boards manager URL's:
     "https://arduino.esp8266.com/stable/package_esp8266com_index.json,https://dl.espressif.com/dl/package_esp32_index.json"
 

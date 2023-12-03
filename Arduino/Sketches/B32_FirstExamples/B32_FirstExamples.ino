@@ -1,6 +1,12 @@
 const char szSketchName[]  = "B32_FirstExamples.ino";
-const char szFileDate[]    = "12/3/23c";
+const char szFileDate[]    = "12/3/23g";
 #include <Streaming.h>
+
+//Function protorypes so compiler knows about them when it sees calls
+void setup          (void);
+void loop           (void);
+void PrintNumbers   (void);
+
 
 void setup() {
   Serial.begin(115200);
@@ -9,6 +15,8 @@ void setup() {
   Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
   Serial << "setup(): Hello World! (from Larry Beck)"<< endl;
 
+  PrintNumbers();
+
   return;
 } //setup
 
@@ -16,6 +24,23 @@ void loop() {
   //We're currently not doing anything when loop() is called
   return;
 } //loop
+
+
+void PrintNumbers(void){
+  int wFirstNumber  = 1;
+  int wLastNumber   = 10;
+  int wNumberCubed;
+
+  Serial << "PrintNumbers(): Print " << (wLastNumber - wFirstNumber + 1) << " numbers and their squares & cubes" << endl;
+  for(int wNumber= wFirstNumber; wNumber <= wLastNumber; wNumber++){
+    wNumberCubed= pow(wNumber, 3);
+    Serial << "PrintNumbers(): Number= " << wNumber << ", Square= " << wNumber*wNumber <<
+              ", Cube= " << wNumberCubed << endl;
+  } //for
+
+  return;
+} //PrintNumbers
+
 
 /*
   If you create a new sketch in c:\_Repos\TCouple\Arduino\Sketches\KCB_FirstExamples\KCB_FirstExamples.ino, then
@@ -39,5 +64,7 @@ void loop() {
 
   Even though I selected the ESP32 Dev Module in the window in AIDE2, I found I still had to go into 
     Tools>Board: ESP32 Dev Module>esp32 and select the ESP32 Dev Module there, too.
+
+  I had to hit the reset on the side of the TTGO to make it run.
 */
 //Last line

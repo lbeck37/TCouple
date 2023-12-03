@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_FirstExamples.ino";
-const char szFileDate[]    = "12/3/23g";
+const char szFileDate[]    = "12/3/23j";
 #include <Streaming.h>
 
 //Function protorypes so compiler knows about them when it sees calls
@@ -20,6 +20,7 @@ void setup() {
   return;
 } //setup
 
+
 void loop() {
   //We're currently not doing anything when loop() is called
   return;
@@ -31,7 +32,8 @@ void PrintNumbers(void){
   int wLastNumber   = 10;
   int wNumberCubed;
 
-  Serial << "PrintNumbers(): Print " << (wLastNumber - wFirstNumber + 1) << " numbers and their squares & cubes" << endl;
+  Serial << "PrintNumbers(): Print " << (wLastNumber - wFirstNumber + 1) <<
+            " numbers and their squares & cubes" << endl;
   for(int wNumber= wFirstNumber; wNumber <= wLastNumber; wNumber++){
     wNumberCubed= pow(wNumber, 3);
     Serial << "PrintNumbers(): Number= " << wNumber << ", Square= " << wNumber*wNumber <<
@@ -43,11 +45,15 @@ void PrintNumbers(void){
 
 
 /*
-  If you create a new sketch in c:\_Repos\TCouple\Arduino\Sketches\KCB_FirstExamples\KCB_FirstExamples.ino, then
-  you could then check it in to TCouple repository. I installed "Git for Windows" from https://git-scm.com/download/win 
-  and I was then able to open a terminal window , cd to c:\_Repos\TCouple\, and type "git gui" to bring up the Git Gui window
-  where I type in a "Commit Message" describing what is being Comitted to my local repository and Pushed up to github.
-  It may be easier, especially for the future, to use your own github account and create your own repository. This can be done later
+  If you create a new sketch:
+     c:\_Repos\TCouple\Arduino\Sketches\KCB_FirstExamples\KCB_FirstExamples.ino, then
+  you could then check it in to your repository.
+  I installed "Git for Windows" from:
+     https://git-scm.com/download/win,  and I was then able to open a terminal window ,
+  cd to c:\_Repos\TCouple\, and type "git gui" to bring up the Git Gui window  where I type
+  in a "Commit Message" describing what is being Comitted to my local repository and Pushed up to github.
+  It may be easier, especially for the future, to use your own github account and create your own repository, but
+  this can be done later (unless you are feeling adventurous :)
 
   Put the text between the quotes in File>Preferences>Additional boards manager URL's:
     "https://arduino.esp8266.com/stable/package_esp8266com_index.json,https://dl.espressif.com/dl/package_esp32_index.json"
@@ -62,7 +68,7 @@ void PrintNumbers(void){
   in "c:\_Repos\TCouple\Arduino\Sketches\libraries". This is where it finds the Streaming.h library mentioned in
   the "#include <Streaming.h>" line
 
-  Even though I selected the ESP32 Dev Module in the window in AIDE2, I found I still had to go into 
+  Even though I selected the ESP32 Dev Module in the window in AIDE2, I found I still had to go into
     Tools>Board: ESP32 Dev Module>esp32 and select the ESP32 Dev Module there, too.
 
   I had to hit the reset on the side of the TTGO to make it run.

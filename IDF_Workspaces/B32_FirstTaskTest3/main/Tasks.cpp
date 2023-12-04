@@ -1,4 +1,4 @@
-//Beck, Tasks.cpp, 12/2/23m
+//Beck, Tasks.cpp, 12/3/23c
 #include "Tasks.h"
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
@@ -7,6 +7,7 @@
 
 #define TASK1_PERIOD_MSEC	2000
 #define TASK2_PERIOD_MSEC	6000
+#define ONE_SECOND_DELAY	1000
 
 #if 0
 #ifdef __cplusplus
@@ -56,6 +57,9 @@ void Task2(void *pvParameter){
 */
 		xTaskCreate(&Task1, "Task_One", 2048, NULL, 5, NULL);
 		xTaskCreate(&Task2, "Task_Two", 2048, NULL, 5, NULL);
+		while(true){
+			vTaskDelay(ONE_SECOND_DELAY/portTICK_PERIOD_MS);
+		}
 	}
 	#ifdef __cplusplus
 	}

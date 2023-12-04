@@ -1,86 +1,74 @@
-//Beck, Tasks.cpp, 12/3/23c
+const char szFileName[]  = "Tasks.cpp";
+const char szFileDate[]    = "12/3/23p";
+
 #include "Tasks.h"
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_system.h"
 
-#define TASK1_PERIOD_MSEC	2000
-#define TASK2_PERIOD_MSEC	6000
+//#include <Streaming.h>
+#include <iostream>
+using std::cout;
+using std::endl;
+
+#define TASK1_PERIOD_SEC	   2
+#define TASK2_PERIOD_SEC	   6
 #define ONE_SECOND_DELAY	1000
 
-#if 0
+//Function protos
+void 		Task1		(void *pvParameter);
+void 		Task2		(void *pvParameter);
+int64_t 	lGetMsec	(void);
+
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
+void LaunchTasks(void *pvParameter){	//Prototype in Tasks.h
+	cout << endl << lGetMsec() << " LaunchTasks(): File: " << szFileName << ", " << szFileDate << endl;
+	cout << lGetMsec() << " LaunchTasks(): Launch Task1 and Task2" << endl;
+	xTaskCreate(&Task1, "Task_One", 2048, NULL, 5, NULL);
+	xTaskCreate(&Task2, "Task_Two", 2048, NULL, 5, NULL);
+	while(true){
+		vTaskDelay(ONE_SECOND_DELAY/portTICK_PERIOD_MS);	//Not sure if one second is good
+	}	//while(true)
+	//Never returns
+}	//LaunchTasks
+
+#ifdef __cplusplus
+	}
+#endif
+
+
+//Doesn't need extern "C" surround since it's not called from C code (main.c)
 void Task1(void *pvParameter){
 	while(true){
-		printf("Task1(): Hello World! 12/2/23k\n");
-		vTaskDelay(TASK1_PERIOD_MSEC/portTICK_PERIOD_MS);
+		cout << lGetMsec() << " Task1(): Hello World!" << endl;
+
+		vTaskDelay((TASK1_PERIOD_SEC * ONE_SECOND_DELAY)/portTICK_PERIOD_MS);
 	}	//while(true)
   //It's a task so it should never return
 }   //Task1
 
-#ifdef __cplusplus
-}
-#endif
 
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
+//Doesn't need extern "C" surround since it's not called from C code (main.c)
 void Task2(void *pvParameter){
 	while(true){
-		printf("Task2(): It's my turn!\n");
-		vTaskDelay(TASK2_PERIOD_MSEC/portTICK_PERIOD_MS);
+		cout << lGetMsec() << " Task2(): It's my turn!" << endl;
+		vTaskDelay((TASK2_PERIOD_SEC * ONE_SECOND_DELAY)/portTICK_PERIOD_MS);
 	}	//while(true)
   //It's a task so it should never return
 }   //Task2
 
-#ifdef __cplusplus
-}
-#endif
-#else
-	//Function protos
-	void Task1		(void *pvParameter);
-	void Task2		(void *pvParameter);
 
-	#ifdef __cplusplus
-		extern "C" {
-	#endif
-	void LaunchTasks	(void *pvParameter){
-/*
-		Task1(pvParameter);
-		Task2(pvParameter);
-*/
-		xTaskCreate(&Task1, "Task_One", 2048, NULL, 5, NULL);
-		xTaskCreate(&Task2, "Task_Two", 2048, NULL, 5, NULL);
-		while(true){
-			vTaskDelay(ONE_SECOND_DELAY/portTICK_PERIOD_MS);
-		}
-	}
-	#ifdef __cplusplus
-	}
-	#endif
+int64_t lGetMsec(void){
+	// https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/system_time.html
+	struct timeval 		stTimeNow;
+	int64_t 			lTimeMsec;
 
-
-	void Task1(void *pvParameter){
-		while(true){
-			printf("Task1(): Hello World! 12/2/23m\n");
-			vTaskDelay(TASK1_PERIOD_MSEC/portTICK_PERIOD_MS);
-		}	//while(true)
-	  //It's a task so it should never return
-	}   //Task1
-
-
-	void Task2(void *pvParameter){
-		while(true){
-			printf("Task2(): It's my turn!\n");
-			vTaskDelay(TASK2_PERIOD_MSEC/portTICK_PERIOD_MS);
-		}	//while(true)
-	  //It's a task so it should never return
-	}   //Task2
-#endif
+	gettimeofday(&stTimeNow, NULL);
+	lTimeMsec = ((int64_t)stTimeNow.tv_sec * 1000L) + ((int64_t)stTimeNow.tv_usec / 1000L);
+	return lTimeMsec;
+}	//lGetMsec
 //Last line

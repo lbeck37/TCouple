@@ -25,7 +25,6 @@ int64_t 	lGetMsec	(void);
 	extern "C" {
 #endif
 
-/*
 void LaunchTasks(void *pvParameter){	//Prototype in Tasks.h
 	cout << endl << lGetMsec() << " LaunchTasks(): File: " << szFileName << ", " << szFileDate << endl;
 	cout << lGetMsec() << " LaunchTasks(): Launch Task1 and Task2" << endl;
@@ -61,53 +60,6 @@ void Task2(void *pvParameter){
 	}	//while(true)
   //It's a task so it should never return
 }   //Task2
-*/
-void LaunchTasks(void *pvParameter){	//Prototype in Tasks.h
-	cout << endl << lGetMsec() << " LaunchTasks(): File: " << szFileName << ", " << szFileDate << endl;
-
-	cout << lGetMsec() << " LaunchTasks(): Call setup()" << endl;
-	setup();
-
-	cout << lGetMsec() << " LaunchTasks(): Launch Task1" << endl;
-	xTaskCreate(&Task1, "Loop Task", 2048, NULL, 5, NULL);
-
-/*
-	cout << lGetMsec() << " LaunchTasks(): Launch Task2" << endl;
-	xTaskCreate(&Task2, "Task_Two", 2048, NULL, 5, NULL);
-*/
-
-	while(true){
-		vTaskDelay(ONE_SECOND_DELAY/portTICK_PERIOD_MS);	//Not sure if one second is good
-	}	//while(true)
-	//Never returns
-}	//LaunchTasks
-
-#ifdef __cplusplus
-	}
-#endif
-
-
-//Doesn't need extern "C" surround since it's not called from C code (main.c)
-void Task1(void *pvParameter){
-	while(true){
-		cout << lGetMsec() << " Task1(): Hello World!" << endl;
-
-		vTaskDelay((TASK1_PERIOD_SEC * ONE_SECOND_DELAY)/portTICK_PERIOD_MS);
-	}	//while(true)
-  //It's a task so it should never return
-}   //Task1
-
-
-/*
-//Doesn't need extern "C" surround since it's not called from C code (main.c)
-void Task2(void *pvParameter){
-	while(true){
-		cout << lGetMsec() << " Task2(): It's my turn!" << endl;
-		vTaskDelay((TASK2_PERIOD_SEC * ONE_SECOND_DELAY)/portTICK_PERIOD_MS);
-	}	//while(true)
-  //It's a task so it should never return
-}   //Task2
-*/
 
 
 int64_t lGetMsec(void){

@@ -3,7 +3,7 @@
 # for more information about component CMakeLists.txt files.
 
 idf_component_register(
-    SRCS main.c Tasks.h Tasks.cpp B32_TTGOWeatherStation.cpp ani.h Animation.h Orbitron_Medium_20.h
+    SRCS main.c Tasks.h Tasks.cpp B32_TTGOWeatherStation.cpp ani.h Animation.h Orbitron_Medium_20.h TFT_eSPI.cpp TFT_eSPI.h TFT_eSPI_Generic.c
     INCLUDE_DIRS        # optional, add here public include directories
     PRIV_INCLUDE_DIRS   # optional, add here private include directories
     REQUIRES            # optional, list the public requirements (component names)

@@ -75,7 +75,7 @@ bool OW_Weather::getForecast(OW_current *current, OW_hourly *hourly, OW_daily *d
 ** Function name:           getForecast (using forecast API)
 ** Description:             Setup the weather forecast request
 ***************************************************************************************/
-bool OW_Weather::getForecast(OW_forecast *forecast, String api_key, 
+bool OW_Weather::getForecast(OW_forecast *forecast, String api_key,
                              String latitude, String longitude,
                              String units, String language, bool secure)
 {
@@ -103,7 +103,7 @@ bool OW_Weather::getForecast(OW_forecast *forecast, String api_key,
 ** Description:             Set requested data set to partial (true) or full (false)
 ***************************************************************************************/
 void OW_Weather::partialDataSet(bool partialSet) {
-  
+
   this->partialSet = partialSet;
 }
 
@@ -115,7 +115,7 @@ void OW_Weather::partialDataSet(bool partialSet) {
 ***************************************************************************************/
 bool OW_Weather::parseRequest(String url) {
 
-  uint32_t dt = millis();
+  //uint32_t dt = millis();
 
   OW_STATUS_PRINTF("\n\nThe connection to server is secure (https). Certificate not checked.\n");
   WiFiClientSecure client;
@@ -197,7 +197,7 @@ bool OW_Weather::parseRequest(String url) {
   parser.reset();
 
   client.stop();
-  
+
   // A message has been parsed, but the data-point correctness is unknown
   return parseOK;
 }
@@ -303,7 +303,7 @@ bool OW_Weather::parseRequestSecure(String* url) {
   parser.reset();
 
   client.stop();
-  
+
   // A message has been parsed without error but the data-point correctness is unknown
   return parseOK;
 }
@@ -317,7 +317,7 @@ bool OW_Weather::parseRequestInsecure(String* url) {
   // AXTLS used (insecure)
   WiFiClient client;
   port = 80;
- 
+
   if (!client.connect(host, port))
   {
     OW_STATUS_PRINTF("Connection failed.\n");
@@ -387,7 +387,7 @@ bool OW_Weather::parseRequestInsecure(String* url) {
   parser.reset();
 
   client.stop();
-  
+
   // A message has been parsed without error but the data-point correctness is unknown
   return parseOK;
 }
@@ -451,7 +451,7 @@ void OW_Weather::endObject() {
   if (arrayLevel == 0) currentParent = "";
   if (arrayLevel == 1  && objectLevel == 2) arrayIndex++;
   objectLevel--;
-  
+
 
 #ifdef SHOW_CALLBACK
   Serial.print("\n<<< End object <<<");
@@ -568,9 +568,9 @@ void OW_Weather::fullDataSet(const char *val) {
   // Hourly forecast
   if (currentParent == "hourly") {
     data_set = "hourly";
-    
+
     if (arrayIndex >= MAX_HOURS) return;
-    
+
     if (currentKey == "dt") hourly->dt[arrayIndex] = (uint32_t)value.toInt();
     else
     if (currentKey == "temp") hourly->temp[arrayIndex] = value.toFloat();
@@ -615,9 +615,9 @@ void OW_Weather::fullDataSet(const char *val) {
   // Daily forecast
   if (currentParent == "daily") {
     data_set = "daily";
-    
+
     if (arrayIndex >= MAX_DAYS) return;
-    
+
     if (currentKey == "dt") daily->dt[arrayIndex] = (uint32_t)value.toInt();
     else
     if (currentKey == "sunrise") daily->sunrise[arrayIndex] = (uint32_t)value.toInt();
@@ -825,9 +825,9 @@ void OW_Weather::partialDataSet(const char *val) {
   // Hourly forecast
   if (currentParent == "hourly") {
     data_set = "hourly";
-    
+
     if (arrayIndex >= MAX_HOURS) return;
-    
+
     if (currentKey == "dt") hourly->dt[arrayIndex] = (uint32_t)value.toInt();
     else
     if (currentKey == "temp") hourly->temp[arrayIndex] = value.toFloat();
@@ -868,9 +868,9 @@ void OW_Weather::partialDataSet(const char *val) {
   // Daily forecast
   if (currentParent == "daily") {
     data_set = "daily";
-    
+
     if (arrayIndex >= MAX_DAYS) return;
-    
+
     if (currentKey == "dt"){
       daily->dt[arrayIndex]= (uint32_t)value.toInt();
     }

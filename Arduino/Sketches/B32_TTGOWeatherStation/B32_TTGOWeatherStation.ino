@@ -1,7 +1,9 @@
 const char szSketchName[]  = "B32_TTGOWeather.ino";
-const char szFileDate[]    = "11/21/23B";
+const char szFileDate[]    = "12/8/23c";
 
-#include "Animation.h"
+//#include "Animation.h" Animation10x.h
+//#include "ani.h"
+#include "Animation10x.h"
 #include <SPI.h>
 #include <TFT_eSPI.h>           // Hardware-specific library
 #include <NTPClient.h>          //https://github.com/taranais/NTPClient

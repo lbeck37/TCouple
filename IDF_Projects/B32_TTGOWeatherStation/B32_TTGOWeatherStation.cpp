@@ -1,7 +1,11 @@
-const char szFileName[]  = "B32_TTGOWeatherStation.ino";
+const char szFileName[]  = "B32_TTGOWeatherStation.cpp";
 const char szFileDate[]  = "12/4/23b";
 
-#define AIDE	false			//Set true when building for Arduino IDE
+#define B32_IDF     true
+#define AIDE	      false			//Set true when building for Arduino IDE
+#define AIDE_ORG    true      //Stuff in Arduino version
+
+/*Original code used in AIDE
 #include "Animation.h"
 #include <SPI.h>
 #include <TFT_eSPI.h>           // Hardware-specific library
@@ -9,14 +13,34 @@ const char szFileDate[]  = "12/4/23b";
 #include "Orbitron_Medium_20.h"
 #include <WiFi.h>
 #include <WiFiUdp.h>
-#if AIDE
-	#include <Streaming.h>
+#include <Streaming.h>
+*/
+#if AIDE_ORG
+  #include "Animation.h"
+  #if !B32_IDF
+    #include <SPI.h>
+  #endif
+  //#include <TFT_eSPI.h>           // Hardware-specific library
+  #include "TFT_eSPI.h"           // Hardware-specific library
+  #include <NTPClient.h>          //https://github.com/taranais/NTPClient
+  #include "Orbitron_Medium_20.h"
+  #include <WiFi.h>
+  #include <WiFiUdp.h>
+  #include <Streaming.h>
 #endif
-#include <stdio.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "esp_system.h"
-#include "Tasks.h"
+#if B32_IDF
+  #include <stdio.h>
+  #include "freertos/FreeRTOS.h"
+  #include "freertos/task.h"
+  #include "esp_system.h"
+  #include "Tasks.h"
+#endif
+
+#if B32_IDF
+  #define COUT            cout
+#else
+  #define COUT            Serial
+#endif
 
 #define DO_OTA            false
 #define DO_OPENWEATHER    true
@@ -103,8 +127,10 @@ long        lNextPrintMsec  = 0;
 long        lNextReadMsec   = 0;
 
 //Func protos
+/*
 void    setup               (void);
 void    loop                (void);
+*/
 void    HandleRightButton   (void);
 void    HandleLeftButton    (void);
 void    ReadOpenWeather     (void);
@@ -116,18 +142,18 @@ String  strTime             (time_t unixTime);
 void setup(void) {
   Serial.begin(115200);
   delay(500);
-  Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
+  COUT << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
   pinMode(0, INPUT_PULLUP);
   pinMode(ucRightButtonPin, INPUT);
-  Serial << "setup(): Sketch: Call tft.init()" << endl;
+  COUT << "setup(): Sketch: Call tft.init()" << endl;
   tft.init            ();
   tft.setRotation     (0);
   tft.fillScreen      (TFT_BLACK);
   tft.setTextColor    (TFT_WHITE, TFT_BLACK);
   tft.setTextSize     (1);
 
-  Serial << "setup(): Sketch: Call ledcSetup()" << endl;
+  COUT << "setup(): Sketch: Call ledcSetup()" << endl;
   ledcSetup           (ucPWMLedChannel, dPWMFreq, ucPWMResolution);
   ledcAttachPin       (TFT_BL, ucPWMLedChannel);
   ledcWrite           (ucPWMLedChannel, awBacklight[uwBacklightDuty]);
@@ -135,7 +161,7 @@ void setup(void) {
   tft.print           ("Connecting to ");    //This goes to the display
   tft.println         (szRouterName);
 
-  Serial << "setup(): Sketch: Call WiFi.begin(" << szRouterName << ", "
+  COUT << "setup(): Sketch: Call WiFi.begin(" << szRouterName << ", "
          << szRouterPW << ")" << endl;
   WiFi.begin(szRouterName, szRouterPW);
 
@@ -143,7 +169,7 @@ void setup(void) {
     delay(300);
     tft.print(".");
   } //while
-  Serial << endl << "setup(): Connected to " << szRouterName
+  COUT << endl << "setup(): Connected to " << szRouterName
          << ", IP address to connect to is " << WiFi.localIP() << endl;
 
   tft.println       ("");
@@ -191,7 +217,7 @@ void setup(void) {
   ReadOpenWeather();
 
 #if DO_OTA
-  Serial << "setup(): Call SetupWebServer(" << szWebHostName << ") for OTA updates" << endl;
+  COUT << "setup(): Call SetupWebServer(" << szWebHostName << ") for OTA updates" << endl;
   SetupWebserver(szWebHostName);
 #endif
   return;
@@ -284,7 +310,7 @@ void DisplayTimeStamp(void){
   // We need to extract date and time
   szFormattedDate = NTPTimeClient.getFormattedDate();
   if (millis() > lNextPrintMsec){
-    Serial << "loop(): Formatted Date= " << szFormattedDate << endl;
+    COUT << "loop(): Formatted Date= " << szFormattedDate << endl;
     lNextPrintMsec= (millis() + lPrintInterval);
   }
 
@@ -346,12 +372,12 @@ void ReadOpenWeather(void){
     lNextReadMsec= (millis() + lReadInterval);
   }  //if(millis()>lNextReadMsec)
 
-  Serial << endl << "ReadOpenWeather(): Begin" << endl;
+  COUT << endl << "ReadOpenWeather(): Begin" << endl;
   tft.fillRect    (1, 170, 64,20, TFT_BLACK);
   tft.fillRect    (1, 210, 64,20, TFT_BLACK);
   if ((WiFi.status() != WL_CONNECTED)) { //Check the current connection status
     //Return without doing anything.
-    Serial << "ReadOpenWeather(): ERROR: WiFi is not connected" << endl;
+    COUT << "ReadOpenWeather(): ERROR: WiFi is not connected" << endl;
   } //if((WiFi.status()==WL_CONNECTED))
 
   //Create the structures that hold the retrieved weather
@@ -362,24 +388,24 @@ void ReadOpenWeather(void){
   OW_forecast   *pForecast    = new OW_forecast;
 
   uwTimeZoneOffset= ulSLOSecOffset;
-  Serial << "ReadOpenWeather(): Call OneCall OpenWeather.getForecast()" << endl;
+  COUT << "ReadOpenWeather(): Call OneCall OpenWeather.getForecast()" << endl;
   OpenWeather.getForecast(pCurrent, pHourly, pDaily, szAPIKey, szSLOLatitude, szSLOLongitude,
                           szUnits, szLanguage);
   fTemperature  = pCurrent->temp;
   ucHumidity    = pCurrent->humidity;
 
-  Serial << "ReadOpenWeather(): dt          : " << (strTime(pCurrent->dt));
-  Serial << "ReadOpenWeather(): Sunrise     : " << (strTime(pCurrent->sunrise));
-  Serial << "ReadOpenWeather(): Sunset      : " << (strTime(pCurrent->sunset));
-  Serial << "ReadOpenWeather(): main        : " << pCurrent->main << endl;
-  Serial << "ReadOpenWeather(): description : " << pCurrent->description << endl;
-  Serial << "ReadOpenWeather(): icon        : " << pCurrent->icon << endl;
+  COUT << "ReadOpenWeather(): dt          : " << (strTime(pCurrent->dt));
+  COUT << "ReadOpenWeather(): Sunrise     : " << (strTime(pCurrent->sunrise));
+  COUT << "ReadOpenWeather(): Sunset      : " << (strTime(pCurrent->sunset));
+  COUT << "ReadOpenWeather(): main        : " << pCurrent->main << endl;
+  COUT << "ReadOpenWeather(): description : " << pCurrent->description << endl;
+  COUT << "ReadOpenWeather(): icon        : " << pCurrent->icon << endl;
 
-  Serial << "ReadOpenWeather(): Latitude    :   " << (OpenWeather.lat) << endl;
-  Serial << "ReadOpenWeather(): Longitude   : " << (OpenWeather.lon) << endl;
-  //Serial << "ReadOpenWeather(): Temperature : " << fTemperature << " DegF" << endl;
-  Serial << "ReadOpenWeather(): Temperature : " << fTemperature << "\370" << "F" << endl;
-  Serial << "ReadOpenWeather(): Humidity    : " << ucHumidity << "%" << endl;
+  COUT << "ReadOpenWeather(): Latitude    :   " << (OpenWeather.lat) << endl;
+  COUT << "ReadOpenWeather(): Longitude   : " << (OpenWeather.lon) << endl;
+  //COUT << "ReadOpenWeather(): Temperature : " << fTemperature << " DegF" << endl;
+  COUT << "ReadOpenWeather(): Temperature : " << fTemperature << "\370" << "F" << endl;
+  COUT << "ReadOpenWeather(): Humidity    : " << ucHumidity << "%" << endl;
 
   // Delete to free up space and prevent fragmentation as strings change in length
   delete pCurrent;

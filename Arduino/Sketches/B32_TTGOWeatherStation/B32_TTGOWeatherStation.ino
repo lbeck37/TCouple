@@ -1,8 +1,6 @@
-const char szSketchName[]  = "B32_TTGOWeather.ino";
-const char szFileDate[]    = "12/8/23c";
+const char szSketchName[]  = "B32_TTGOWeatherStation.ino";
+const char szFileDate[]    = "12/8/23g";
 
-//#include "Animation.h" Animation10x.h
-//#include "ani.h"
 #include "Animation10x.h"
 #include <SPI.h>
 #include <TFT_eSPI.h>           // Hardware-specific library
@@ -66,6 +64,8 @@ const time_t  ulSLOSecOffset    = (wSLOTimeZone   * wSecPerHour);
 //time_t        ulTimeZoneOffset;
 uint32_t      uwTimeZoneOffset;
 
+const int     wReadWeatherTaskPeriodSec = 3;
+
 String        szLatitude;
 String        szLongitude;
 String        szUnits          = "imperial";  //"metric" or "imperial"
@@ -104,7 +104,8 @@ void    setup               (void);
 void    loop                (void);
 void    HandleRightButton   (void);
 void    HandleLeftButton    (void);
-void    ReadOpenWeather     (void);
+//void    ReadOpenWeather     (void);
+void    ReadWeatherTask     (void *pvParameter);
 void    DisplayTempHumidity (void);
 void    DisplayTimeStamp    (void);
 String  strTime             (time_t unixTime);
@@ -185,14 +186,36 @@ void setup(void) {
   NTPTimeClient.begin();
   NTPTimeClient.setTimeOffset(wGMTminus8);
 
-  ReadOpenWeather();
-
 #if DO_OTA
   Serial << "setup(): Call SetupWebServer(" << szWebHostName << ") for OTA updates" << endl;
   SetupWebserver(szWebHostName);
 #endif
+
+	//xTaskCreate(&ReadWeatherTask, "ReadWeather Task", 2048, NULL, 5, NULL);
+
   return;
 }   //setup
+
+
+void loop(void){
+  static int     wFrame          = 0;
+
+  //Display the next frame of 10 of animation
+  wFrame= ((wFrame + 1) % 10);
+  tft.pushImage  (0, 88,  135, 65, ausAnimation[wFrame]);
+
+  HandleRightButton();
+  HandleLeftButton();
+  //ReadOpenWeather();
+  DisplayTempHumidity();
+  DisplayTimeStamp();
+
+#if DO_OTA
+  HandleOTAWebserver();
+#endif
+  //delay(1000);
+  return;
+}   //loop
 
 
 void HandleRightButton(void){
@@ -251,6 +274,9 @@ void HandleLeftButton(void){
 
 
 void DisplayTempHumidity(void){
+  tft.fillRect    (1, 170, 64,20, TFT_BLACK);   //Was in ReadOpenWeather()
+  tft.fillRect    (1, 210, 64,20, TFT_BLACK);
+
   tft.setFreeFont   (&Orbitron_Medium_20);
   tft.setCursor     (2, 187);
   //tft.println       (szTemperature.substring(0, 3));
@@ -313,26 +339,7 @@ void DisplayTimeStamp(void){
 } //DisplayTimeStamp
 
 
-void loop(void){
-  static int     wFrame          = 0;
-
-  //Display the next frame of 10 of animation
-  wFrame= ((wFrame + 1) % 10);
-  tft.pushImage  (0, 88,  135, 65, ausAnimation[wFrame]);
-
-  HandleRightButton();
-  HandleLeftButton();
-  ReadOpenWeather();
-  DisplayTempHumidity();
-  DisplayTimeStamp();
-
-#if DO_OTA
-  HandleOTAWebserver();
-#endif
-  return;
-}   //loop
-
-
+#if 0
 void ReadOpenWeather(void){
   if (millis() < lNextReadMsec){
     return;
@@ -386,6 +393,51 @@ void ReadOpenWeather(void){
 
   return;
 } //ReadOpenWeather
+#endif
+
+
+void ReadWeatherTask(void *pvParameter){
+  Serial << endl << "ReadWeatherTask(): Begin" << endl;
+
+  while(true){
+    //Create the structures that hold the retrieved weather
+    //OW_current, OW_hourly, OW_daily and OW_forecast are structs defined in Data_Point_Set.h
+    OW_current    *pCurrent     = new OW_current;
+    OW_hourly     *pHourly      = new OW_hourly;
+    OW_daily      *pDaily       = new OW_daily;
+    OW_forecast   *pForecast    = new OW_forecast;
+
+    uwTimeZoneOffset= ulSLOSecOffset;
+    Serial << "ReadWeatherTask(): Call OneCall OpenWeather.getForecast()" << endl;
+    OpenWeather.getForecast(pCurrent, pHourly, pDaily, szAPIKey, szSLOLatitude, szSLOLongitude,
+                            szUnits, szLanguage);
+    fTemperature  = pCurrent->temp;
+    ucHumidity    = pCurrent->humidity;
+
+    Serial << "ReadWeatherTask(): dt          : " << (strTime(pCurrent->dt));
+    Serial << "ReadWeatherTask(): Sunrise     : " << (strTime(pCurrent->sunrise));
+    Serial << "ReadWeatherTask(): Sunset      : " << (strTime(pCurrent->sunset));
+    Serial << "ReadWeatherTask(): main        : " << pCurrent->main << endl;
+    Serial << "ReadWeatherTask(): description : " << pCurrent->description << endl;
+    Serial << "ReadWeatherTask(): icon        : " << pCurrent->icon << endl;
+
+    Serial << "ReadWeatherTask(): Latitude    :   " << (OpenWeather.lat) << endl;
+    Serial << "ReadWeatherTask(): Longitude   : " << (OpenWeather.lon) << endl;
+    //Serial << "ReadWeatherTask(): Temperature : " << fTemperature << " DegF" << endl;
+    Serial << "ReadWeatherTask(): Temperature : " << fTemperature << "\370" << "F" << endl;
+    Serial << "ReadWeatherTask(): Humidity    : " << ucHumidity << "%" << endl;
+
+    // Delete to free up space and prevent fragmentation as strings change in length
+    delete pCurrent;
+    delete pHourly;
+    delete pDaily;
+    delete pForecast;
+
+    vTaskDelay(wReadWeatherTaskPeriodSec/portTICK_PERIOD_MS);
+} //while(true)
+
+  //Never returns
+} //ReadWeatherTask
 
 
 String strTime(time_t unixTime){

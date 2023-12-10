@@ -1,9 +1,10 @@
 const char szSketchName[]  = "B32_TTGOWeatherStation.ino";
-const char szFileDate[]    = "12/8/23g";
+const char szFileDate[]    = "12/9/23c";
 
 #include "Animation10x.h"
 #include <SPI.h>
 #include <TFT_eSPI.h>           // Hardware-specific library
+//#include "TFT_eSPI.h"           // Hardware-specific library
 #include <NTPClient.h>          //https://github.com/taranais/NTPClient
 #include "Orbitron_Medium_20.h"
 #include <WiFi.h>

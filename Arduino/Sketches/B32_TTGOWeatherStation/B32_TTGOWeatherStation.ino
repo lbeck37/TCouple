@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TTGOWeatherStation.ino";
-const char szFileDate[]    = "12/10/23h";
+const char szFileDate[]    = "12/11/23c";
 
 #define DO_OTA            true
 #define DO_OPENWEATHER    true
@@ -114,7 +114,7 @@ void    setup               (void);
 void    loop                (void);
 void    HandleRightButton   (void);
 void    HandleLeftButton    (void);
-//void    ReadOpenWeather     (void);
+void    ReadOpenWeather     (void);
 void    ReadWeatherTask     (void *pvParameter);
 void    DisplayTempHumidity (void);
 void    DisplayTimeStamp    (void);
@@ -218,7 +218,10 @@ void loop(void){
 
   HandleRightButton();
   HandleLeftButton();
-  //ReadOpenWeather();
+  
+  #if !DO_TASKING
+    ReadOpenWeather();
+  #endif
   DisplayTempHumidity();
   DisplayTimeStamp();
 
@@ -351,7 +354,6 @@ void DisplayTimeStamp(void){
 } //DisplayTimeStamp
 
 
-#if 0
 void ReadOpenWeather(void){
   if (millis() < lNextReadMsec){
     return;
@@ -375,7 +377,7 @@ void ReadOpenWeather(void){
   OW_current    *pCurrent     = new OW_current;
   OW_hourly     *pHourly      = new OW_hourly;
   OW_daily      *pDaily       = new OW_daily;
-  OW_forecast   *pForecast    = new OW_forecast;
+  //OW_forecast   *pForecast    = new OW_forecast;
 
   uwTimeZoneOffset= ulSLOSecOffset;
   Serial << "ReadOpenWeather(): Call OneCall OpenWeather.getForecast()" << endl;
@@ -384,6 +386,54 @@ void ReadOpenWeather(void){
   fTemperature  = pCurrent->temp;
   ucHumidity    = pCurrent->humidity;
 
+  // Delete to free up space and prevent fragmentation as strings change in length
+  delete pCurrent;
+  delete pHourly;
+  delete pDaily;
+  //delete pForecast;
+
+  return;
+} //ReadOpenWeather
+
+
+void ReadWeatherTask(void *pvParameter){
+  Serial << endl << "ReadWeatherTask(): Begin" << endl;
+
+  while(true){
+    //Create the structures that hold the retrieved weather
+    //OW_current, OW_hourly, OW_daily and OW_forecast are structs defined in Data_Point_Set.h
+    OW_current    *pCurrent     = new OW_current;
+    OW_hourly     *pHourly      = new OW_hourly;
+    OW_daily      *pDaily       = new OW_daily;
+    //OW_forecast   *pForecast    = new OW_forecast;
+
+    uwTimeZoneOffset= ulSLOSecOffset;
+    OpenWeather.getForecast(pCurrent, pHourly, pDaily, szAPIKey, szSLOLatitude, 
+                            szSLOLongitude, szUnits, szLanguage);
+    fTemperature  = pCurrent->temp;
+    ucHumidity    = pCurrent->humidity;
+
+    // Delete to free up space and prevent fragmentation as strings change in length
+    delete pCurrent;
+    delete pHourly;
+    delete pDaily;
+    //delete pForecast;
+
+    vTaskDelay(wReadWeatherTaskPeriodSec/portTICK_PERIOD_MS);
+  } //while(true)
+
+  //Never returns
+} //ReadWeatherTask
+
+
+String strTime(time_t unixTime){
+  //Convert unix time to a time string
+  unixTime += uwTimeZoneOffset;
+  return ctime(&unixTime);
+} //strTime
+
+#if false   //Here just as documentation
+void PrintOpenWeather(OW_current *pCurrent){
   Serial << "ReadOpenWeather(): dt          : " << (strTime(pCurrent->dt));
   Serial << "ReadOpenWeather(): Sunrise     : " << (strTime(pCurrent->sunrise));
   Serial << "ReadOpenWeather(): Sunset      : " << (strTime(pCurrent->sunset));
@@ -396,65 +446,7 @@ void ReadOpenWeather(void){
   //Serial << "ReadOpenWeather(): Temperature : " << fTemperature << " DegF" << endl;
   Serial << "ReadOpenWeather(): Temperature : " << fTemperature << "\370" << "F" << endl;
   Serial << "ReadOpenWeather(): Humidity    : " << ucHumidity << "%" << endl;
-
-  // Delete to free up space and prevent fragmentation as strings change in length
-  delete pCurrent;
-  delete pHourly;
-  delete pDaily;
-  delete pForecast;
-
-  return;
-} //ReadOpenWeather
+} //PrintOpenWeather
 #endif
 
-
-void ReadWeatherTask(void *pvParameter){
-  Serial << endl << "ReadWeatherTask(): Begin" << endl;
-
-  while(true){
-    //Create the structures that hold the retrieved weather
-    //OW_current, OW_hourly, OW_daily and OW_forecast are structs defined in Data_Point_Set.h
-    OW_current    *pCurrent     = new OW_current;
-    OW_hourly     *pHourly      = new OW_hourly;
-    OW_daily      *pDaily       = new OW_daily;
-    OW_forecast   *pForecast    = new OW_forecast;
-
-    uwTimeZoneOffset= ulSLOSecOffset;
-    Serial << "ReadWeatherTask(): Call OneCall OpenWeather.getForecast()" << endl;
-    OpenWeather.getForecast(pCurrent, pHourly, pDaily, szAPIKey, szSLOLatitude, szSLOLongitude,
-                            szUnits, szLanguage);
-    fTemperature  = pCurrent->temp;
-    ucHumidity    = pCurrent->humidity;
-
-    Serial << "ReadWeatherTask(): dt          : " << (strTime(pCurrent->dt));
-    Serial << "ReadWeatherTask(): Sunrise     : " << (strTime(pCurrent->sunrise));
-    Serial << "ReadWeatherTask(): Sunset      : " << (strTime(pCurrent->sunset));
-    Serial << "ReadWeatherTask(): main        : " << pCurrent->main << endl;
-    Serial << "ReadWeatherTask(): description : " << pCurrent->description << endl;
-    Serial << "ReadWeatherTask(): icon        : " << pCurrent->icon << endl;
-
-    Serial << "ReadWeatherTask(): Latitude    :   " << (OpenWeather.lat) << endl;
-    Serial << "ReadWeatherTask(): Longitude   : " << (OpenWeather.lon) << endl;
-    //Serial << "ReadWeatherTask(): Temperature : " << fTemperature << " DegF" << endl;
-    Serial << "ReadWeatherTask(): Temperature : " << fTemperature << "\370" << "F" << endl;
-    Serial << "ReadWeatherTask(): Humidity    : " << ucHumidity << "%" << endl;
-
-    // Delete to free up space and prevent fragmentation as strings change in length
-    delete pCurrent;
-    delete pHourly;
-    delete pDaily;
-    delete pForecast;
-
-    vTaskDelay(wReadWeatherTaskPeriodSec/portTICK_PERIOD_MS);
-} //while(true)
-
-  //Never returns
-} //ReadWeatherTask
-
-
-String strTime(time_t unixTime){
-  //Convert unix time to a time string
-  unixTime += uwTimeZoneOffset;
-  return ctime(&unixTime);
-} //strTime
 //Last line.

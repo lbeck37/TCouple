@@ -1,34 +1,23 @@
 const char szSketchName[]  = "B32_TTGOWeatherStation.ino";
-const char szFileDate[]    = "12/11/23e";
+const char szFileDate[]    = "12/11/23g";
 
 #define DO_OTA            true
-#define DO_OPENWEATHER    true
-#define DO_TASKING        true 
+#define DO_TASKING        false 
 
+#include <NTPClient.h>    //https://github.com/taranais/NTPClient
+#include <OpenWeather.h>
 #include <SPI.h>
+#include <Streaming.h>
+#include <TFT_eSPI.h>     // Hardware-specific library
+#include <Time.h>         //Just using this library for unix time conversion
 #include <WiFi.h>
 #include <WiFiUdp.h>
-#include <Time.h>     //Just using this library for unix time conversion
-
-#include <TFT_eSPI.h>           // Hardware-specific library
-#include <NTPClient.h>          //https://github.com/taranais/NTPClient
-#include <Streaming.h>
 
 #include "Animation10x.h"
 #include "Orbitron_Medium_20.h"
 
-#if false && DO_TASKING
-  #include <FreeRTOS.h>
-  #include <Arduino_FreeRTOS.h>
-  #include "freertos/FreeRTOS.h"
-#endif  //DO_TASKING
-
 #if DO_OTA
   #include "BeckE32_OTALib.h"
-#endif
-
-#if DO_OPENWEATHER
-  #include <OpenWeather.h>
 #endif
 
 const double    dPWMFreq          = 5000.0;
@@ -69,20 +58,18 @@ const int     wBoiseTimeZone    = -7;
 const int     wSLOTimeZone      = -8;
 const time_t  ulBoiseSecOffset  = (wBoiseTimeZone * wSecPerHour);
 const time_t  ulSLOSecOffset    = (wSLOTimeZone   * wSecPerHour);
-
-//time_t        ulTimeZoneOffset;
-uint32_t      uwTimeZoneOffset;
-
 const int     wReadWeatherTaskPeriodSec = 3;
+
+uint32_t      uwTimeZoneOffset;
 
 String        szLatitude;
 String        szLongitude;
 String        szUnits          = "imperial";  //"metric" or "imperial"
 String        szLanguage       = "en";
 
-OW_Weather    OpenWeather;                    //Weather pForecast library instance
+OW_Weather    OpenWeather;                    //Weather pForecast instance
 
-TFT_eSPI      tft              = TFT_eSPI();  // Invoke graphics library
+TFT_eSPI      tft              = TFT_eSPI();  //Graphics library
 
 // Define NTP Client to get time
 WiFiUDP     ntpUDP;

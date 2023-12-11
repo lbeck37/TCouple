@@ -1,10 +1,9 @@
 const char szSketchName[]  = "B32_TTGOWeatherStation.ino";
-const char szFileDate[]    = "12/11/23c";
+const char szFileDate[]    = "12/11/23e";
 
 #define DO_OTA            true
 #define DO_OPENWEATHER    true
-//#define DO_GRAPHICS       true 
-#define DO_TASKING        false 
+#define DO_TASKING        true 
 
 #include <SPI.h>
 #include <WiFi.h>
@@ -18,7 +17,7 @@ const char szFileDate[]    = "12/11/23c";
 #include "Animation10x.h"
 #include "Orbitron_Medium_20.h"
 
-#if DO_TASKING
+#if false && DO_TASKING
   #include <FreeRTOS.h>
   #include <Arduino_FreeRTOS.h>
   #include "freertos/FreeRTOS.h"
@@ -203,7 +202,8 @@ void setup(void) {
 #endif
 
 #if DO_TASKING
-	xTaskCreate(&ReadWeatherTask, "ReadWeather Task", 2048, NULL, 5, NULL);
+	//xTaskCreate(&ReadWeatherTask, "ReadWeather Task", 2048, NULL, 5, NULL);
+	xTaskCreate(&ReadWeatherTask, "ReadWeather Task", (4 * 2048), NULL, 5, NULL);
 #endif
   return;
 }   //setup
@@ -377,7 +377,6 @@ void ReadOpenWeather(void){
   OW_current    *pCurrent     = new OW_current;
   OW_hourly     *pHourly      = new OW_hourly;
   OW_daily      *pDaily       = new OW_daily;
-  //OW_forecast   *pForecast    = new OW_forecast;
 
   uwTimeZoneOffset= ulSLOSecOffset;
   Serial << "ReadOpenWeather(): Call OneCall OpenWeather.getForecast()" << endl;
@@ -390,22 +389,18 @@ void ReadOpenWeather(void){
   delete pCurrent;
   delete pHourly;
   delete pDaily;
-  //delete pForecast;
 
   return;
 } //ReadOpenWeather
 
 
 void ReadWeatherTask(void *pvParameter){
-  Serial << endl << "ReadWeatherTask(): Begin" << endl;
-
   while(true){
     //Create the structures that hold the retrieved weather
     //OW_current, OW_hourly, OW_daily and OW_forecast are structs defined in Data_Point_Set.h
     OW_current    *pCurrent     = new OW_current;
     OW_hourly     *pHourly      = new OW_hourly;
     OW_daily      *pDaily       = new OW_daily;
-    //OW_forecast   *pForecast    = new OW_forecast;
 
     uwTimeZoneOffset= ulSLOSecOffset;
     OpenWeather.getForecast(pCurrent, pHourly, pDaily, szAPIKey, szSLOLatitude, 
@@ -417,7 +412,6 @@ void ReadWeatherTask(void *pvParameter){
     delete pCurrent;
     delete pHourly;
     delete pDaily;
-    //delete pForecast;
 
     vTaskDelay(wReadWeatherTaskPeriodSec/portTICK_PERIOD_MS);
   } //while(true)

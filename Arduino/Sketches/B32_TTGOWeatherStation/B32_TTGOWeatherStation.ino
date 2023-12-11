@@ -1,9 +1,9 @@
 const char szSketchName[]  = "B32_TTGOWeatherStation.ino";
-const char szFileDate[]    = "12/10/23g";
+const char szFileDate[]    = "12/10/23h";
 
 #define DO_OTA            true
 #define DO_OPENWEATHER    true
-#define DO_GRAPHICS       true 
+//#define DO_GRAPHICS       true 
 #define DO_TASKING        false 
 
 #include <SPI.h>
@@ -128,83 +128,70 @@ void setup(void) {
 
   pinMode(0, INPUT_PULLUP);
   pinMode(ucRightButtonPin, INPUT);
-  #if DO_GRAPHICS
-    Serial << "setup(): Sketch: Call tft.init()" << endl;
-    tft.init            ();
-    tft.setRotation     (0);
-    tft.fillScreen      (TFT_BLACK);
-    tft.setTextColor    (TFT_WHITE, TFT_BLACK);
-    tft.setTextSize     (1);
 
-    Serial << "setup(): Sketch: Call ledcSetup()" << endl;
-    ledcSetup           (ucPWMLedChannel, dPWMFreq, ucPWMResolution);
-    ledcAttachPin       (TFT_BL, ucPWMLedChannel);
-    ledcWrite           (ucPWMLedChannel, awBacklight[uwBacklightDuty]);
+  Serial << "setup(): Sketch: Call tft.init()" << endl;
+  tft.init            ();
+  tft.setRotation     (0);
+  tft.fillScreen      (TFT_BLACK);
+  tft.setTextColor    (TFT_WHITE, TFT_BLACK);
+  tft.setTextSize     (1);
 
-    tft.print           ("Connecting to ");    //This goes to the display
-    tft.println         (szRouterName);
+  Serial << "setup(): Sketch: Call ledcSetup()" << endl;
+  ledcSetup           (ucPWMLedChannel, dPWMFreq, ucPWMResolution);
+  ledcAttachPin       (TFT_BL, ucPWMLedChannel);
+  ledcWrite           (ucPWMLedChannel, awBacklight[uwBacklightDuty]);
 
-    Serial << "setup(): Sketch: Call WiFi.begin(" << szRouterName << ", "
-          << szRouterPW << ")" << endl;
-    WiFi.begin(szRouterName, szRouterPW);
+  tft.print           ("Connecting to ");    //This goes to the display
+  tft.println         (szRouterName);
 
-    while (WiFi.status() != WL_CONNECTED) {
-      delay(300);
-      tft.print(".");
-    } //while
-    Serial << endl << "setup(): Connected to " << szRouterName
-          << ", IP address to connect to is " << WiFi.localIP() << endl;
+  Serial << "setup(): Sketch: Call WiFi.begin(" << szRouterName << ", "
+        << szRouterPW << ")" << endl;
+  WiFi.begin(szRouterName, szRouterPW);
 
-    tft.println       ("");
-    tft.println       ("WiFi connected.");
-    tft.println       ("IP address: ");
-    tft.println       (WiFi.localIP());
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(300);
+    tft.print(".");
+  } //while
+  Serial << endl << "setup(): Connected to " << szRouterName
+        << ", IP address to connect to is " << WiFi.localIP() << endl;
 
-    tft.print         ("setup(): Sketch: ");
-    tft.println       (szSketchName);
-    tft.println       (szFileDate);
-    delay(3000);    //Delay long enough to read screen
+  tft.println       ("");
+  tft.println       ("WiFi connected.");
+  tft.println       ("IP address: ");
+  tft.println       (WiFi.localIP());
 
-    tft.setTextColor  (TFT_WHITE,TFT_BLACK);  tft.setTextSize(1);
-    tft.fillScreen    (TFT_BLACK);
-    tft.setSwapBytes  (true);
-    tft.setCursor     (2, 232, 1);
-    tft.println       (WiFi.localIP());
-    tft.setCursor     (80, 204, 1);
-    tft.println       ("BRIGHT:");
+  tft.print         ("setup(): Sketch: ");
+  tft.println       (szSketchName);
+  tft.println       (szFileDate);
+  delay(3000);    //Delay long enough to read screen
 
-    tft.setCursor     (80, 152, 2);
-    tft.println       ("SEC:");
-    tft.setTextColor  (TFT_WHITE,usLightBlue);
-    tft.setCursor     (4, 152, 2);
-    tft.println       ("TEMP:");
+  tft.setTextColor  (TFT_WHITE,TFT_BLACK);  tft.setTextSize(1);
+  tft.fillScreen    (TFT_BLACK);
+  tft.setSwapBytes  (true);
+  tft.setCursor     (2, 232, 1);
+  tft.println       (WiFi.localIP());
+  tft.setCursor     (80, 204, 1);
+  tft.println       ("BRIGHT:");
 
-    tft.setCursor     (4, 192, 2);
-    tft.println       ("HUM: ");
-    tft.setTextColor  (TFT_WHITE,TFT_BLACK);
+  tft.setCursor     (80, 152, 2);
+  tft.println       ("SEC:");
+  tft.setTextColor  (TFT_WHITE,usLightBlue);
+  tft.setCursor     (4, 152, 2);
+  tft.println       ("TEMP:");
 
-    tft.setFreeFont   (&Orbitron_Medium_20);
-    tft.setCursor     (6, 82);
-    tft.println       (szCity);
+  tft.setCursor     (4, 192, 2);
+  tft.println       ("HUM: ");
+  tft.setTextColor  (TFT_WHITE,TFT_BLACK);
 
-    tft.fillRect      (68, 152, 1, 74, usTFT_Grey);
+  tft.setFreeFont   (&Orbitron_Medium_20);
+  tft.setCursor     (6, 82);
+  tft.println       (szCity);
 
-    for(int i= 0;i < (uwBacklightDuty + 1);i++){
-      tft.fillRect((78 + (i*7)), 216, 3, 10, usBlue);
-    } //for
-#else
- Serial << "setup(): Sketch: Call WiFi.begin(" << szRouterName << ", "
-          << szRouterPW << ")" << endl;
-    WiFi.begin(szRouterName, szRouterPW);
+  tft.fillRect      (68, 152, 1, 74, usTFT_Grey);
 
-    Serial << "setup(): Connecting to WiFi ";
-    while (WiFi.status() != WL_CONNECTED) {
-      delay(300);
-      Serial << ".";
-    } //while
-    Serial << endl << "setup(): Connected to " << szRouterName
-          << ", IP address to connect to is " << WiFi.localIP() << endl;
-#endif  //DO_GRAPHICS
+  for(int i= 0;i < (uwBacklightDuty + 1);i++){
+    tft.fillRect((78 + (i*7)), 216, 3, 10, usBlue);
+  } //for
 
 //Initialize a NTPClient to get time
   NTPTimeClient.begin();

@@ -1,15 +1,29 @@
 const char szSketchName[]  = "B32_TTGOWeatherStation.ino";
-const char szFileDate[]    = "12/9/23c";
+const char szFileDate[]    = "12//23e";
 
+/* 
 #include "Animation10x.h"
 #include <SPI.h>
-#include <TFT_eSPI.h>           // Hardware-specific library
-//#include "TFT_eSPI.h"           // Hardware-specific library
+//#include <TFT_eSPI.h>           // Hardware-specific library
+#include "TFT_eSPI.h"           // Hardware-specific library
 #include <NTPClient.h>          //https://github.com/taranais/NTPClient
 #include "Orbitron_Medium_20.h"
 #include <WiFi.h>
 #include <WiFiUdp.h>
 #include <Streaming.h>
+*/
+#include "Animation10x.h"
+#include "Orbitron_Medium_20.h"
+#include <SPI.h>
+#include <WiFi.h>
+#include <WiFiUdp.h>
+#include <Time.h>     //Just using this library for unix time conversion
+
+#include <TFT_eSPI.h>           // Hardware-specific library
+//#include "TFT_eSPI.h"           // Hardware-specific library
+#include <NTPClient.h>          //https://github.com/taranais/NTPClient
+#include <Streaming.h>
+
 //#include <FreeRTOS.h>
 //#include <Arduino_FreeRTOS.h>
 //#include "freertos/FreeRTOS.h"
@@ -18,10 +32,11 @@ const char szFileDate[]    = "12/9/23c";
 #define DO_OPENWEATHER    true
 
 #if DO_OTA
-  #include <BeckE32_OTALib.h>
+  #include "BeckE32_OTALib.h"
 #endif
-#include <OpenWeather.h>
-#include <Time.h>     //Just using this library for unix time conversion
+#if DO_OPENWEATHER
+  #include <OpenWeather.h>
+#endif
 
 const double    dPWMFreq          = 5000.0;
 const uint8_t   ucPWMResolution   =  8;

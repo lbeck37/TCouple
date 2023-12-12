@@ -1,8 +1,8 @@
 const char szSketchName[]  = "B32_TTGOWeatherStation.ino";
-const char szFileDate[]    = "12/11/23n";
+const char szFileDate[]    = "12/11/23r";
 
 #define DO_OTA            true
-#define DO_TASKING        false 
+#define DO_TASKING        true 
 
 #include <NTPClient.h>    //https://github.com/taranais/NTPClient
 #include <OpenWeather.h>
@@ -340,7 +340,7 @@ void ReadOpenWeather(void){
   Serial << "ReadOpenWeather(): fTemperature= " << fTemperature <<
             ",  ucHumidity= " <<  ucHumidity  << endl;
 
-  PrintOpenWeather(pCurrent);
+  //PrintOpenWeather(pCurrent);
   // Delete to free up space and prevent fragmentation as strings change in length
   delete pCurrent;
   delete pHourly;
@@ -374,6 +374,23 @@ void ReadWeatherTask(void *pvParameter){
 
   //Never returns
 } //ReadWeatherTask
+
+
+void PrintOpenWeather(OW_current *pCurrent){
+  Serial << "ReadOpenWeather(): dt          : " << (strTime(pCurrent->dt));
+  Serial << "ReadOpenWeather(): Sunrise     : " << (strTime(pCurrent->sunrise));
+  Serial << "ReadOpenWeather(): Sunset      : " << (strTime(pCurrent->sunset));
+  Serial << "ReadOpenWeather(): main        : " << pCurrent->main << endl;
+  Serial << "ReadOpenWeather(): description : " << pCurrent->description << endl;
+  Serial << "ReadOpenWeather(): icon        : " << pCurrent->icon << endl;
+
+  Serial << "ReadOpenWeather(): Latitude    :   " << (OpenWeather.lat) << endl;
+  Serial << "ReadOpenWeather(): Longitude   : " << (OpenWeather.lon) << endl;
+  //Serial << "ReadOpenWeather(): Temperature : " << fTemperature << " DegF" << endl;
+  Serial << "ReadOpenWeather(): Temperature : " << fTemperature << "\370" << "F" << endl;
+  Serial << "ReadOpenWeather(): Humidity    : " << ucHumidity << "%" << endl;
+  return;
+} //PrintOpenWeather
 
 
 void HandleRightButton(void){
@@ -436,24 +453,4 @@ String strTime(time_t unixTime){
   unixTime += uwTimeZoneOffset;
   return ctime(&unixTime);
 } //strTime
-
-
-#if true   //Here just as documentation
-void PrintOpenWeather(OW_current *pCurrent){
-  Serial << "ReadOpenWeather(): dt          : " << (strTime(pCurrent->dt));
-  Serial << "ReadOpenWeather(): Sunrise     : " << (strTime(pCurrent->sunrise));
-  Serial << "ReadOpenWeather(): Sunset      : " << (strTime(pCurrent->sunset));
-  Serial << "ReadOpenWeather(): main        : " << pCurrent->main << endl;
-  Serial << "ReadOpenWeather(): description : " << pCurrent->description << endl;
-  Serial << "ReadOpenWeather(): icon        : " << pCurrent->icon << endl;
-
-  Serial << "ReadOpenWeather(): Latitude    :   " << (OpenWeather.lat) << endl;
-  Serial << "ReadOpenWeather(): Longitude   : " << (OpenWeather.lon) << endl;
-  //Serial << "ReadOpenWeather(): Temperature : " << fTemperature << " DegF" << endl;
-  Serial << "ReadOpenWeather(): Temperature : " << fTemperature << "\370" << "F" << endl;
-  Serial << "ReadOpenWeather(): Humidity    : " << ucHumidity << "%" << endl;
-  return;
-} //PrintOpenWeather
-#endif
-
 //Last line.

@@ -34,7 +34,8 @@ char szFileDate[]    = "12/11/23b";
 
 const bool  bNoTCouples     = true;
 
-uint8_t aucReceiverMACAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};   //BlackPin MAC
+//uint8_t aucReceiverMACAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};   //BlackPin MAC
+const uint8_t aucReceiverMACAddress[]          = {0x84, 0xCC, 0xA8, 0x60, 0xB4, 0x2C}; //WhitePin MAC
 
 //ESP32 GPIO pin numbers (range from 0 to 39)
 #define T0   27

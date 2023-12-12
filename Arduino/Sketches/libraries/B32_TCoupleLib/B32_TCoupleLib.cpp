@@ -1,8 +1,10 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = "10/19/23g";
+//const char szFileDate[]  = 12/11/23b";
 #include <B32_TCoupleLib.h>
 
 const uint8_t aucBlackPinMAC[]          = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
+const uint8_t aucWhitePinMAC[]          = {0x84, 0xCC, 0xA8, 0x60, 0xB4, 0x2C}; //WhitePin MAC
+const uint8_t aucBluePinMAC[]           = {0x3C, 0x61, 0x05, 0x0B, 0xC5, 0x14}; //BluePin MAC
 
 //Define variables to store temperature readings to be sent
 double                  dTCouple0_DegF;

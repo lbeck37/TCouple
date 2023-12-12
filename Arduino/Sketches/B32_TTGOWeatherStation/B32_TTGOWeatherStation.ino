@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TTGOWeatherStation.ino";
-const char szFileDate[]    = "12/11/23g";
+const char szFileDate[]    = "12/11/23n";
 
 #define DO_OTA            true
 #define DO_TASKING        false 
@@ -98,12 +98,16 @@ long        lNextReadMsec   = 0;
 //Func protos
 void    setup               (void);
 void    loop                (void);
-void    HandleRightButton   (void);
-void    HandleLeftButton    (void);
-void    ReadOpenWeather     (void);
-void    ReadWeatherTask     (void *pvParameter);
+void    WiFiSetup           (void);
+void    DisplaySetup        (void);
+void    DisplayHomeScreen   (void);
 void    DisplayTempHumidity (void);
 void    DisplayTimeStamp    (void);
+void    ReadOpenWeather     (void);
+void    ReadWeatherTask     (void *pvParameter);
+void    PrintOpenWeather    (OW_current *pCurrent);
+void    HandleRightButton   (void);
+void    HandleLeftButton    (void);
 String  strTime             (time_t unixTime);
 
 
@@ -112,72 +116,9 @@ void setup(void) {
   delay(500);
   Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
-  pinMode(0, INPUT_PULLUP);
-  pinMode(ucRightButtonPin, INPUT);
-
-  Serial << "setup(): Sketch: Call tft.init()" << endl;
-  tft.init            ();
-  tft.setRotation     (0);
-  tft.fillScreen      (TFT_BLACK);
-  tft.setTextColor    (TFT_WHITE, TFT_BLACK);
-  tft.setTextSize     (1);
-
-  Serial << "setup(): Sketch: Call ledcSetup()" << endl;
-  ledcSetup           (ucPWMLedChannel, dPWMFreq, ucPWMResolution);
-  ledcAttachPin       (TFT_BL, ucPWMLedChannel);
-  ledcWrite           (ucPWMLedChannel, awBacklight[uwBacklightDuty]);
-
-  tft.print           ("Connecting to ");    //This goes to the display
-  tft.println         (szRouterName);
-
-  Serial << "setup(): Sketch: Call WiFi.begin(" << szRouterName << ", "
-        << szRouterPW << ")" << endl;
-  WiFi.begin(szRouterName, szRouterPW);
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(300);
-    tft.print(".");
-  } //while
-  Serial << endl << "setup(): Connected to " << szRouterName
-        << ", IP address to connect to is " << WiFi.localIP() << endl;
-
-  tft.println       ("");
-  tft.println       ("WiFi connected.");
-  tft.println       ("IP address: ");
-  tft.println       (WiFi.localIP());
-
-  tft.print         ("setup(): Sketch: ");
-  tft.println       (szSketchName);
-  tft.println       (szFileDate);
-  delay(3000);    //Delay long enough to read screen
-
-  tft.setTextColor  (TFT_WHITE,TFT_BLACK);  tft.setTextSize(1);
-  tft.fillScreen    (TFT_BLACK);
-  tft.setSwapBytes  (true);
-  tft.setCursor     (2, 232, 1);
-  tft.println       (WiFi.localIP());
-  tft.setCursor     (80, 204, 1);
-  tft.println       ("BRIGHT:");
-
-  tft.setCursor     (80, 152, 2);
-  tft.println       ("SEC:");
-  tft.setTextColor  (TFT_WHITE,usLightBlue);
-  tft.setCursor     (4, 152, 2);
-  tft.println       ("TEMP:");
-
-  tft.setCursor     (4, 192, 2);
-  tft.println       ("HUM: ");
-  tft.setTextColor  (TFT_WHITE,TFT_BLACK);
-
-  tft.setFreeFont   (&Orbitron_Medium_20);
-  tft.setCursor     (6, 82);
-  tft.println       (szCity);
-
-  tft.fillRect      (68, 152, 1, 74, usTFT_Grey);
-
-  for(int i= 0;i < (uwBacklightDuty + 1);i++){
-    tft.fillRect((78 + (i*7)), 216, 3, 10, usBlue);
-  } //for
+  DisplaySetup();
+  WiFiSetup();
+  DisplayHomeScreen();
 
 //Initialize a NTPClient to get time
   NTPTimeClient.begin();
@@ -220,59 +161,84 @@ void loop(void){
 }   //loop
 
 
-void HandleRightButton(void){
-  //Handle TTGO button on the right of the USB connector
-  //Cycles through 5 levels of the LED backlight to the LCD screen
-  static bool    bPress2         = false;
-  //static int     wFrame          = 0;
+void WiFiSetup(void){
+  tft.print           ("Connecting to ");    //This goes to the display
+  tft.println         (szRouterName);
 
-  if(digitalRead(ucRightButtonPin) == 0){
-    if(!bPress2){
-      bPress2= true;
-      tft.fillRect   (78,216,44,12,TFT_BLACK);
+  Serial << "WiFiSetup(): Call WiFi.begin(" << szRouterName << ", "
+        << szRouterPW << ")" << endl;
+  WiFi.begin(szRouterName, szRouterPW);
 
-      uwBacklightDuty++;
-      if(uwBacklightDuty >= 5){
-        uwBacklightDuty= 0;
-      }  //if(uwBacklightDuty>=5)
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(300);
+    tft.print(".");
+  } //while
+  Serial << endl << "WiFiSetup(): Connected to " << szRouterName
+        << ", IP address to connect to is " << WiFi.localIP() << endl;
 
-      //wFrame cycles from 0 to 9, why?
-      //wFrame= ((wFrame + 1) % 10);
+  tft.println       ("");
+  tft.println       ("WiFi connected.");
+  tft.println       ("IP address: ");
+  tft.println       (WiFi.localIP());
 
-      //Display number of bars to indicate brightness
-      for(int wLevel= 0;wLevel < (uwBacklightDuty + 1);wLevel++){
-        tft.fillRect (78 + (wLevel * 7), 216, 3, 10, usBlue);
-      }  //for
+  tft.print         ("setup(): Sketch: ");
+  tft.println       (szSketchName);
+  tft.println       (szFileDate);
+  delay(3000);      //Delay long enough to be able to read screen
 
-      //uwBacklightDuty ranges from 10 to 220
-      ledcWrite(ucPWMLedChannel, awBacklight[uwBacklightDuty]);
-    }  //if(!bPress2)
-  }  //if(digitalRead(ucRightButtonPin)==0)
-  else{
-    bPress2= false;
-  }  //if(digitalRead(ucRightButtonPin)==0)else
   return;
-} //HandleRightButton
+} //WiFiSetup
 
 
-void HandleLeftButton(void){
-  //Handle TTGO button on the left of the USB connector
-  //Left button toggles between black background and inverted
-  static bool    bPress1          = false;
-  static bool    bInvertDisplay   = true;
+void DisplaySetup(void){
+  pinMode(0, INPUT_PULLUP);
+  pinMode(ucRightButtonPin, INPUT);
 
-  if(digitalRead(ucLeftButtonPin) == 0){
-     if(!bPress1){
-       bPress1= true;
-       bInvertDisplay= !bInvertDisplay;
-       tft.invertDisplay(bInvertDisplay);
-     }  //if(!bPress1)
-  }  //if(digitalRead(ucLeftButtonPin)==0)
-  else{
-     bPress1= false;
-  }  //if(digitalRead(ucLeftButtonPin)==0)else
+  Serial << "setup(): Sketch: Call tft.init()" << endl;
+  tft.init            ();
+  tft.setRotation     (0);
+  tft.fillScreen      (TFT_BLACK);
+  tft.setTextColor    (TFT_WHITE, TFT_BLACK);
+  tft.setTextSize     (1);
+
+  Serial << "setup(): Sketch: Call ledcSetup()" << endl;
+  ledcSetup           (ucPWMLedChannel, dPWMFreq, ucPWMResolution);
+  ledcAttachPin       (TFT_BL, ucPWMLedChannel);
+  ledcWrite           (ucPWMLedChannel, awBacklight[uwBacklightDuty]);
   return;
-} //HandleLeftButton
+} //DisplaySetup
+
+
+void DisplayHomeScreen(void){
+  tft.setTextColor  (TFT_WHITE,TFT_BLACK);  tft.setTextSize(1);
+  tft.fillScreen    (TFT_BLACK);
+  tft.setSwapBytes  (true);
+  tft.setCursor     (2, 232, 1);
+  tft.println       (WiFi.localIP());
+  tft.setCursor     (80, 204, 1);
+  tft.println       ("BRIGHT:");
+
+  tft.setCursor     (80, 152, 2);
+  tft.println       ("SEC:");
+  tft.setTextColor  (TFT_WHITE,usLightBlue);
+  tft.setCursor     (4, 152, 2);
+  tft.println       ("TEMP:");
+
+  tft.setCursor     (4, 192, 2);
+  tft.println       ("HUM: ");
+  tft.setTextColor  (TFT_WHITE,TFT_BLACK);
+
+  tft.setFreeFont   (&Orbitron_Medium_20);
+  tft.setCursor     (6, 82);
+  tft.println       (szCity);
+
+  tft.fillRect      (68, 152, 1, 74, usTFT_Grey);
+
+  for(int i= 0;i < (uwBacklightDuty + 1);i++){
+    tft.fillRect((78 + (i*7)), 216, 3, 10, usBlue);
+  } //for
+  return;
+} //DisplayHomeScreen
 
 
 void DisplayTempHumidity(void){
@@ -366,12 +332,15 @@ void ReadOpenWeather(void){
   OW_daily      *pDaily       = new OW_daily;
 
   uwTimeZoneOffset= ulSLOSecOffset;
-  Serial << "ReadOpenWeather(): Call OneCall OpenWeather.getForecast()" << endl;
+  //Serial << "ReadOpenWeather(): Call OneCall OpenWeather.getForecast()" << endl;
   OpenWeather.getForecast(pCurrent, pHourly, pDaily, szAPIKey, szSLOLatitude, szSLOLongitude,
                           szUnits, szLanguage);
   fTemperature  = pCurrent->temp;
   ucHumidity    = pCurrent->humidity;
+  Serial << "ReadOpenWeather(): fTemperature= " << fTemperature <<
+            ",  ucHumidity= " <<  ucHumidity  << endl;
 
+  PrintOpenWeather(pCurrent);
   // Delete to free up space and prevent fragmentation as strings change in length
   delete pCurrent;
   delete pHourly;
@@ -407,13 +376,69 @@ void ReadWeatherTask(void *pvParameter){
 } //ReadWeatherTask
 
 
+void HandleRightButton(void){
+  //Handle TTGO button on the right of the USB connector
+  //Cycles through 5 levels of the LED backlight to the LCD screen
+  static bool    bPress2         = false;
+  //static int     wFrame          = 0;
+
+  if(digitalRead(ucRightButtonPin) == 0){
+    if(!bPress2){
+      bPress2= true;
+      tft.fillRect   (78,216,44,12,TFT_BLACK);
+
+      uwBacklightDuty++;
+      if(uwBacklightDuty >= 5){
+        uwBacklightDuty= 0;
+      }  //if(uwBacklightDuty>=5)
+
+      //wFrame cycles from 0 to 9, why?
+      //wFrame= ((wFrame + 1) % 10);
+
+      //Display number of bars to indicate brightness
+      for(int wLevel= 0;wLevel < (uwBacklightDuty + 1);wLevel++){
+        tft.fillRect (78 + (wLevel * 7), 216, 3, 10, usBlue);
+      }  //for
+
+      //uwBacklightDuty ranges from 10 to 220
+      ledcWrite(ucPWMLedChannel, awBacklight[uwBacklightDuty]);
+    }  //if(!bPress2)
+  }  //if(digitalRead(ucRightButtonPin)==0)
+  else{
+    bPress2= false;
+  }  //if(digitalRead(ucRightButtonPin)==0)else
+  return;
+} //HandleRightButton
+
+
+void HandleLeftButton(void){
+  //Handle TTGO button on the left of the USB connector
+  //Left button toggles between black background and inverted
+  static bool    bPress1          = false;
+  static bool    bInvertDisplay   = true;
+
+  if(digitalRead(ucLeftButtonPin) == 0){
+     if(!bPress1){
+       bPress1= true;
+       bInvertDisplay= !bInvertDisplay;
+       tft.invertDisplay(bInvertDisplay);
+     }  //if(!bPress1)
+  }  //if(digitalRead(ucLeftButtonPin)==0)
+  else{
+     bPress1= false;
+  }  //if(digitalRead(ucLeftButtonPin)==0)else
+  return;
+} //HandleLeftButton
+
+
 String strTime(time_t unixTime){
   //Convert unix time to a time string
   unixTime += uwTimeZoneOffset;
   return ctime(&unixTime);
 } //strTime
 
-#if false   //Here just as documentation
+
+#if true   //Here just as documentation
 void PrintOpenWeather(OW_current *pCurrent){
   Serial << "ReadOpenWeather(): dt          : " << (strTime(pCurrent->dt));
   Serial << "ReadOpenWeather(): Sunrise     : " << (strTime(pCurrent->sunrise));
@@ -427,6 +452,7 @@ void PrintOpenWeather(OW_current *pCurrent){
   //Serial << "ReadOpenWeather(): Temperature : " << fTemperature << " DegF" << endl;
   Serial << "ReadOpenWeather(): Temperature : " << fTemperature << "\370" << "F" << endl;
   Serial << "ReadOpenWeather(): Humidity    : " << ucHumidity << "%" << endl;
+  return;
 } //PrintOpenWeather
 #endif
 

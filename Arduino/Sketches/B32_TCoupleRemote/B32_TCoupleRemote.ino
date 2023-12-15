@@ -30,7 +30,8 @@ char szFileDate[]    = "12/14/23c";
 
 //This sketch, (B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
 //communication code from the esp_now.h library.
-#include <B32_TCoupleLib.h>
+//#include <B32_TCoupleLib.h>
+#include "B32_TCoupleLib.h"
 
 eBoardPinColor   eReceiverBoardPinColor    {eBoardPinColor::eWhitePin};
 
@@ -103,7 +104,7 @@ void ReadAmbiant(void){
   }   //if(!bNoTCouples)
   else{
     dDummyJunctionDegF += 0.10;
-    dJunctionDegF= dDummyJunctionDegF; 
+    dJunctionDegF= dDummyJunctionDegF;
   }   //if(!bNoTCouples)else
   return;
 } //ReadAmbiant
@@ -147,7 +148,7 @@ void ReadTCouples(void){
       dDummyAddDegF += 0.10;
       stOutgoingReadings.adTCoupleDegF[wTCoupleNum]= (100.00 + (wTCoupleNum * 10.00) + dDummyAddDegF);
     } //if(!bNoTCouples)else
-  
+
     if (stOutgoingReadings.adTCoupleDegF[wTCoupleNum] == FAULT_OPEN){
       //Break out of for loop, go to top of for loop and next TCouple
       continue;

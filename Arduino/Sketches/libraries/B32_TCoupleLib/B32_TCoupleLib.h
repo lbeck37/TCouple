@@ -1,6 +1,5 @@
-//B32_TCoupleLib.h, 11/14/23
+//B32_TCoupleLib.h, 12/14/23c
 #pragma once
-
 #include <Streaming.h>
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
 #include <SPI.h>
@@ -8,8 +7,16 @@
 #include <WiFi.h>
 #include <MAX31855.h>
 
-
 const int                   wNumTCouples= 8;
+
+enum class eBoardPinColor {
+  eBluePin= 1,
+  eWhitePin,
+  eBlackPin,
+  eLastPin
+}; //eBoardPinColor
+
+//extern enum eBoardPinColor   eReceiverBoardPinColor;
 
 //Message Structure that is used to pass data back an forth
 typedef struct stMessageStructure {
@@ -19,6 +26,7 @@ typedef struct stMessageStructure {
 //Create stMessageStructure structures to hold readings
 extern stMessageStructure   stIncomingReadings;
 extern stMessageStructure   stOutgoingReadings;
+extern stMessageStructure   stErrorReadings;
 
 extern uint8_t              aucReceiverMACAddress[];
 
@@ -50,6 +58,7 @@ void  OnDataRecv                  (const uint8_t *pucMACAddress,
 void  OnDataSent                  (const uint8_t *mac_addr, esp_now_send_status_t status);
 void  HandleDataReceived          (void);
 void  SendDataToDisplayBoard      (void);
+void  SelectReceiverMAC           (enum eBoardPinColor ePinColor);
 void  UpdateScreen                (stMessageStructure stReadings);
 void  PrintTemperatures           (void);
 void  PrintTemperature            (double dDegF);

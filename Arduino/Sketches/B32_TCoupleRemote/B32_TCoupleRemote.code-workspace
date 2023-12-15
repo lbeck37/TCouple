@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../libraries/B32_TCoupleLib"
+		}
+	],
+	"settings": {}
+}

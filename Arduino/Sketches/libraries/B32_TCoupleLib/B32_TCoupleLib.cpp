@@ -1,10 +1,15 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/11/23b";
+//const char szFileDate[]  = 12/14/23c";
 #include <B32_TCoupleLib.h>
 
-const uint8_t aucBlackPinMAC[]          = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
-const uint8_t aucWhitePinMAC[]          = {0x84, 0xCC, 0xA8, 0x60, 0xB4, 0x2C}; //WhitePin MAC
-const uint8_t aucBluePinMAC[]           = {0x3C, 0x61, 0x05, 0x0B, 0xC5, 0x14}; //BluePin MAC
+const uint8_t           aucBlackPinMAC[]          = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
+const uint8_t           aucWhitePinMAC[]          = {0x84, 0xC6, 0xA8, 0x60, 0xB4, 0x2C}; //WhitePin MAC
+const uint8_t           aucBluePinMAC[]           = {0x3C, 0x61, 0x05, 0x0B, 0xC5, 0x14}; //BluePin MAC
+
+uint8_t                 aucReceiverMACAddress[6];
+
+//enum eBoardPinColor     eReceiverBoardPinColor;
+extern enum eBoardPinColor   eReceiverBoardPinColor;
 
 //Define variables to store temperature readings to be sent
 double                  dTCouple0_DegF;
@@ -21,10 +26,14 @@ String                  szSuccess;
 // Create a stMessageStructure to hold incoming sensor readings
 stMessageStructure      stIncomingReadings;
 stMessageStructure      stOutgoingReadings;
+stMessageStructure      stErrorReadings;
 
 TFT_eSPI                Screen=     TFT_eSPI();  //Class library for TTGO T-Screen
 
 esp_now_peer_info_t     stPeerInfo;
+
+//Protos for functions not seen externally
+void        SelectReceiverMAC    (enum eBoardPinColor ePinColor);
 
 
 void SetupESP_NOW(void){
@@ -50,6 +59,11 @@ void SetupESP_NOW(void){
 
   // Register for a callback function that will be called when data is received
   esp_now_register_recv_cb(OnDataRecv);
+
+  //Create error readings displayed when new readings have not been received
+  for(int wReading= 0; wReading < wNumTCouples; wReading++){
+    stErrorReadings.adTCoupleDegF[wReading]= -99.99;
+  } //for(int wReading=0;...
   return;
 }   //SetupESP_NOW
 
@@ -72,8 +86,11 @@ void HandleDataReceived(void) {
   return;
 } //OnDataRecv
 
+
 void SendDataToDisplayBoard(void){
-  esp_err_t wResult= esp_now_send(aucReceiverMACAddress,
+  SelectReceiverMAC(eReceiverBoardPinColor);
+
+   esp_err_t wResult= esp_now_send(aucReceiverMACAddress,
                                   (uint8_t *)&stOutgoingReadings,
                                   sizeof(stOutgoingReadings));
   if (wResult == ESP_OK) {
@@ -84,6 +101,37 @@ void SendDataToDisplayBoard(void){
   }
   return;
 } //SendDataToDisplayBoard
+
+
+void SelectReceiverMAC(enum eBoardPinColor ePinColor){
+  //Copy MAC address one byte at a time
+  for (int wMACByteNum= 0; wMACByteNum < 6; wMACByteNum++){
+    switch (ePinColor){
+      case eBoardPinColor::eBluePin:
+        aucReceiverMACAddress[wMACByteNum]= aucBluePinMAC[wMACByteNum];
+        break;
+      case eBoardPinColor::eWhitePin:
+        aucReceiverMACAddress[wMACByteNum]= aucWhitePinMAC[wMACByteNum];
+        break;
+      case eBoardPinColor::eBlackPin:
+        aucReceiverMACAddress[wMACByteNum]= aucBlackPinMAC[wMACByteNum];
+        break;
+      default: 
+        Serial << "SelectReceiverMAC(): Bad swtich= " << (int)ePinColor << endl;
+    } //switch
+  } //for(int wMACByteNum=0;...
+
+  Serial << "SendDataToDisplayBoard(): Sending data to ";
+    for (int wByteNum= 0; wByteNum < 6; wByteNum++){
+      Serial << _HEX(aucReceiverMACAddress[wByteNum]);
+      if (wByteNum != 5){
+        Serial << ":";
+      } //if (wByteNum!=5)
+    } //for(int wByteNum=0;...
+    Serial << endl;
+
+  return;
+} //SelectReceiverMAC
 
 
 void SetupScreen(){

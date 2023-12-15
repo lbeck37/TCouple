@@ -1,8 +1,8 @@
 {
-    "port": "COM3",
+    "port": "COM4",
     "configuration": "JTAGAdapter=default,PSRAM=disabled,PartitionScheme=default,CPUFreq=240,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,LoopCore=1,EventsCore=1,DebugLevel=none,EraseFlash=none",
     "board": "esp32:esp32:esp32",
     "programmer": "esptool",
-    "output": "C:/_VSCode_BuildOutputs/TCoupleDisplayOutput",
-    "sketch": "..\\..\\B32_TCoupleRemote\\B32_TCoupleRemote.ino"
+    "sketch": "B32_TCoupleDisplay.ino",
+    "output": "C:/_VSCode_BuildOutputs/TCoupleDisplayOutput"
 }

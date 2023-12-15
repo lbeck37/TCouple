@@ -1,5 +1,5 @@
 char szSketchName[]  = "B32_TCoupleRemote.ino";
-char szFileDate[]    = "12/11/23b";
+char szFileDate[]    = "12/14/23c";
 /* MAX31855 library example sketch
  This sample code is designed to be used on the MAX31855x8 breakout board.
  The board has a single MAX31855 IC on it, and uses a multiplexer
@@ -32,10 +32,9 @@ char szFileDate[]    = "12/11/23b";
 //communication code from the esp_now.h library.
 #include <B32_TCoupleLib.h>
 
-const bool  bNoTCouples     = true;
+eBoardPinColor   eReceiverBoardPinColor    {eBoardPinColor::eWhitePin};
 
-//uint8_t aucReceiverMACAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C};   //BlackPin MAC
-const uint8_t aucReceiverMACAddress[]          = {0x84, 0xCC, 0xA8, 0x60, 0xB4, 0x2C}; //WhitePin MAC
+const bool  bNoTCouples     = true;
 
 //ESP32 GPIO pin numbers (range from 0 to 39)
 #define T0   27

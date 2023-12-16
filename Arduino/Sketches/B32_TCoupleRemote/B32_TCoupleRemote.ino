@@ -1,5 +1,5 @@
 char szSketchName[]  = "B32_TCoupleRemote.ino";
-char szFileDate[]    = "12/15/23b";
+char szFileDate[]    = "12/16/23b";
 /* MAX31855 library example sketch
  This sample code is designed to be used on the MAX31855x8 breakout board.
  The board has a single MAX31855 IC on it, and uses a multiplexer
@@ -30,7 +30,6 @@ char szFileDate[]    = "12/15/23b";
 
 //This sketch, (B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
 //communication code from the esp_now.h library.
-//#include <B32_TCoupleLib.h>
 #include "Arduino.h"
 #include "B32_TCoupleLib.h"
 

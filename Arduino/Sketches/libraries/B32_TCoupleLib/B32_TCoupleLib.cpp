@@ -1,14 +1,13 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/15/23c";
+//const char szFileDate[]  = 12/16/23d";
 #include <B32_TCoupleLib.h>
 
 const uint8_t           aucBlackPinMAC[]          = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
-const uint8_t           aucWhitePinMAC[]          = {0x84, 0xC6, 0xA8, 0x60, 0xB4, 0x2C}; //WhitePin MAC
+const uint8_t           aucWhitePinMAC[]          = {0x84, 0xCC, 0xA8, 0x60, 0xB4, 0x2C}; //WhitePin MAC
 const uint8_t           aucBluePinMAC[]           = {0x3C, 0x61, 0x05, 0x0B, 0xC5, 0x14}; //BluePin MAC
 
 uint8_t                 aucReceiverMACAddress[6];
 
-//enum eBoardPinColor     eReceiverBoardPinColor;
 extern enum eBoardPinColor   eReceiverBoardPinColor;
 
 //Define variables to store temperature readings to be sent
@@ -90,8 +89,6 @@ void HandleDataReceived(void) {
 
 
 void SendDataToDisplayBoard(void){
-//  SelectReceiverMAC(eReceiverBoardPinColor);
-
    esp_err_t wResult= esp_now_send(aucReceiverMACAddress,
                                   (uint8_t *)&stOutgoingReadings,
                                   sizeof(stOutgoingReadings));
@@ -119,18 +116,18 @@ void SelectReceiverMAC(enum eBoardPinColor ePinColor){
         aucReceiverMACAddress[wMACByteNum]= aucBlackPinMAC[wMACByteNum];
         break;
       default: 
-        Serial << "SelectReceiverMAC(): Bad swtich= " << (int)ePinColor << endl;
+        Serial << "SelectReceiverMAC(): Bad switch= " << (int)ePinColor << endl;
     } //switch
   } //for(int wMACByteNum=0;...
 
-  Serial << "SendDataToDisplayBoard(): Sending data to ";
-    for (int wByteNum= 0; wByteNum < 6; wByteNum++){
-      Serial << _HEX(aucReceiverMACAddress[wByteNum]);
-      if (wByteNum != 5){
-        Serial << ":";
-      } //if (wByteNum!=5)
-    } //for(int wByteNum=0;...
-    Serial << endl;
+  Serial << "SelectReceiverMAC(): Sending data to ";
+	for (int wByteNum= 0; wByteNum < 6; wByteNum++){
+	  Serial << _HEX(aucReceiverMACAddress[wByteNum]);
+	  if (wByteNum != 5){
+	    Serial << ":";
+	  } //if (wByteNum!=5)
+	} //for(int wByteNum=0;...
+	Serial << endl;
 
   return;
 } //SelectReceiverMAC

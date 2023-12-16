@@ -1,4 +1,4 @@
-//B32_TCoupleLib.h, 12/15/23b
+//B32_TCoupleLib.h, 12/16/23c
 #pragma once
 #include <Streaming.h>
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
@@ -16,11 +16,9 @@ enum class eBoardPinColor {
   eLastPin
 }; //eBoardPinColor
 
-//extern enum eBoardPinColor   eReceiverBoardPinColor;
-
 //Message Structure that is used to pass data back an forth
 typedef struct stMessageStructure {
-  double                    adTCoupleDegF[wNumTCouples];
+  double      adTCoupleDegF[wNumTCouples];
 } stMessageStructure;
 
 //Create stMessageStructure structures to hold readings
@@ -28,9 +26,7 @@ extern stMessageStructure   stIncomingReadings;
 extern stMessageStructure   stOutgoingReadings;
 extern stMessageStructure   stErrorReadings;
 
-//extern uint8_t              aucReceiverMACAddress[];
-
-extern const uint8_t        aucBlackPinMAC[];            //BlackPin MAC
+//extern const uint8_t        aucBlackPinMAC[];            //BlackPin MAC
 extern const uint8_t        aucESP32_ScreenOneDot[];     //ESP32 w/3.2" LCD
 extern const uint8_t        aucESP32_ScreenTwoDot[];     //ESP32 w/3.2" LCD
 
@@ -47,10 +43,6 @@ extern TFT_eSPI             Screen;  //Class library for TTGO T-Display
 extern esp_now_peer_info_t  stPeerInfo;
 
 //Function prototypes
-/*
-void  setup                       (void);
-void  loop                        (void);
-*/
 void  SetupScreen                 (void);
 void  SetupESP_NOW                (void);
 void  OnDataRecv                  (const uint8_t *pucMACAddress,
@@ -58,7 +50,6 @@ void  OnDataRecv                  (const uint8_t *pucMACAddress,
 void  OnDataSent                  (const uint8_t *mac_addr, esp_now_send_status_t status);
 void  HandleDataReceived          (void);
 void  SendDataToDisplayBoard      (void);
-//void  SelectReceiverMAC           (enum eBoardPinColor ePinColor);
 void  UpdateScreen                (stMessageStructure stReadings);
 void  PrintTemperatures           (void);
 void  PrintTemperature            (double dDegF);

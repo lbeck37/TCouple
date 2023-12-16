@@ -31,6 +31,7 @@ char szFileDate[]    = "12/14/23c";
 //This sketch, (B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
 //communication code from the esp_now.h library.
 //#include <B32_TCoupleLib.h>
+#include "Arduino.h"
 #include "B32_TCoupleLib.h"
 
 eBoardPinColor   eReceiverBoardPinColor    {eBoardPinColor::eWhitePin};

@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/15/23b";
+//const char szFileDate[]  = 12/14/23c";
 #include <B32_TCoupleLib.h>
 
 const uint8_t           aucBlackPinMAC[]          = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
@@ -46,8 +46,6 @@ void SetupESP_NOW(void){
     return;
   } // if(esp_now_init()!=ESP_OK)
 
-  SelectReceiverMAC(eReceiverBoardPinColor);
-
   //Register display module
   memcpy(stPeerInfo.peer_addr, aucReceiverMACAddress, 6);
   stPeerInfo.channel = 0;
@@ -90,7 +88,7 @@ void HandleDataReceived(void) {
 
 
 void SendDataToDisplayBoard(void){
-//  SelectReceiverMAC(eReceiverBoardPinColor);
+  SelectReceiverMAC(eReceiverBoardPinColor);
 
    esp_err_t wResult= esp_now_send(aucReceiverMACAddress,
                                   (uint8_t *)&stOutgoingReadings,

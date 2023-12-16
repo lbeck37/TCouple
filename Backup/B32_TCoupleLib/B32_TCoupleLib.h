@@ -1,4 +1,4 @@
-//B32_TCoupleLib.h, 12/15/23b
+//B32_TCoupleLib.h, 12/14/23c
 #pragma once
 #include <Streaming.h>
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
@@ -58,7 +58,7 @@ void  OnDataRecv                  (const uint8_t *pucMACAddress,
 void  OnDataSent                  (const uint8_t *mac_addr, esp_now_send_status_t status);
 void  HandleDataReceived          (void);
 void  SendDataToDisplayBoard      (void);
-//void  SelectReceiverMAC           (enum eBoardPinColor ePinColor);
+void  SelectReceiverMAC           (enum eBoardPinColor ePinColor);
 void  UpdateScreen                (stMessageStructure stReadings);
 void  PrintTemperatures           (void);
 void  PrintTemperature            (double dDegF);

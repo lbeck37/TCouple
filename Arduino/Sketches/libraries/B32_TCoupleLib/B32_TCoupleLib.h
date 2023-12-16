@@ -28,7 +28,7 @@ extern stMessageStructure   stIncomingReadings;
 extern stMessageStructure   stOutgoingReadings;
 extern stMessageStructure   stErrorReadings;
 
-extern uint8_t              aucReceiverMACAddress[];
+//extern uint8_t              aucReceiverMACAddress[];
 
 extern const uint8_t        aucBlackPinMAC[];            //BlackPin MAC
 extern const uint8_t        aucESP32_ScreenOneDot[];     //ESP32 w/3.2" LCD

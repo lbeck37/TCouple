@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/15/23b";
+//const char szFileDate[]  = 12/15/23c";
 #include <B32_TCoupleLib.h>
 
 const uint8_t           aucBlackPinMAC[]          = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
@@ -152,7 +152,7 @@ void SetupScreen(){
   Screen.setTextSize    (1);
   Screen.setCursor      (0, 0, 2);
 
-  Screen << "My MACk= " << WiFi.macAddress() << endl;
+  Screen << "UpdateScreen(): My MAC= " << WiFi.macAddress() << endl;
 
   for (int wTCoupleNum=0; (wTCoupleNum < 5); wTCoupleNum++) {
     Screen << "T" << wTCoupleNum << "= " << stReadings.adTCoupleDegF[wTCoupleNum] << "F, T"

@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleDisplay.ino";
-const char szFileDate[]    = "12/14/23d";
+const char szFileDate[]    = "12/15/23b";
 //Thanks to Rui Santos, https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32
 
 //This sketch, (B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
@@ -7,7 +7,9 @@ const char szFileDate[]    = "12/14/23d";
 #include <B32_TCoupleLib.h>
 
 //uint8_t aucReceiverMACAddress[]= {0xB0, 0xB2, 0x1C, 0x4F, 0x32, 0xCC};   //RedPin MAC
-uint8_t aucReceiverMACAddress[]= {0x3C, 0x61, 0x05, 0x0B, 0xC5, 0x14}; //BluePin MAC
+// aucReceiverMACAddress[]= {0x3C, 0x61, 0x05, 0x0B, 0xC5, 0x14}; //BluePin MAC
+
+eBoardPinColor   eReceiverBoardPinColor    {eBoardPinColor::eBluePin};
 
 //Function prototypes
 void  setup   (void);

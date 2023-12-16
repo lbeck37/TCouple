@@ -1,5 +1,5 @@
 char szSketchName[]  = "B32_TCoupleRemote.ino";
-char szFileDate[]    = "12/14/23c";
+char szFileDate[]    = "12/15/23b";
 /* MAX31855 library example sketch
  This sample code is designed to be used on the MAX31855x8 breakout board.
  The board has a single MAX31855 IC on it, and uses a multiplexer
@@ -68,7 +68,7 @@ void setup() {
   SetupPins();
   SetupScreen();
   SetupESP_NOW();
-  Serial << endl << "My MAC Address is- " << WiFi.macAddress() << endl;
+  Serial << endl << "setup(): My MAC Address is- " << WiFi.macAddress() << endl;
   return;
 }   //setup
 

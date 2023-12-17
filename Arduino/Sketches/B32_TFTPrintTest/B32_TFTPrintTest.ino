@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TFTPrintTest.ino";
-const char szFileDate[]    = "11/14/23m";
+const char szFileDate[]    = "12/16/23b";
 
 //Make sure the pin connections for the larger displays are correct by editing:
 //  Sketches/libraries/TFT_eSPI/User_Setups/Setup1_ILI9341.h
@@ -37,7 +37,8 @@ void loop() {
 
   Serial << "loop(): Call Screen.init()" << endl;
   Screen.init         ();
-  Screen.setRotation  (3);                    //USB at lower right
+  //Screen.setRotation  (3);                    //USB at lower right
+  Screen.setRotation  (1);                    //USB at upper left
   Screen.fillScreen   (TFT_BLACK);
   
   // Set "cursor" at top left corner of display (0,0) and select font 2

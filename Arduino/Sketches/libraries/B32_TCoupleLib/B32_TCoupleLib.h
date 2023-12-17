@@ -1,11 +1,12 @@
-//B32_TCoupleLib.h, 12/16/23c
+//B32_TCoupleLib.h, 12/16/23g
 #pragma once
-#include <Streaming.h>
+//#include <Streaming.h>
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
 #include <SPI.h>
 #include <esp_now.h>
 #include <WiFi.h>
 #include <MAX31855.h>
+#include <Streaming.h>
 
 const int                   wNumTCouples= 8;
 
@@ -21,10 +22,17 @@ typedef struct stMessageStructure {
   double      adTCoupleDegF[wNumTCouples];
 } stMessageStructure;
 
+extern uint8_t              aucMyMACAddress[];
+
 //Create stMessageStructure structures to hold readings
 extern stMessageStructure   stIncomingReadings;
 extern stMessageStructure   stOutgoingReadings;
 extern stMessageStructure   stErrorReadings;
+
+extern uint8_t              auc100ByteBuffer[100];
+//extern char                 ac100ByteBuffer[];
+extern const char           szSketchName[];
+extern const char           szFileDate[];
 
 //extern const uint8_t        aucBlackPinMAC[];            //BlackPin MAC
 extern const uint8_t        aucESP32_ScreenOneDot[];     //ESP32 w/3.2" LCD
@@ -53,5 +61,7 @@ void  SendDataToDisplayBoard      (void);
 void  UpdateScreen                (stMessageStructure stReadings);
 void  PrintTemperatures           (void);
 void  PrintTemperature            (double dDegF);
+//char  acShowMAC                   (uint8_t acOutputBuffer[], uint8_t aucMACAddress[], bool bDisplay);
+void ShowMAC                      (uint8_t aucMACAddress[], bool bDisplay);
 void  ResetTimer                  (void);
 //Last line

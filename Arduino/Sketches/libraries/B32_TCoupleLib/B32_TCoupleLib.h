@@ -1,6 +1,5 @@
-//B32_TCoupleLib.h, 12/16/23g
+//B32_TCoupleLib.h, 12/16/23h
 #pragma once
-//#include <Streaming.h>
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
 #include <SPI.h>
 #include <esp_now.h>
@@ -29,12 +28,10 @@ extern stMessageStructure   stIncomingReadings;
 extern stMessageStructure   stOutgoingReadings;
 extern stMessageStructure   stErrorReadings;
 
-extern uint8_t              auc100ByteBuffer[100];
-//extern char                 ac100ByteBuffer[];
+//extern uint8_t              auc100ByteBuffer[100];
 extern const char           szSketchName[];
 extern const char           szFileDate[];
 
-//extern const uint8_t        aucBlackPinMAC[];            //BlackPin MAC
 extern const uint8_t        aucESP32_ScreenOneDot[];     //ESP32 w/3.2" LCD
 extern const uint8_t        aucESP32_ScreenTwoDot[];     //ESP32 w/3.2" LCD
 
@@ -61,7 +58,6 @@ void  SendDataToDisplayBoard      (void);
 void  UpdateScreen                (stMessageStructure stReadings);
 void  PrintTemperatures           (void);
 void  PrintTemperature            (double dDegF);
-//char  acShowMAC                   (uint8_t acOutputBuffer[], uint8_t aucMACAddress[], bool bDisplay);
-void ShowMAC                      (uint8_t aucMACAddress[], bool bDisplay);
+void  ShowMyMAC                   (bool bDisplay);
 void  ResetTimer                  (void);
 //Last line

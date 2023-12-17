@@ -22,7 +22,6 @@ void setup(){
   SetupESP_NOW();
 
   Serial << endl << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
-  //Serial << endl << "setup(): My MAC Address is- " << WiFi.macAddress() << endl;
   Serial << endl << "setup(): My MAC Address is- ";
   ShowMAC(aucMyMACAddress, false);
   Serial<< endl;

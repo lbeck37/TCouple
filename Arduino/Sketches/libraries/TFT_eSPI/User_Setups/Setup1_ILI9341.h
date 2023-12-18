@@ -1,4 +1,4 @@
-//Beck, 12/17/23, was 11/15/23b
+//Beck, Setup1_ILI9341.h, 12/18/23d
 // See SetupX_Template.h for all options available
 #define USER_SETUP_ID 1
 
@@ -6,6 +6,14 @@
 
 #define DO_WALMART_DISPLAY      true
 #define DO_ESP32_DISPLAY        false
+
+//If colors are inverted (white shows as black) then use one of these
+//#define   TFT_INVERSION_ON
+//#define   TFT_INVERSION_OFF
+
+//If the blue & red are swapped on your display then use one of these
+//#define   TFT_RGB_ORDER     TFT_RGB     // Color order Red-Green-Blue
+//#define   TFT_RGB_ORDER     TFT_BGR     // Color order Blue-Green-Red
 
 #if DO_ESP32_DISPLAY
 //From ElectroDragon Wiki "ESP-LCD32
@@ -29,8 +37,11 @@
   #define TFT_CS              15
   #define TFT_DC               2
   #define TFT_RST             12
-  #define TFT_BL              27    // Display backlight control pin for Walmart ESP32-2432S0 32
-  #define TFT_BACKLIGHT_ON  HIGH    // HIGH or LOW are options
+  #define TFT_BL              27          // Display backlight control pin for Walmart ESP32-2432S0 32
+  #define TFT_BACKLIGHT_ON    HIGH        // HIGH or LOW are options
+  #define TFT_RGB_ORDER       TFT_RGB     // Color order Blue-Green-Red
+
+  #define TFT_INVERSION_ON
 #endif  //DO_WALMART_DISPLAY
 
 #if 0   //From original code, 11/15/23 Beck

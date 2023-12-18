@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TFTPrintTest.ino";
-const char szFileDate[]    = "12/16/23b";
+const char szFileDate[]    = "12/16/23e";
 
 //Make sure the pin connections for the larger displays are correct by editing:
 //  Sketches/libraries/TFT_eSPI/User_Setups/Setup1_ILI9341.h
@@ -10,6 +10,8 @@ const char szFileDate[]    = "12/16/23b";
 #include <WiFi.h>
 #include <B32_TCoupleLib.h>
 #include <Streaming.h>
+
+#define DO_ORIGINAL_DEMO    true
 
 #define TFT_GREY 0x5AEB // New colour
 
@@ -37,8 +39,11 @@ void loop() {
 
   Serial << "loop(): Call Screen.init()" << endl;
   Screen.init         ();
-  //Screen.setRotation  (3);                    //USB at lower right
-  Screen.setRotation  (1);                    //USB at upper left
+  Screen.setRotation  (0);                    //Portrait USB at upper-right
+  //Screen.setRotation  (1);                    //Landscape, USB at upper-left
+  //Screen.setRotation  (2);                    //Portrait USB at lower-left
+  //Screen.setRotation  (3);                    //Landscape, USB at lower-right
+  //Screen.setRotation  (4);                    //Portrait USB at lower-left, text right-to-left
   Screen.fillScreen   (TFT_BLACK);
   
   // Set "cursor" at top left corner of display (0,0) and select font 2
@@ -48,6 +53,7 @@ void loop() {
   Screen.setTextColor (TFT_WHITE, TFT_BLACK);    //White on black
   Screen.setTextSize  (1);
   //Screen.setTextSize  (2);
+#if !DO_ORIGINAL_DEMO
   Screen << "Sketch: " << szSketchName << ", " << szFileDate << endl;
   Screen << "My MAC address is- " << WiFi.macAddress() << endl;
   
@@ -58,8 +64,7 @@ void loop() {
   } //for(int wTCoupleNum=0;wTCoupleNum<wNumTCouples;wTCoupleNum++)
 
   UpdateScreen(stDummyReadings);
-
-/*
+#else
   // Set the font colour to be yellow with no background, set to font 7
   Screen.setTextColor (TFT_YELLOW); Screen.setTextFont(7);
   double dNumber= 1234.56;
@@ -94,8 +99,8 @@ void loop() {
   Screen.println((int)fnumber, BIN); // Print as integer value in binary
   Screen.print("Hexadecimal = ");
   Screen.println((int)fnumber, HEX); // Print as integer number in Hexadecimal
-*/
-  delay(3000);
+#endif
+  delay(10000);
   return;
 }//loop
 //Last line.

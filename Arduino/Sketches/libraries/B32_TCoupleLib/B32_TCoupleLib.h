@@ -7,14 +7,15 @@
 #include <MAX31855.h>
 #include <Streaming.h>
 
-const int                   wNumTCouples= 8;
-
 enum class eBoardPinColor {
   eBluePin= 1,
   eWhitePin,
   eBlackPin,
+  e3dot2NoPin,
   eLastPin
 }; //eBoardPinColor
+
+const int   wNumTCouples= 8;
 
 //Message Structure that is used to pass data back an forth
 typedef struct stMessageStructure {

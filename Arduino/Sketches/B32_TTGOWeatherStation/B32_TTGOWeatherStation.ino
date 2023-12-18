@@ -1,8 +1,8 @@
 const char szSketchName[]  = "B32_TTGOWeatherStation.ino";
-const char szFileDate[]    = "12/11/23r";
+const char szFileDate[]    = "12/17/23c";
 
 #define DO_OTA            true
-#define DO_TASKING        true 
+#define DO_TASKING        true
 
 #include <NTPClient.h>    //https://github.com/taranais/NTPClient
 #include <OpenWeather.h>
@@ -194,14 +194,14 @@ void DisplaySetup(void){
   pinMode(0, INPUT_PULLUP);
   pinMode(ucRightButtonPin, INPUT);
 
-  Serial << "setup(): Sketch: Call tft.init()" << endl;
+  Serial << "DisplaySetup(): Sketch: Call tft.init()" << endl;
   tft.init            ();
   tft.setRotation     (0);
   tft.fillScreen      (TFT_BLACK);
   tft.setTextColor    (TFT_WHITE, TFT_BLACK);
   tft.setTextSize     (1);
 
-  Serial << "setup(): Sketch: Call ledcSetup()" << endl;
+  Serial << "DisplaySetup(): Sketch: Call ledcSetup()" << endl;
   ledcSetup           (ucPWMLedChannel, dPWMFreq, ucPWMResolution);
   ledcAttachPin       (TFT_BL, ucPWMLedChannel);
   ledcWrite           (ucPWMLedChannel, awBacklight[uwBacklightDuty]);

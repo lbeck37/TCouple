@@ -33,7 +33,8 @@ const char szFileDate[]    = "12/16/23h";
 #include "Arduino.h"
 #include "B32_TCoupleLib.h"
 
-eBoardPinColor   eReceiverBoardPinColor    {eBoardPinColor::eWhitePin};
+//eBoardPinColor   eReceiverBoardPinColor    {eBoardPinColor::eWhitePin};
+eBoardPinColor   eReceiverBoardPinColor    {eBoardPinColor::e3dot2NoPin};
 
 const bool  bNoTCouples     = true;
 

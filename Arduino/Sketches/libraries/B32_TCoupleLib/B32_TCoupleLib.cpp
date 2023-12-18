@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/16/23k";
+//const char szFileDate[]  = 12/17/23b";
 #include <B32_TCoupleLib.h>
 
 extern enum eBoardPinColor   eReceiverBoardPinColor;
@@ -7,6 +7,7 @@ extern enum eBoardPinColor   eReceiverBoardPinColor;
 const uint8_t           aucBlackPinMAC[]          = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
 const uint8_t           aucWhitePinMAC[]          = {0x84, 0xCC, 0xA8, 0x60, 0xB4, 0x2C}; //WhitePin MAC
 const uint8_t           aucBluePinMAC[]           = {0x3C, 0x61, 0x05, 0x0B, 0xC5, 0x14}; //BluePin MAC
+const uint8_t           auc3dot2MAC[]             = {0xE0, 0x5A, 0x1B, 0xA2, 0x74, 0x1C}; //BluePin MAC
 
 uint8_t                 aucReceiverMACAddress[6];
 uint8_t                 aucMyMACAddress[6];
@@ -117,6 +118,9 @@ void SelectReceiverMAC(enum eBoardPinColor ePinColor){
         break;
       case eBoardPinColor::eBlackPin:
         aucReceiverMACAddress[wMACByteNum]= aucBlackPinMAC[wMACByteNum];
+        break;
+      case eBoardPinColor::e3dot2NoPin:
+        aucReceiverMACAddress[wMACByteNum]= auc3dot2MAC[wMACByteNum];
         break;
       default: 
         Serial << "SelectReceiverMAC(): Bad switch= " << (int)ePinColor << endl;

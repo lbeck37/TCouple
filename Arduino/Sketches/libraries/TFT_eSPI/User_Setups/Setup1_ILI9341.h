@@ -1,11 +1,11 @@
-//Beck, 11/15/23b
+//Beck, 12/17/23, was 11/15/23b
 // See SetupX_Template.h for all options available
 #define USER_SETUP_ID 1
 
 #define ILI9341_DRIVER
 
-#define DO_WALMART_DISPLAY      false
-#define DO_ESP32_DISPLAY        true
+#define DO_WALMART_DISPLAY      true
+#define DO_ESP32_DISPLAY        false
 
 #if DO_ESP32_DISPLAY
 //From ElectroDragon Wiki "ESP-LCD32

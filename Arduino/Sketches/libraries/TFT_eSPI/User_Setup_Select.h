@@ -24,7 +24,7 @@
 ///////////////////////////////////////////////////////
 
 // Only ONE line below should be uncommented to define your setup.  Add extra lines and files as needed.
-#define DO_ESP32_DISPLAY      true      //3.2" display with ESP32, from ElectroDragon Nov 2023
+#define DO_ESP32_DISPLAY      true      //3.2" display with ESP32, from ElectroDragon Nov 2023, also Walmart 3.2" w/ESP32
 #define DO_TTGO_DISPLAY       false     //TTGO display with ESP32, 16MB (?) memory
 
 #if 0     //Beck, 11/16/23, this is useless and buggy and apparantly obsolete and not needed.

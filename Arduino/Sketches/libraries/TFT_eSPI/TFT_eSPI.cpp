@@ -1,3 +1,4 @@
+//Beck, TFT_eSPI.cpp, 12/18/23b
 /***************************************************
   Arduino TFT graphics library targeted at 32 bit
   processors such as ESP32, ESP8266 and STM32.
@@ -57,6 +58,7 @@
   if ((y + dh) > _vpH ) dh = _vpH - y;                 \
                                                        \
   if (dw < 1 || dh < 1) return;
+
 
 /***************************************************************************************
 ** Function name:           Legacy - deprecated

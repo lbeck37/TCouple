@@ -1,7 +1,7 @@
-//B32_TCoupleLib.h, 12/16/23h
+//B32_TCoupleLib.h, 12/18/23c
 #pragma once
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
-#include <SPI.h>
+//#include <SPI.h>
 #include <esp_now.h>
 #include <WiFi.h>
 #include <MAX31855.h>

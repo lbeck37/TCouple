@@ -162,7 +162,14 @@ void ShowMyMAC(bool bDisplay){
 void SetupScreen(){
   Screen.init();
   //Screen.setRotation(1);   //1= USB Right Landscape
-  Screen.setRotation(3);   //3= USB Left Landscape
+  //OLD:Screen.setRotation(3);   //3= USB Left Landscape
+  Screen.setRotation  (0);                    //ED: Portrait USB at upper-right, WM: Landscape USB on left
+  //Screen.setRotation  (1);                    //ED: Landscape, USB at upper-left, WM: Portrait, USB on top
+  //Screen.setRotation  (2);                    //ED: Portrait USB at lower-left
+  //Screen.setRotation  (3);                    //ED: Landscape, USB at lower-right
+  //Screen.setRotation  (4);                    //ED: Portrait USB at lower-left, text right-to-left
+  //Screen.fillScreen   (LB_BLACK);
+
   Screen.fillScreen(TFT_BLACK);
   return;
 }//SetupScreen stMessageStructure stMessage
@@ -170,9 +177,11 @@ void SetupScreen(){
 
  void UpdateScreen(stMessageStructure stReadings){
   Screen.fillScreen     (TFT_BLACK);
-  Screen.setTextColor   (TFT_GREEN,TFT_BLACK);
-  //Screen.setTextFont    (3);
-  Screen.setTextFont    (5);
+  //Screen.setTextColor   (TFT_GREEN,TFT_BLACK);
+  Screen.setTextColor   (TFT_YELLOW,TFT_BLACK);
+  Screen.setTextFont    (3);
+  //Screen.setTextFont    (5);
+  //Screen.setTextFont    (4);
   Screen.setTextSize    (1);
   Screen.setCursor      (0, 0, 2);
 

@@ -26,6 +26,7 @@
 **                         Section 1: Load required header files
 ***************************************************************************************/
 
+//#define B32_ILI9341   true
 //Standard support
 #include <Arduino.h>
 #include <Print.h>
@@ -66,6 +67,7 @@
   #endif
 #endif
 
+//#define B32_ILI9341   true
 #include <User_Setup_Select.h>
 
 // Handle FLASH based storage e.g. PROGMEM

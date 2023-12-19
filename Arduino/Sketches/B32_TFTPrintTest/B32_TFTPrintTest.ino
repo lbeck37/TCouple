@@ -91,7 +91,8 @@ void DoTest() {
   Screen.fillScreen(LB_BLACK);
   delay (2000);
 
-  //Set the font color to be yellow with no background, set to font 7
+/*
+  //Yellow with no background, set to font 7, 7-segment, only 0-9,.,-
   Screen.setTextColor (LB_YELLOW);
   Screen.setTextFont  (7);
   double dNumber= 1234.56;
@@ -100,8 +101,9 @@ void DoTest() {
   Screen.setTextColor (LB_GREEN, LB_BLACK);     //Green on black
   Screen.setTextFont  (4);
   Screen << "Above is Font7 TFT_YELLOW" << endl;
+*/
 
-  // Set the font color to be green with black background, set to font 4
+  //Green with black background, font 4, Medium, 26 pixel high
   Screen.setTextColor (LB_GREEN, LB_BLACK);     //Green on black
   Screen.setTextFont  (4);
   Screen << "Font4 TFT_GREEN" << endl;

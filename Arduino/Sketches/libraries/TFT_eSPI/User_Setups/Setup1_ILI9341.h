@@ -1,7 +1,15 @@
-//Beck, Setup1_ILI9341.h, 12/18/23f
+//Beck, Setup1_ILI9341.h, 12/19/23c
 // See SetupX_Template.h for all options available
+#pragma once
 #define USER_SETUP_ID           1
-#define ILI9341_DRIVER
+#pragma message("Setup1_ILI9341.h, Begin")
+#ifdef B32_ILI9341
+  #pragma message("Setup1_ILI9341.h, B32_ILI9341 is defined")
+#else
+  #pragma message("Setup1_ILI9341.h, B32_ILI9341 is not defined")
+#endif
+
+//#define ILI9341_DRIVER
 
 #define DO_WALMART_DISPLAY      true
 #define DO_ESP32_DISPLAY        false
@@ -30,6 +38,8 @@
   //Start with https://forum.arduino.cc/t/esp32-2432s028r-all-in-one-display-touch-spi-problems/1059746
   //Also found in esp32-smartdisplay.h for ESP32-2432S024N, 24R, 24C 28R
   //24C is only one with backlight on 27 like our Walmart, others are 21
+  #define TFT_WIDTH          320
+  #define TFT_HEIGHT         240
   #define TFT_MOSI            13
   #define TFT_SCLK            14
   #define TFT_CS              15

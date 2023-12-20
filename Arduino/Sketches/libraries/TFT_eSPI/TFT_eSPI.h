@@ -1,3 +1,4 @@
+//Beck, TFT_eSPI.h, 12/19/23d
 /***************************************************
   Arduino TFT graphics library targeted at ESP8266
   and ESP32 based boards.
@@ -16,11 +17,18 @@
 #ifndef _TFT_eSPIH_
 #define _TFT_eSPIH_
 
-#define TFT_ESPI_VERSION "2.5.33"
+//#if B32_ILI9341
+#ifdef  B32_ILI9341
+  #pragma message("TFT_eSPI.h, Begin, B32_ILI9341 is defined")
+#else
+  #pragma message("TFT_eSPI.h, Begin, B32_ILI9341 is not defined")
+#endif
+
+#define TFT_ESPI_VERSION    "2.5.33"
 
 // Bit level feature flags
 // Bit 0 set: viewport capability
-#define TFT_ESPI_FEATURES 1
+#define TFT_ESPI_FEATURES   1
 
 /***************************************************************************************
 **                         Section 1: Load required header files
@@ -68,6 +76,11 @@
 #endif
 
 //#define B32_ILI9341   true
+#ifdef B32_ILI9341
+  #pragma message("TFT_eSPI.h, Include User_Setup_Select.h, B32_ILI9341 is defined")
+#else
+  #pragma message("TFT_eSPI.h, Include User_Setup_Select.h, B32_ILI9341 is not defined")
+#endif
 #include <User_Setup_Select.h>
 
 // Handle FLASH based storage e.g. PROGMEM

@@ -1,6 +1,9 @@
-//B32_TCoupleLib.h, 12/18/23c
+//B32_TCoupleLib.h, 12/19/23b
 #pragma once
+/*
+#pragma message("B32_TCoupleLib.h, Begin, include TFT_eSPI.h, if not already included")
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
+*/
 //#include <SPI.h>
 #include <esp_now.h>
 #include <WiFi.h>

@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleDisplay.ino";
-const char szFileDate[]    = "12/18/23e";
+const char szFileDate[]    = "12/19/23d";
 //Thanks to Rui Santos, https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32
 
 //This sketch, (B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
@@ -7,8 +7,18 @@ const char szFileDate[]    = "12/18/23e";
 //#include <TFT_eSPI_DriverDefines.h>
 //#define B32_ILI9341             true
 //#define B32_TTGO_T_DISPLAY      false
+/*
 #ifndef B32_ILI9341
  #define B32_ILI9341
+#endif
+*/
+//#define B32_ILI9341             true
+#define B32_ILI9341
+
+#ifdef B32_ILI9341
+  #pragma message("B32_TCoupleDisplay.ino, Include TFT_eSPI.h, B32_ILI9341 is defined")
+#else
+  #pragma message("B32_TCoupleDisplay.ino, Include TFT_eSPI.h, B32_ILI9341 is not defined")
 #endif
 
 #include <TFT_eSPI.h>

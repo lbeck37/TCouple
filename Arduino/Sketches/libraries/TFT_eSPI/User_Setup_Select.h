@@ -1,4 +1,4 @@
-//Beck, User_Setup_select, 12/19/23d
+//Beck, User_Setup_select, 12/20/23b
 // This header file contains a list of user setup files and defines which one the
 // compiler uses when the IDE performs a Verify/Compile or Upload.
 //
@@ -15,17 +15,19 @@
 
 // Example User_Setup files are stored in the "User_Setups" folder. These can be used
 // unmodified or adapted for a particular hardware configuration.
+#pragma once
 
 #ifndef USER_SETUP_LOADED //  Lets PlatformIO users define settings in
                           //  platformio.ini, see notes in "Tools" folder.
-#pragma once
+/*
 #ifdef B32_ILI9341
   #pragma message("User_Setup_select.h, Include TFT_eSPI_DriverSelect.h, B32_ILI9341 is defined")
 #else
   #pragma message("User_Setup_select.h, Include TFT_eSPI_DriverSelect.h, B32_ILI9341 is not defined")
 #endif
+*/
 
-#include <TFT_eSPI_DriverSelect.h>
+#include <TFT_eSPI_DriverSelect.h>      //Beck- Created by me, to be renamed to TFT_eSPI_DriverSelectB32.h
 ///////////////////////////////////////////////////////
 //   User configuration selection lines are below    //
 ///////////////////////////////////////////////////////

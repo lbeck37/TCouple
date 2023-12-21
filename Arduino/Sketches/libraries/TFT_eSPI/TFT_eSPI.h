@@ -1,4 +1,4 @@
-//Beck, TFT_eSPI.h, 12/19/23d
+//Beck, TFT_eSPI.h, 12/20/23b
 /***************************************************
   Arduino TFT graphics library targeted at ESP8266
   and ESP32 based boards.
@@ -20,8 +20,10 @@
 //#if B32_ILI9341
 #ifdef  B32_ILI9341
   #pragma message("TFT_eSPI.h, Begin, B32_ILI9341 is defined")
+  #pragma message(B32_ILI9341)
 #else
   #pragma message("TFT_eSPI.h, Begin, B32_ILI9341 is not defined")
+  #pragma message(B32_ILI9341)
 #endif
 
 #define TFT_ESPI_VERSION    "2.5.33"

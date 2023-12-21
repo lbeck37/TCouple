@@ -1,16 +1,8 @@
-//Beck, Setup1_ILI9341.h, 12/20/23b
+//Beck, Setup1_ILI9341.h, 12/20/23c
 // See SetupX_Template.h for all options available
 #pragma once
 #define USER_SETUP_ID           1
 #pragma message("Setup1_ILI9341.h, Begin")
-
-/*
-#ifdef B32_ILI9341
-  #pragma message("Setup1_ILI9341.h, B32_ILI9341 is defined")
-#else
-  #pragma message("Setup1_ILI9341.h, B32_ILI9341 is not defined")
-#endif
-*/
 
 #define ILI9341_DRIVER
 

@@ -1,4 +1,4 @@
-//B32_TCoupleLib.h, 12/21/23H
+//B32_TCoupleLib.h, 12/22/23b
 #pragma once
 #pragma message("B32_TCoupleLib.h, Begin, include TFT_eSPI.h, if not already included")
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
@@ -48,23 +48,6 @@ extern long                 lNextMsec;
 extern MAX31855             TCoupleObject;
 extern TFT_eSPI             Screen;  //Class library for TTGO T-Display
 extern esp_now_peer_info_t  stPeerInfo;
-
-//ESP32 GPIO pin numbers (range from 0 to 39)
-#define TCoupleSelect0    27
-#define TCoupleSelect1    26
-#define TCoupleSelect2    25
-#define TCouple_MISO      32
-#define TCouple_CS        17
-#define TCouple_SCK  33
-/*
-//ESP32 GPIO pin numbers (range from 0 to 39)
-#define TCoupleSelect0    27
-#define TCoupleSelect1    26
-#define TCoupleSelect2    25
-#define TCouple_MISO       32
-#define TCouple_CS        17
-#define TCouple_SCK       33
-*/
 
 //Function prototypes
 void  SetupESP_NOW                (void);

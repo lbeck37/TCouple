@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleDisplay.ino";
-const char szFileDate[]    = "12/22/23B";
+const char szFileDate[]    = "12/22/23d";
 //Thanks to Rui Santos, https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32
 //This sketch, (B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
 //communication code from the esp_now.h library.
@@ -23,11 +23,11 @@ eBoardPinColor    eReceiverBoardPinColor    {eBoardPinColor::eBluePin};  //Displ
 #endif
 
 #if defined(B32_ILI9341)
-  const uint8_t ucRotation  = 0;  //0 WM: L, USB L/ DIY: P, USB Bot/ ED: P, USB UR/ TT: P, USB Bot
+  const uint8_t ucRotation  = 0;  //0 WM: L, USB L/ DIY: ?, USB Bot/ ED: P, USB UR/ TT: P, USB Bot
 #endif
 
 #if defined(B32_ILI9488_ESP32)
-  const uint8_t ucRotation  = 0;  //0 WM: L, USB L/ DIY: P, USB Bot/ ED: P, USB UR/ TT: P, USB Bot
+  const uint8_t ucRotation  = 0;  //0 WM: L, USB L/ DIY: ?, USB Bot/ ED: P, USB UR/ TT: P, USB Bot
 #endif
 
 //Function prototypes
@@ -49,7 +49,7 @@ void setup(){
 
 
 void loop(){
-  //Loop doesn't have to anything, it's all driven by the receiving of data
+  //Loop doesn't have to do anything but check the no-data timer, it's all driven by receiving data
   if (millis() > lNextMsec){
     Serial << "loop(): We haven't seen any data for over " << 
               (lAliveMsec/1000) << " seconds" << endl;

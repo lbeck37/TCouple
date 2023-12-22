@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/22/23B";
+//const char szFileDate[]  = 12/22/23d";
 #include <B32_TCoupleLib.h>
 
 extern enum eBoardPinColor   eReceiverBoardPinColor;
@@ -11,6 +11,14 @@ const uint8_t           auc3dot2MAC[]             = {0xE0, 0x5A, 0x1B, 0xA2, 0x7
 
 uint8_t                 aucReceiverMACAddress[6];
 uint8_t                 aucMyMACAddress[6];
+
+//ESP32 GPIO pin numbers (range from 0 to 39)
+const uint8_t           TCoupleSelect0            = 27;
+const uint8_t           TCoupleSelect1            = 26;
+const uint8_t           TCoupleSelect2            = 25;
+const uint8_t           TCouple_MISO              = 32;
+const uint8_t           TCouple_CS                = 17;
+const uint8_t           TCouple_SCK               = 33;
 
 const bool  bNoTCouples     = true;
 double  dJunctionDegF;

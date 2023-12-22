@@ -1,4 +1,4 @@
-//B32_TCoupleLib.h, 12/21/23b
+//B32_TCoupleLib.h, 12/21/23c
 #pragma once
 #pragma message("B32_TCoupleLib.h, Begin, include TFT_eSPI.h, if not already included")
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
@@ -46,6 +46,7 @@ extern long                 lAliveMsec;
 extern long                 lCurrentMsec;
 extern long                 lNextMsec;
 
+extern MAX31855             TCoupleObject;
 extern TFT_eSPI             Screen;  //Class library for TTGO T-Display
 extern esp_now_peer_info_t  stPeerInfo;
 
@@ -59,7 +60,10 @@ void  OnDataSent                  (const uint8_t *mac_addr, esp_now_send_status_
 void  HandleDataReceived          (void);
 void  SendDataToDisplayBoard      (void);
 void  UpdateScreen                (stMessageStructure stReadings);
-void  PrintTemperatures           (void);
+void  ReadAmbiant                 (void);
+void  ReadTCouples                (void);
+//void  PrintTemperatures           (void);
+void  PrintTemperatures           (stMessageStructure stReadings);
 void  PrintTemperature            (double dDegF);
 void  ShowMyMAC                   (bool bDisplay);
 void  ResetTimer                  (void);

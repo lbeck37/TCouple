@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/17/23c";
+//const char szFileDate[]  = 12/21/23c";
 #include <B32_TCoupleLib.h>
 
 extern enum eBoardPinColor   eReceiverBoardPinColor;
@@ -13,6 +13,11 @@ uint8_t                 aucReceiverMACAddress[6];
 uint8_t                 aucMyMACAddress[6];
 
 //uint8_t                 auc100ByteBuffer[100];
+
+const bool  bNoTCouples     = true;
+double  dJunctionDegF;
+double  dDummyJunctionDegF  = 60.00;   //3 ED: L, USB LR/
+double  dDummyAddDegF       =  0.00;
 
 //Define variables to store temperature readings to be sent
 double                  dTCouple0_DegF;
@@ -86,7 +91,7 @@ void OnDataRecv(const uint8_t *pucMACAddress, const uint8_t *pucIncomingData, in
 void HandleDataReceived(void) {
   ResetTimer();
 
-  PrintTemperatures();
+  PrintTemperatures(stIncomingReadings);
   UpdateScreen(stIncomingReadings);
   return;
 } //OnDataRecv
@@ -168,7 +173,7 @@ void SetupScreen(uint8_t ucRotation){
   //Screen.setRotation  (0);  //0 WM: L, USB L/ DIY: P, USB Bot/ ED: P, USB UR/ TT: P, USB Bot
   //Screen.setRotation  (1);  //1 WM: P, USB Top/ ED: L, USB UL/ TT: L, USB R
   //Screen.setRotation  (2);  //2 ED: P  USB LL/
-  //Screen.setRotation  (3);  //3 ED: L, USB LR/
+  //Screen.setRotation  (3);  //3 ED: L, USB LR/ TT: L, USB L
   //Screen.setRotation  (4);  //4 ED: P, USB LL, text right-to-left
   //Screen.fillScreen   (LB_BLACK);
 
@@ -197,9 +202,70 @@ void SetupScreen(uint8_t ucRotation){
         << (wTCoupleNum + 3)  << "= " << stReadings.adTCoupleDegF[wTCoupleNum +3] << "F" << endl;
   } //for(int wTCoupleNum=0;(wTCoupleNum<5);wTCoupleNum++)
   return;
-}   //UpdateScreen
+}   //UpdateScreen stMessageStructure stReadings
 
 
+ void ReadAmbiant(void){
+   if (!bNoTCouples){
+     dJunctionDegF= TCoupleObject.readJunction(FAHRENHEIT);
+   }   //if(!bNoTCouples)
+   else{
+     dDummyJunctionDegF += 0.10;
+     dJunctionDegF= dDummyJunctionDegF;
+   }   //if(!bNoTCouples)else
+   return;
+ } //ReadAmbiant
+
+
+ void ReadTCouples(void){
+ /*
+   //Read the temperatures of the 8 thermocouples
+   for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
+     //Select the thermocouple
+     digitalWrite(T0, wTCoupleNum & 1? HIGH: LOW);
+     digitalWrite(T1, wTCoupleNum & 2? HIGH: LOW);
+     digitalWrite(T2, wTCoupleNum & 4? HIGH: LOW);
+     //The MAX31855 takes 100ms to sample the TCouple.
+     //Wait a bit longer to be safe.  We'll wait 0.125 seconds
+     delay(125);
+
+     //adTCoupleDegF[wTCoupleNum]= TCoupleObject.readThermocouple(FAHRENHEIT);
+     stOutgoingReadings.adTCoupleDegF[wTCoupleNum]= TCoupleObject.readThermocouple(FAHRENHEIT);
+     if (stOutgoingReadings.adTCoupleDegF[wTCoupleNum] == FAULT_OPEN){
+       //Break out of for loop, go to top of for loop and next TCouple
+       continue;
+     } //if(stOutgoingReadings.adTCoupleDegF[wTCoupleNum]==FAULT_OPEN)
+   }   //for(int wTCoupleNum=0;wTCoupleNum<8;wTCoupleNum++)
+ */
+   //Read the temperatures of the 8 thermocouples
+   for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
+     //Select the thermocouple
+     digitalWrite(T0, wTCoupleNum & 1? HIGH: LOW);
+     digitalWrite(T1, wTCoupleNum & 2? HIGH: LOW);
+     digitalWrite(T2, wTCoupleNum & 4? HIGH: LOW);
+     //The MAX31855 takes 100ms to sample the TCouple.
+     //Wait a bit longer to be safe.  We'll wait 0.125 seconds
+     delay(125);
+
+     if (!bNoTCouples){
+       //adTCoupleDegF[wTCoupleNum]= TCoupleObject.readThermocouple(FAHRENHEIT);
+       stOutgoingReadings.adTCoupleDegF[wTCoupleNum]= TCoupleObject.readThermocouple(FAHRENHEIT);
+     } //if(!bNoTCouples)
+     else{
+       dDummyAddDegF += 0.10;
+       stOutgoingReadings.adTCoupleDegF[wTCoupleNum]= (100.00 + (wTCoupleNum * 10.00) + dDummyAddDegF);
+     } //if(!bNoTCouples)else
+
+     if (stOutgoingReadings.adTCoupleDegF[wTCoupleNum] == FAULT_OPEN){
+       //Break out of for loop, go to top of for loop and next TCouple
+       continue;
+     } //if(stOutgoingReadings.adTCoupleDegF[wTCoupleNum]==FAULT_OPEN)
+   } //for(int wTCoupleNum=0;wTCoupleNum<8;wTCoupleNum++)
+   return;
+ }   //ReadTCouples
+
+
+/*
 void PrintTemperatures(void){
   for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
     Serial << "T" << wTCoupleNum << "= ";
@@ -211,6 +277,18 @@ void PrintTemperatures(void){
   Serial << endl;
   return;
 } //PrintTemperatures
+*/
+ void PrintTemperatures(stMessageStructure stReadings){
+   for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
+     Serial << "T" << wTCoupleNum << "= ";
+     PrintTemperature(stReadings.adTCoupleDegF[wTCoupleNum]);
+     if (wTCoupleNum < (wNumTCouples - 1)){  //Put a comma after all but last
+       Serial << ", ";
+     }
+   } //for(int wTCoupleNum=0;wTCoupleNum<8;wTCoupleNum++)
+   Serial << endl;
+   return;
+ } //PrintTemperatures
 
 
 //Print the temperature, or the type of fault

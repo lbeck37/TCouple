@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleRemote.ino";
-const char szFileDate[]    = "12/21/23f";
+const char szFileDate[]    = "12/21/23j";
 /* MAX31855 library example sketch
  This sample code is designed to be used on the MAX31855x8 breakout board.
  The board has a single MAX31855 IC on it, and uses a multiplexer
@@ -41,7 +41,6 @@ const char szFileDate[]    = "12/21/23f";
 //eBoardPinColor   eReceiverBoardPinColor    {eBoardPinColor::eWhitePin};
 eBoardPinColor   eReceiverBoardPinColor    {eBoardPinColor::e3dot2NoPin};
 
-const bool  bNoTCouples     = true;
 
 //ESP32 GPIO pin numbers (range from 0 to 39)
 #define T0   27
@@ -54,22 +53,23 @@ const bool  bNoTCouples     = true;
 //Create the temperature object, defining the pins used for communication
 MAX31855 TCoupleObject = MAX31855(MISO, CS, SCK);
 
+/*
+const bool  bNoTCouples     = true;
 double  dJunctionDegF;
 double  dDummyJunctionDegF  = 60.00;   //3 ED: L, USB LR/
 double  dDummyAddDegF       =  0.00;
+*/
 
 #if defined(B32_TTGO_T_DISPLAY)
-  //const uint8_t ucRotation          = 0;  //0 WM: L, USB L/ DIY: P, USB Bot/ ED: P, USB UR/ TT: P, USB Bot
-  //const uint8_t ucRotation          = 1;  //1 WM: P, USB Top/ ED: L, USB UL/ TT: L, USB R
-  const uint8_t ucRotation          = 3;  //1 WM: P, USB Top/ ED: L, USB UL/ TT: L, USB L
+  const uint8_t ucRotation  = 3;  //1 WM: P, USB Top/ ED: L, USB UL/ TT: L, USB L
 #endif
 
 #if defined(B32_ILI9341)
-  const uint8_t ucRotation          = 0;  //WM: Landscape, USB left, DIYMall: Portrait, USB Bottom, ED: Portrait USB upper-right
+  const uint8_t ucRotation  = 0;  //0 WM: L, USB L/ DIY: P, USB Bot/ ED: P, USB UR/ TT: P, USB Bot
 #endif
 
 #if defined(B32_ILI9488_ESP32)
-  const uint8_t ucRotation          = 0;  //WM: Landscape, USB left, DIYMall: Portrait, USB Bottom, ED: Portrait USB upper-right
+  const uint8_t ucRotation  = 0;  //0 WM: L, USB L/ DIY: P, USB Bot/ ED: P, USB UR/ TT: P, USB Bot
 #endif
 
 
@@ -77,8 +77,8 @@ double  dDummyAddDegF       =  0.00;
 void  setup                   (void);
 void  loop                    (void);
 void  SetupPins               (void);
-void  ReadAmbiant             (void);
-void  ReadTCouples            (void);
+//void  ReadAmbiant             (void);
+//void  ReadTCouples            (void);
 
 void setup() {
   Serial.begin(115200);
@@ -98,11 +98,12 @@ void setup() {
 void loop() {
   ReadAmbiant();
   ReadTCouples();
-  PrintTemperatures();
+  //PrintTemperatures();
+  PrintTemperatures(stOutgoingReadings);
   SendDataToDisplayBoard();
   UpdateScreen(stOutgoingReadings);
 
-  //No delay, loop as fast as possible
+  delay(1000);
   return;
 }   //loop
 
@@ -120,7 +121,7 @@ void SetupPins(void){
   return;
 } //SetupPins
 
-
+/*
 void ReadAmbiant(void){
   if (!bNoTCouples){
     dJunctionDegF= TCoupleObject.readJunction(FAHRENHEIT);
@@ -134,7 +135,7 @@ void ReadAmbiant(void){
 
 
 void ReadTCouples(void){
-/*
+
   //Read the temperatures of the 8 thermocouples
   for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
     //Select the thermocouple
@@ -152,7 +153,7 @@ void ReadTCouples(void){
       continue;
     } //if(stOutgoingReadings.adTCoupleDegF[wTCoupleNum]==FAULT_OPEN)
   }   //for(int wTCoupleNum=0;wTCoupleNum<8;wTCoupleNum++)
-*/
+
   //Read the temperatures of the 8 thermocouples
   for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
     //Select the thermocouple
@@ -179,4 +180,5 @@ void ReadTCouples(void){
   } //for(int wTCoupleNum=0;wTCoupleNum<8;wTCoupleNum++)
   return;
 }   //ReadTCouples
+*/
 //Last line.

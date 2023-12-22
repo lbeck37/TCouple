@@ -50,22 +50,20 @@ extern TFT_eSPI             Screen;  //Class library for TTGO T-Display
 extern esp_now_peer_info_t  stPeerInfo;
 
 //ESP32 GPIO pin numbers (range from 0 to 39)
-#define T0   27
-#define T1   26
-#define T2   25
-#define MISO 32
-#define CS   17
-#define SCK  33
+#define TCoupleSelect0    27
+#define TCoupleSelect1    26
+#define TCoupleSelect2    25
+#define TCouple_MISO      32
+#define TCouple_CS        17
+#define TCouple_SCK  33
 /*
 //ESP32 GPIO pin numbers (range from 0 to 39)
-#define TCoupleSelect0   27
-#define TCoupleSelect1   26
-#define TCoupleSelect2   25
-#define T1   26
-#define T2   25
-#define MISO 32
-#define CS   17
-#define SCK  33
+#define TCoupleSelect0    27
+#define TCoupleSelect1    26
+#define TCoupleSelect2    25
+#define TCouple_MISO       32
+#define TCouple_CS        17
+#define TCouple_SCK       33
 */
 
 //Function prototypes

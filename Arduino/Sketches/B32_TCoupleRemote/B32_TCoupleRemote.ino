@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleRemote.ino";
-const char szFileDate[]    = "12/21/23R";
+const char szFileDate[]    = "12/22/23B";
 /* MAX31855 library example sketch
  This sample code is designed to be used on the MAX31855x8 breakout board.
  The board has a single MAX31855 IC on it, and uses a multiplexer
@@ -40,9 +40,6 @@ const char szFileDate[]    = "12/21/23R";
 //eBoardPinColor   eReceiverBoardPinColor    {eBoardPinColor::eWhitePin};
 eBoardPinColor   eReceiverBoardPinColor    {eBoardPinColor::e3dot2NoPin};
 
-//Create the temperature object, defining the pins used for communication
-MAX31855 TCoupleObject = MAX31855(MISO, CS, SCK);
-
 #if defined(B32_TTGO_T_DISPLAY)
   const uint8_t ucRotation  = 3;  //1 WM: P, USB Top/ ED: L, USB UL/ TT: L, USB L
 #endif
@@ -55,10 +52,10 @@ MAX31855 TCoupleObject = MAX31855(MISO, CS, SCK);
   const uint8_t ucRotation  = 0;  //0 WM: L, USB L/ DIY: P, USB Bot/ ED: P, USB UR/ TT: P, USB Bot
 #endif
 
-
 //Function prototypes
 void  setup                   (void);
 void  loop                    (void);
+
 
 void setup() {
   Serial.begin(115200);

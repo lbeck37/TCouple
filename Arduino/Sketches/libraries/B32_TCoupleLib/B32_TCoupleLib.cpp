@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/21/23E";
+//const char szFileDate[]  = 12/22/23B";
 #include <B32_TCoupleLib.h>
 
 extern enum eBoardPinColor   eReceiverBoardPinColor;
@@ -26,15 +26,16 @@ long                    lAliveMsec     = 5000;
 long                    lCurrentMsec   = 0;
 long                    lNextMsec      = 0;
 
-// Variable to store if sending data was successful
+//Variable to store if sending data was successful
 String                  szSuccess;
 
-// Create a stMessageStructure to hold incoming sensor readings
+//Create a stMessageStructure to hold incoming sensor readings
 stMessageStructure      stIncomingReadings;
 stMessageStructure      stOutgoingReadings;
 stMessageStructure      stErrorReadings;
 
-TFT_eSPI                Screen=     TFT_eSPI();  //Class library for TTGO T-Screen
+MAX31855                TCoupleObject = MAX31855(TCouple_MISO, TCouple_CS, TCouple_SCK);
+TFT_eSPI                Screen        = TFT_eSPI();
 
 esp_now_peer_info_t     stPeerInfo;
 
@@ -219,9 +220,9 @@ void SetupScreen(uint8_t ucRotation){
    //Read the temperatures of the 8 thermocouples
    for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
      //Select the thermocouple
-     digitalWrite(T0, wTCoupleNum & 1? HIGH: LOW);
-     digitalWrite(T1, wTCoupleNum & 2? HIGH: LOW);
-     digitalWrite(T2, wTCoupleNum & 4? HIGH: LOW);
+     digitalWrite(TCoupleSelect0, wTCoupleNum & 1? HIGH: LOW);
+     digitalWrite(TCoupleSelect1, wTCoupleNum & 2? HIGH: LOW);
+     digitalWrite(TCoupleSelect2, wTCoupleNum & 4? HIGH: LOW);
      //The MAX31855 takes 100ms to sample the TCouple.
      //Wait a bit longer to be safe.  We'll wait 0.125 seconds
      delay(125);
@@ -281,13 +282,13 @@ void PrintTemperature(double dDegF) {
 
 
 void SetupPins(void){
-  pinMode(T0,   OUTPUT);
-  pinMode(T1,   OUTPUT);
-  pinMode(T2,   OUTPUT);
+  pinMode(TCoupleSelect0, OUTPUT);
+  pinMode(TCoupleSelect1, OUTPUT);
+  pinMode(TCoupleSelect2, OUTPUT);
 
-  pinMode(MISO, INPUT);
-  pinMode(CS,   OUTPUT);
-  pinMode(SCK,  OUTPUT);
+  pinMode(TCouple_MISO,   INPUT);
+  pinMode(TCouple_CS,     OUTPUT);
+  pinMode(TCouple_SCK,    OUTPUT);
 
   delay(200);
   return;

@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleRemote.ino";
-const char szFileDate[]    = "12/21/23b";
+const char szFileDate[]    = "12/21/23f";
 /* MAX31855 library example sketch
  This sample code is designed to be used on the MAX31855x8 breakout board.
  The board has a single MAX31855 IC on it, and uses a multiplexer
@@ -55,8 +55,23 @@ const bool  bNoTCouples     = true;
 MAX31855 TCoupleObject = MAX31855(MISO, CS, SCK);
 
 double  dJunctionDegF;
-double  dDummyJunctionDegF  = 60.00;
+double  dDummyJunctionDegF  = 60.00;   //3 ED: L, USB LR/
 double  dDummyAddDegF       =  0.00;
+
+#if defined(B32_TTGO_T_DISPLAY)
+  //const uint8_t ucRotation          = 0;  //0 WM: L, USB L/ DIY: P, USB Bot/ ED: P, USB UR/ TT: P, USB Bot
+  //const uint8_t ucRotation          = 1;  //1 WM: P, USB Top/ ED: L, USB UL/ TT: L, USB R
+  const uint8_t ucRotation          = 3;  //1 WM: P, USB Top/ ED: L, USB UL/ TT: L, USB L
+#endif
+
+#if defined(B32_ILI9341)
+  const uint8_t ucRotation          = 0;  //WM: Landscape, USB left, DIYMall: Portrait, USB Bottom, ED: Portrait USB upper-right
+#endif
+
+#if defined(B32_ILI9488_ESP32)
+  const uint8_t ucRotation          = 0;  //WM: Landscape, USB left, DIYMall: Portrait, USB Bottom, ED: Portrait USB upper-right
+#endif
+
 
 //Function prototypes
 void  setup                   (void);
@@ -69,7 +84,7 @@ void setup() {
   Serial.begin(115200);
 
   SetupPins();
-  SetupScreen();
+  SetupScreen(ucRotation);
   SetupESP_NOW();
   delay(500);
 

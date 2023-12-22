@@ -1,4 +1,4 @@
-//B32_TCoupleLib.h, 12/20/23b
+//B32_TCoupleLib.h, 12/21/23b
 #pragma once
 #pragma message("B32_TCoupleLib.h, Begin, include TFT_eSPI.h, if not already included")
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
@@ -50,7 +50,8 @@ extern TFT_eSPI             Screen;  //Class library for TTGO T-Display
 extern esp_now_peer_info_t  stPeerInfo;
 
 //Function prototypes
-void  SetupScreen                 (void);
+//void  SetupScreen                 (void);
+void  SetupScreen                 (uint8_t ucRotation);
 void  SetupESP_NOW                (void);
 void  OnDataRecv                  (const uint8_t *pucMACAddress,
                                    const uint8_t *pucIncomingData, int wNumBytes);

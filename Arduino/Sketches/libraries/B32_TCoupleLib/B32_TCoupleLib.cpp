@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/17/23b";
+//const char szFileDate[]  = 12/17/23c";
 #include <B32_TCoupleLib.h>
 
 extern enum eBoardPinColor   eReceiverBoardPinColor;
@@ -159,20 +159,24 @@ void ShowMyMAC(bool bDisplay){
 } //ShowMyMAC
 
 
-void SetupScreen(){
-  Screen.init();
-  //Screen.setRotation(1);   //1= USB Right Landscape
-  //OLD:Screen.setRotation(3);   //3= USB Left Landscape
-  Screen.setRotation  (0);                    //ED: Portrait USB at upper-right, WM: Landscape USB on left
-  //Screen.setRotation  (1);                    //ED: Landscape, USB at upper-left, WM: Portrait, USB on top
-  //Screen.setRotation  (2);                    //ED: Portrait USB at lower-left
-  //Screen.setRotation  (3);                    //ED: Landscape, USB at lower-right
-  //Screen.setRotation  (4);                    //ED: Portrait USB at lower-left, text right-to-left
+void SetupScreen(uint8_t ucRotation){
+  //Screen.setRotation(1);        //1= USB Right Landscape
+  //OLD:Screen.setRotation(3);    //3= USB Left Landscape
+
+  //A is WalMart 3.2", B is ElectroDragon 3.2", C is DIYMall 3.5" touchscreen, D is TTGO_Display
+
+  //Screen.setRotation  (0);  //0 WM: L, USB L/ DIY: P, USB Bot/ ED: P, USB UR/ TT: P, USB Bot
+  //Screen.setRotation  (1);  //1 WM: P, USB Top/ ED: L, USB UL/ TT: L, USB R
+  //Screen.setRotation  (2);  //2 ED: P  USB LL/
+  //Screen.setRotation  (3);  //3 ED: L, USB LR/
+  //Screen.setRotation  (4);  //4 ED: P, USB LL, text right-to-left
   //Screen.fillScreen   (LB_BLACK);
 
-  Screen.fillScreen(TFT_BLACK);
+  Screen.init         ();
+  Screen.setRotation  (ucRotation);
+  Screen.fillScreen   (TFT_BLACK);
   return;
-}//SetupScreen stMessageStructure stMessage
+}//SetupScreen
 
 
  void UpdateScreen(stMessageStructure stReadings){

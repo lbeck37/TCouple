@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleRemote.ino";
-const char szFileDate[]    = "12/18/23c";
+const char szFileDate[]    = "12/21/23b";
 /* MAX31855 library example sketch
  This sample code is designed to be used on the MAX31855x8 breakout board.
  The board has a single MAX31855 IC on it, and uses a multiplexer
@@ -30,8 +30,9 @@ const char szFileDate[]    = "12/18/23c";
 
 //This sketch, (B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
 //communication code from the esp_now.h library.
-#define ILI9341             false
-#define TTGO_T_DISPLAY      true
+//#define ILI9341             false
+//#define TTGO_T_DISPLAY      true
+//In Project Properties (right click project), Sloeber, append -DTTGO_T_DISPLAY to c++ compile
 //#include <Arduino.h>
 #include <TFT_eSPI.h>
 #include <SPI.h>

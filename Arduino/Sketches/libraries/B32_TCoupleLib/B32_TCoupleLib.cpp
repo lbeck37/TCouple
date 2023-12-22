@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/21/23c";
+//const char szFileDate[]  = 12/21/23D";
 #include <B32_TCoupleLib.h>
 
 extern enum eBoardPinColor   eReceiverBoardPinColor;
@@ -11,8 +11,6 @@ const uint8_t           auc3dot2MAC[]             = {0xE0, 0x5A, 0x1B, 0xA2, 0x7
 
 uint8_t                 aucReceiverMACAddress[6];
 uint8_t                 aucMyMACAddress[6];
-
-//uint8_t                 auc100ByteBuffer[100];
 
 const bool  bNoTCouples     = true;
 double  dJunctionDegF;
@@ -97,10 +95,10 @@ void HandleDataReceived(void) {
 } //OnDataRecv
 
 
-void SendDataToDisplayBoard(void){
+void SendDataToDisplayBoard(stMessageStructure stReadings){
    esp_err_t wResult= esp_now_send(aucReceiverMACAddress,
-                                  (uint8_t *)&stOutgoingReadings,
-                                  sizeof(stOutgoingReadings));
+                                  (uint8_t *)&stReadings,
+                                  sizeof(stReadings));
   if (wResult == ESP_OK) {
     Serial << "SendDataToDisplayBoard(): Sent, no guarantee if received." << endl;
   }
@@ -164,6 +162,20 @@ void ShowMyMAC(bool bDisplay){
 } //ShowMyMAC
 
 
+void SetupPins(void){
+  pinMode(T0,   OUTPUT);
+  pinMode(T1,   OUTPUT);
+  pinMode(T2,   OUTPUT);
+
+  pinMode(MISO, INPUT);
+  pinMode(CS,   OUTPUT);
+  pinMode(SCK,  OUTPUT);
+
+  delay(200);
+  return;
+} //SetupPins
+
+
 void SetupScreen(uint8_t ucRotation){
   //Screen.setRotation(1);        //1= USB Right Landscape
   //OLD:Screen.setRotation(3);    //3= USB Left Landscape
@@ -218,25 +230,6 @@ void SetupScreen(uint8_t ucRotation){
 
 
  void ReadTCouples(stMessageStructure& stReadings){
- /*
-   //Read the temperatures of the 8 thermocouples
-   for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
-     //Select the thermocouple
-     digitalWrite(T0, wTCoupleNum & 1? HIGH: LOW);
-     digitalWrite(T1, wTCoupleNum & 2? HIGH: LOW);
-     digitalWrite(T2, wTCoupleNum & 4? HIGH: LOW);
-     //The MAX31855 takes 100ms to sample the TCouple.
-     //Wait a bit longer to be safe.  We'll wait 0.125 seconds
-     delay(125);
-
-     //adTCoupleDegF[wTCoupleNum]= TCoupleObject.readThermocouple(FAHRENHEIT);
-     stOutgoingReadings.adTCoupleDegF[wTCoupleNum]= TCoupleObject.readThermocouple(FAHRENHEIT);
-     if (stOutgoingReadings.adTCoupleDegF[wTCoupleNum] == FAULT_OPEN){
-       //Break out of for loop, go to top of for loop and next TCouple
-       continue;
-     } //if(stOutgoingReadings.adTCoupleDegF[wTCoupleNum]==FAULT_OPEN)
-   }   //for(int wTCoupleNum=0;wTCoupleNum<8;wTCoupleNum++)
- */
    //Read the temperatures of the 8 thermocouples
    for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
      //Select the thermocouple
@@ -264,19 +257,6 @@ void SetupScreen(uint8_t ucRotation){
  }   //ReadTCouples
 
 
-/*
-void PrintTemperatures(void){
-  for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
-    Serial << "T" << wTCoupleNum << "= ";
-    PrintTemperature(stIncomingReadings.adTCoupleDegF[wTCoupleNum]);
-    if (wTCoupleNum < (wNumTCouples - 1)){  //Put a comma after all but last
-      Serial << ", ";
-    }
-  } //for(int wTCoupleNum=0;wTCoupleNum<8;wTCoupleNum++)
-  Serial << endl;
-  return;
-} //PrintTemperatures
-*/
  void PrintTemperatures(stMessageStructure stReadings){
    for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
      Serial << "T" << wTCoupleNum << "= ";

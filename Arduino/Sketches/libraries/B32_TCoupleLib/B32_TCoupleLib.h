@@ -1,8 +1,7 @@
-//B32_TCoupleLib.h, 12/21/23e
+//B32_TCoupleLib.h, 12/21/23G
 #pragma once
 #pragma message("B32_TCoupleLib.h, Begin, include TFT_eSPI.h, if not already included")
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
-//#include <SPI.h>
 #include <esp_now.h>
 #include <WiFi.h>
 #include <MAX31855.h>
@@ -59,21 +58,19 @@ extern esp_now_peer_info_t  stPeerInfo;
 #define SCK  33
 
 //Function prototypes
-//void  SetupScreen                 (void);
 void  SetupScreen                 (uint8_t ucRotation);
 void  SetupESP_NOW                (void);
 void  OnDataRecv                  (const uint8_t *pucMACAddress,
                                    const uint8_t *pucIncomingData, int wNumBytes);
 void  OnDataSent                  (const uint8_t *mac_addr, esp_now_send_status_t status);
 void  HandleDataReceived          (void);
-void  SendDataToDisplayBoard      (void);
+void  SendDataToDisplayBoard      (stMessageStructure stReadings);
 void  UpdateScreen                (stMessageStructure stReadings);
 void  ReadAmbiant                 (void);
-//void  ReadTCouples                (void);
 void  ReadTCouples                (stMessageStructure& stReadings);
-//void  PrintTemperatures           (void);
 void  PrintTemperatures           (stMessageStructure stReadings);
 void  PrintTemperature            (double dDegF);
 void  ShowMyMAC                   (bool bDisplay);
+void  SetupPins                   (void);
 void  ResetTimer                  (void);
 //Last line

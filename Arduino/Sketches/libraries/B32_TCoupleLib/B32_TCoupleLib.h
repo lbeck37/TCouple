@@ -1,4 +1,4 @@
-//B32_TCoupleLib.h, 12/21/23G
+//B32_TCoupleLib.h, 12/21/23H
 #pragma once
 #pragma message("B32_TCoupleLib.h, Begin, include TFT_eSPI.h, if not already included")
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
@@ -56,15 +56,26 @@ extern esp_now_peer_info_t  stPeerInfo;
 #define MISO 32
 #define CS   17
 #define SCK  33
+/*
+//ESP32 GPIO pin numbers (range from 0 to 39)
+#define TCoupleSelect0   27
+#define TCoupleSelect1   26
+#define TCoupleSelect2   25
+#define T1   26
+#define T2   25
+#define MISO 32
+#define CS   17
+#define SCK  33
+*/
 
 //Function prototypes
-void  SetupScreen                 (uint8_t ucRotation);
 void  SetupESP_NOW                (void);
 void  OnDataRecv                  (const uint8_t *pucMACAddress,
                                    const uint8_t *pucIncomingData, int wNumBytes);
 void  OnDataSent                  (const uint8_t *mac_addr, esp_now_send_status_t status);
 void  HandleDataReceived          (void);
 void  SendDataToDisplayBoard      (stMessageStructure stReadings);
+void  SetupScreen                 (uint8_t ucRotation);
 void  UpdateScreen                (stMessageStructure stReadings);
 void  ReadAmbiant                 (void);
 void  ReadTCouples                (stMessageStructure& stReadings);

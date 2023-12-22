@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/21/23D";
+//const char szFileDate[]  = 12/21/23E";
 #include <B32_TCoupleLib.h>
 
 extern enum eBoardPinColor   eReceiverBoardPinColor;
@@ -162,20 +162,6 @@ void ShowMyMAC(bool bDisplay){
 } //ShowMyMAC
 
 
-void SetupPins(void){
-  pinMode(T0,   OUTPUT);
-  pinMode(T1,   OUTPUT);
-  pinMode(T2,   OUTPUT);
-
-  pinMode(MISO, INPUT);
-  pinMode(CS,   OUTPUT);
-  pinMode(SCK,  OUTPUT);
-
-  delay(200);
-  return;
-} //SetupPins
-
-
 void SetupScreen(uint8_t ucRotation){
   //Screen.setRotation(1);        //1= USB Right Landscape
   //OLD:Screen.setRotation(3);    //3= USB Left Landscape
@@ -292,6 +278,20 @@ void PrintTemperature(double dDegF) {
       break;
   } //switch
 }//PrintTemperature
+
+
+void SetupPins(void){
+  pinMode(T0,   OUTPUT);
+  pinMode(T1,   OUTPUT);
+  pinMode(T2,   OUTPUT);
+
+  pinMode(MISO, INPUT);
+  pinMode(CS,   OUTPUT);
+  pinMode(SCK,  OUTPUT);
+
+  delay(200);
+  return;
+} //SetupPins
 
 
 void ResetTimer(void){

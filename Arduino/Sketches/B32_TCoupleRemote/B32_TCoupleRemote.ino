@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleRemote.ino";
-const char szFileDate[]    = "12/21/23j";
+const char szFileDate[]    = "12/21/23N";
 /* MAX31855 library example sketch
  This sample code is designed to be used on the MAX31855x8 breakout board.
  The board has a single MAX31855 IC on it, and uses a multiplexer
@@ -42,6 +42,7 @@ const char szFileDate[]    = "12/21/23j";
 eBoardPinColor   eReceiverBoardPinColor    {eBoardPinColor::e3dot2NoPin};
 
 
+/*
 //ESP32 GPIO pin numbers (range from 0 to 39)
 #define T0   27
 #define T1   26
@@ -49,6 +50,7 @@ eBoardPinColor   eReceiverBoardPinColor    {eBoardPinColor::e3dot2NoPin};
 #define MISO 32
 #define CS   17
 #define SCK  33
+*/
 
 //Create the temperature object, defining the pins used for communication
 MAX31855 TCoupleObject = MAX31855(MISO, CS, SCK);
@@ -97,13 +99,13 @@ void setup() {
 
 void loop() {
   ReadAmbiant();
-  ReadTCouples();
+  ReadTCouples(stOutgoingReadings);
   //PrintTemperatures();
   PrintTemperatures(stOutgoingReadings);
   SendDataToDisplayBoard();
   UpdateScreen(stOutgoingReadings);
 
-  delay(1000);
+  //delay(1000);
   return;
 }   //loop
 

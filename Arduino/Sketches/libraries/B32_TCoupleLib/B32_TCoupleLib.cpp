@@ -217,7 +217,7 @@ void SetupScreen(uint8_t ucRotation){
  } //ReadAmbiant
 
 
- void ReadTCouples(void){
+ void ReadTCouples(stMessageStructure& stReadings){
  /*
    //Read the temperatures of the 8 thermocouples
    for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
@@ -248,18 +248,17 @@ void SetupScreen(uint8_t ucRotation){
      delay(125);
 
      if (!bNoTCouples){
-       //adTCoupleDegF[wTCoupleNum]= TCoupleObject.readThermocouple(FAHRENHEIT);
-       stOutgoingReadings.adTCoupleDegF[wTCoupleNum]= TCoupleObject.readThermocouple(FAHRENHEIT);
+       stReadings.adTCoupleDegF[wTCoupleNum]= TCoupleObject.readThermocouple(FAHRENHEIT);
      } //if(!bNoTCouples)
      else{
        dDummyAddDegF += 0.10;
-       stOutgoingReadings.adTCoupleDegF[wTCoupleNum]= (100.00 + (wTCoupleNum * 10.00) + dDummyAddDegF);
+       stReadings.adTCoupleDegF[wTCoupleNum]= (100.00 + (wTCoupleNum * 10.00) + dDummyAddDegF);
      } //if(!bNoTCouples)else
 
-     if (stOutgoingReadings.adTCoupleDegF[wTCoupleNum] == FAULT_OPEN){
+     if (stReadings.adTCoupleDegF[wTCoupleNum] == FAULT_OPEN){
        //Break out of for loop, go to top of for loop and next TCouple
        continue;
-     } //if(stOutgoingReadings.adTCoupleDegF[wTCoupleNum]==FAULT_OPEN)
+     } //if(stReadings.adTCoupleDegF[wTCoupleNum]==FAULT_OPEN)
    } //for(int wTCoupleNum=0;wTCoupleNum<8;wTCoupleNum++)
    return;
  }   //ReadTCouples

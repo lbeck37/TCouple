@@ -1,6 +1,8 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/22/23e";
+//const char szFileDate[]  = 12/22/23g";
 #include <B32_TCoupleLib.h>
+#include <Free_Fonts.h>
+#include <Targa15pt7b.h>
 
 extern enum eBoardPinColor   eReceiverBoardPinColor;
 
@@ -199,15 +201,21 @@ void SetupScreen(uint8_t ucRotation){
   Screen.fillScreen     (TFT_BLACK);
   //Screen.setTextColor   (TFT_GREEN,TFT_BLACK);
   Screen.setTextColor   (TFT_YELLOW,TFT_BLACK);
-  Screen.setTextFont    (3);
-  //Screen.setTextFont    (5);
-  //Screen.setTextFont    (4);
   Screen.setTextSize    (1);
   Screen.setCursor      (0, 0, 2);
 
+#ifdef B32_TTGO_T_DISPLAY
+  Screen.setTextFont    (3);
+#else
+  //Screen.setTextFont    (4);
+  //Screen.setFreeFont    (FSB12);
+  //Screen.setFreeFont    (FM12);
+  Screen.setFreeFont    (&Targa15pt7b);
+#endif  //B32_TTGO_T_DISPLAY
   Screen << szSketchName << " " << szFileDate << endl;
   ShowMyMAC(true);
 
+  Screen << endl;
   for (int wTCoupleNum=0; (wTCoupleNum < 5); wTCoupleNum++) {
     Screen << "T" << wTCoupleNum << "= " << stReadings.adTCoupleDegF[wTCoupleNum] << "F, T"
         << (wTCoupleNum + 3)  << "= " << stReadings.adTCoupleDegF[wTCoupleNum +3] << "F" << endl;

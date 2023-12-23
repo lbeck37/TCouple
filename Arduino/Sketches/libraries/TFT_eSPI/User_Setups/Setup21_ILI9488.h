@@ -1,4 +1,4 @@
-//Beck, Setup21_ILI9488.h, 12/22/23c
+//Beck, Setup21_ILI9488.h, 12/22/23d
 #define USER_SETUP_ID 21
 
 #define ILI9488_DRIVER
@@ -28,6 +28,8 @@
 #define LOAD_FONT7  // Font 7. 7 segment 48 pixel font, needs ~2438 bytes in FLASH, only characters 1234567890:.
 #define LOAD_FONT8  // Font 8. Large 75 pixel font needs ~3256 bytes in FLASH, only characters 1234567890:-.
 #define LOAD_GFXFF  // FreeFonts. Include access to the 48 Adafruit_GFX free fonts FF1 to FF48 and custom fonts
+
+#define LOAD_FONT5
 
 #define SMOOTH_FONT
 

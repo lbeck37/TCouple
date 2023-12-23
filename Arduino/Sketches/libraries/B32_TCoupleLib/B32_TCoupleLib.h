@@ -1,4 +1,4 @@
-//B32_TCoupleLib.h, 12/22/23b
+//B32_TCoupleLib.h, 12/22/23c
 #pragma once
 #pragma message("B32_TCoupleLib.h, Begin, include TFT_eSPI.h, if not already included")
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
@@ -12,6 +12,7 @@ enum class eBoardPinColor {
   eWhitePin,
   eBlackPin,
   e3dot2NoPin,
+  eDIYMall3dot5NoPin,
   eLastPin
 }; //eBoardPinColor
 

@@ -1,13 +1,14 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/22/23d";
+//const char szFileDate[]  = 12/22/23e";
 #include <B32_TCoupleLib.h>
 
 extern enum eBoardPinColor   eReceiverBoardPinColor;
 
-const uint8_t           aucBlackPinMAC[]          = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //BlackPin MAC
-const uint8_t           aucWhitePinMAC[]          = {0x84, 0xCC, 0xA8, 0x60, 0xB4, 0x2C}; //WhitePin MAC
-const uint8_t           aucBluePinMAC[]           = {0x3C, 0x61, 0x05, 0x0B, 0xC5, 0x14}; //BluePin MAC
-const uint8_t           auc3dot2MAC[]             = {0xE0, 0x5A, 0x1B, 0xA2, 0x74, 0x1C}; //BluePin MAC
+const uint8_t           aucBlackPinMAC[]          = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //TTGO w/Black pin headers
+const uint8_t           aucWhitePinMAC[]          = {0x84, 0xCC, 0xA8, 0x60, 0xB4, 0x2C}; //TTGO w/White pin headers
+const uint8_t           aucBluePinMAC[]           = {0x3C, 0x61, 0x05, 0x0B, 0xC5, 0x14}; //TTGO w/Blue  pin headers
+const uint8_t           auc3dot2MAC[]             = {0xE0, 0x5A, 0x1B, 0xA2, 0x74, 0x1C}; //Walmart 3.2"
+const uint8_t           aucDIYMall3dot5MAC[]      = {0xC0, 0x49, 0xEF, 0x13, 0x73, 0xDC}; //DIYMall 3.5" w/capacitive touch
 
 uint8_t                 aucReceiverMACAddress[6];
 uint8_t                 aucMyMACAddress[6];
@@ -20,10 +21,10 @@ const uint8_t           TCouple_MISO              = 32;
 const uint8_t           TCouple_CS                = 17;
 const uint8_t           TCouple_SCK               = 33;
 
-const bool  bNoTCouples     = true;
-double  dJunctionDegF;
-double  dDummyJunctionDegF  = 60.00;   //3 ED: L, USB LR/
-double  dDummyAddDegF       =  0.00;
+const bool  bNoTCouples         = true;
+double      dJunctionDegF;
+double      dDummyJunctionDegF  = 60.00;   //3 ED: L, USB LR/
+double      dDummyAddDegF       =  0.00;
 
 //Define variables to store temperature readings to be sent
 double                  dTCouple0_DegF;
@@ -134,6 +135,9 @@ void SelectReceiverMAC(enum eBoardPinColor ePinColor){
       case eBoardPinColor::e3dot2NoPin:
         aucReceiverMACAddress[wMACByteNum]= auc3dot2MAC[wMACByteNum];
         break;
+      case eBoardPinColor::eDIYMall3dot5NoPin:
+        aucReceiverMACAddress[wMACByteNum]= aucDIYMall3dot5MAC[wMACByteNum];
+        break;
       default: 
         Serial << "SelectReceiverMAC(): Bad switch= " << (int)ePinColor << endl;
     } //switch
@@ -177,10 +181,10 @@ void SetupScreen(uint8_t ucRotation){
 
   //A is WalMart 3.2", B is ElectroDragon 3.2", C is DIYMall 3.5" touchscreen, D is TTGO_Display
 
-  //Screen.setRotation  (0);  //0 WM: L, USB L/ DIY: P, USB Bot/ ED: P, USB UR/ TT: P, USB Bot
-  //Screen.setRotation  (1);  //1 WM: P, USB Top/ ED: L, USB UL/ TT: L, USB R
-  //Screen.setRotation  (2);  //2 ED: P  USB LL/
-  //Screen.setRotation  (3);  //3 ED: L, USB LR/ TT: L, USB L
+  //Screen.setRotation  (0);  //0 WM: L, USB L  / DIY: P, USB Bot/ ED: P, USB UR/ TT: P, USB Bot
+  //Screen.setRotation  (1);  //1 WM: P, USB Top/ DIY: L, USB R  / ED: L, USB UL/ TT: L, USB R
+  //Screen.setRotation  (2);  //2 ED: P  USB LL /
+  //Screen.setRotation  (3);  //3 ED: L, USB LR / TT: L, USB L
   //Screen.setRotation  (4);  //4 ED: P, USB LL, text right-to-left
   //Screen.fillScreen   (LB_BLACK);
 

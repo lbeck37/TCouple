@@ -29,10 +29,7 @@
 #endif  //DO_ESP32_DISPLAY
 
 #if DO_WALMART_DISPLAY
-  #pragma message("Setup1_ILI9341.h, defining TFT_MOSI, SCLK, CS, DC, RST, BL")
-  //Start with https://forum.arduino.cc/t/esp32-2432s028r-all-in-one-display-touch-spi-problems/1059746
-  //Also found in esp32-smartdisplay.h for ESP32-2432S024N, 24R, 24C 28R
-  //24C is only one with backlight on 27 like our Walmart, others are 21
+  #pragma message("Setup1_ILI9341.h, defining SPI pins and display characteristics")
   #define TFT_WIDTH          320
   #define TFT_HEIGHT         240
   #define TFT_MOSI            13

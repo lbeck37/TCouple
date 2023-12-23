@@ -1,23 +1,11 @@
-//Beck, Setup21_ILI9488, 12/21/23b
+//Beck, Setup21_ILI9488.h, 12/22/23c
 #define USER_SETUP_ID 21
 
 #define ILI9488_DRIVER
 
-/*
-//#define TFT_INVERSION_OFF
-#define TFT_MISO 19 // (leave TFT SDO disconnected if other SPI devices share MISO)
-#define TFT_MOSI 23
-#define TFT_SCLK 18
-#define TFT_CS    15  // Chip select control pin
-#define TFT_DC    2  // Data Command control pin
-#define TFT_RST   4  // Reset pin (could connect to RST pin)
-*/
 #define DO_DIYMALL_3dot5_DISPLAY      true
 #if DO_DIYMALL_3dot5_DISPLAY
-  #pragma message("Setup1_ILI9341.h, defining TFT_MOSI, SCLK, CS, DC, RST, BL")
-  //Start with https://forum.arduino.cc/t/esp32-2432s028r-all-in-one-display-touch-spi-problems/1059746
-  //Also found in esp32-smartdisplay.h for ESP32-2432S024N, 24R, 24C 28R
-  //24C is only one with backlight on 27 like our Walmart, others are 21
+  #pragma message("Setup21_ILI9488.h, defining SPI pins and display characteristics")
   #define TFT_WIDTH          480
   #define TFT_HEIGHT         320
   #define TFT_MOSI            13
@@ -27,27 +15,11 @@
   #define TFT_RST             12
   #define TFT_BL              27          // Display backlight control pin for Walmart ESP32-2432S0 32
   #define TFT_BACKLIGHT_ON    HIGH        // HIGH or LOW are options
-  #define TFT_RGB_ORDER       TFT_RGB     // Color order Blue-Green-Red
-  #define TFT_INVERSION_ON
+  #define TFT_RGB_ORDER       TFT_BGR     // Color order Blue-Green-Red
+  #define TFT_INVERSION_OFF
+  //#define TFT_INVERSION_ON
 #endif  //DO_DIYMALL_3dot5_DISPLAY
 
-#if DO_WALMART_DISPLAY
-  #pragma message("Setup1_ILI9341.h, defining TFT_MOSI, SCLK, CS, DC, RST, BL")
-  //Start with https://forum.arduino.cc/t/esp32-2432s028r-all-in-one-display-touch-spi-problems/1059746
-  //Also found in esp32-smartdisplay.h for ESP32-2432S024N, 24R, 24C 28R
-  //24C is only one with backlight on 27 like our Walmart, others are 21
-  #define TFT_WIDTH          320
-  #define TFT_HEIGHT         240
-  #define TFT_MOSI            13
-  #define TFT_SCLK            14
-  #define TFT_CS              15
-  #define TFT_DC               2
-  #define TFT_RST             12
-  #define TFT_BL              27          // Display backlight control pin for Walmart ESP32-2432S0 32
-  #define TFT_BACKLIGHT_ON    HIGH        // HIGH or LOW are options
-  #define TFT_RGB_ORDER       TFT_RGB     // Color order Blue-Green-Red
-  #define TFT_INVERSION_ON
-#endif  //DO_WALMART_DISPLAY
 
 #define LOAD_GLCD   // Font 1. Original Adafruit 8 pixel font needs ~1820 bytes in FLASH
 #define LOAD_FONT2  // Font 2. Small 16 pixel high font, needs ~3534 bytes in FLASH, 96 characters
@@ -60,12 +32,17 @@
 #define SMOOTH_FONT
 
 
-// #define SPI_FREQUENCY  20000000
-#define SPI_FREQUENCY  27000000
-// #define SPI_FREQUENCY  40000000
-// #define SPI_FREQUENCY  80000000
-
-// Optional reduced SPI frequency for reading TFT
-#define SPI_READ_FREQUENCY  16000000
-
+#define SPI_FREQUENCY       27000000
+#define SPI_READ_FREQUENCY  16000000  //Optional reduced SPI frequency for reading TFT
 #define SPI_TOUCH_FREQUENCY  2500000
+
+/*
+//Original defines before bringing up DIYMall 3.5" capacitive touch display w/ESP32
+//#define TFT_INVERSION_OFF
+#define TFT_MISO 19 // (leave TFT SDO disconnected if other SPI devices share MISO)
+#define TFT_MOSI 23
+#define TFT_SCLK 18
+#define TFT_CS    15  // Chip select control pin
+#define TFT_DC    2  // Data Command control pin
+#define TFT_RST   4  // Reset pin (could connect to RST pin)
+*/

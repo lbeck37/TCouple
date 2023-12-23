@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TFTPrintTest.ino";
-const char szFileDate[]    = "12/18/23e";
+const char szFileDate[]    = "12/22/23B";
 
 //Make sure the pin connections for the larger displays are correct by editing:
 //  Sketches/libraries/TFT_eSPI/User_Setups/Setup1_ILI9341.h
@@ -22,6 +22,19 @@ const char szFileDate[]    = "12/18/23e";
 //TFT_eSPI Screen= TFT_eSPI();  // Invoke library
 
 stMessageStructure   stDummyReadings;
+
+// ucRotation mapping is in SetupScreen() definition in B32_TCoupleLib.cpp
+#if defined(B32_TTGO_T_DISPLAY)
+  const uint8_t ucRotation  = 3;
+#endif
+
+#if defined(B32_ILI9341)
+  const uint8_t ucRotation  = 0;
+#endif
+
+#if defined(B32_ILI9488_ESP32)
+  const uint8_t ucRotation  = 3;    //Landscape, USB on the left
+#endif
 
 void setup				      (void);
 void loop				        (void);
@@ -53,13 +66,14 @@ void DoTest() {
   float       fDummyDegF;
   static int  wFraction    = 0;
 
-  Screen.setRotation  (0);                    //ED: Portrait USB at upper-right, WM: Landscape USB on left
+  //Screen.setRotation  (0);                    //ED: Portrait USB at upper-right, WM: Landscape USB on left
   //Screen.setRotation  (1);                    //ED: Landscape, USB at upper-left, WM: Portrait, USB on top
   //Screen.setRotation  (2);                    //ED: Portrait USB at lower-left
   //Screen.setRotation  (3);                    //ED: Landscape, USB at lower-right
   //Screen.setRotation  (4);                    //ED: Portrait USB at lower-left, text right-to-left
   //Screen.fillScreen   (LB_BLACK);
-  
+  Screen.setRotation  (ucRotation);
+
 #if !DO_ORIGINAL_DEMO
   // Set "cursor" at top left corner of display (0,0) and select font 2
   // (cursor will move to next line automatically during printing with 'Screen.println'

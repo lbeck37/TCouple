@@ -58,7 +58,7 @@ const int        wLinesBelowTop  = 3;
 const int16_t     sLeftLabelFirstX                =  0;
 const int16_t     sLeftLabelFirstY                = 35;
 
-const int16_t     sRightLabelFirstX               = (TFT_WIDTH / 2);
+const int16_t     sRightLabelFirstX               = (TFT_WIDTH / 2) + 70;
 const int16_t     sRightLabelFirstY               = 35;
 
 const int16_t     sXTextStart   = 0;

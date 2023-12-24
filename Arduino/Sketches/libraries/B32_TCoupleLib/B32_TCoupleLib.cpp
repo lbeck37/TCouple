@@ -267,10 +267,10 @@ void SetupScreen(uint8_t ucRotation){
 */
 
   for (int wLineNum= 0; wLineNum < 4; wLineNum++) {
-    Screen.setCursor(sLeftLabelFirstX, (sLeftLabelFirstY + (wLineNum * wDotsPerLine)));
+    Screen.setCursor(sLeftLabelFirstX, ((sLeftLabelFirstY + 3 * wDotsPerLine) + (wLineNum * wDotsPerLine)));
     Screen << aucLeftLabel[wLineNum] << "  " << stReadings.adTCoupleDegF[wLineNum] << "F";
 
-    Screen.setCursor(sRightLabelFirstX, (sLeftLabelFirstY + (wLineNum * wDotsPerLine)));
+    Screen.setCursor(sRightLabelFirstX, ((sLeftLabelFirstY + 3 * wDotsPerLine) + (wLineNum * wDotsPerLine)));
     Screen << aucRightLabel[wLineNum] << "  " << stReadings.adTCoupleDegF[wLineNum + 4] << "F" << endl;
   } //for(int wLineNum= 0...
   return;

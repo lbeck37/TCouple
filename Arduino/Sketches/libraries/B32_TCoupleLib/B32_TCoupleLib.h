@@ -1,4 +1,4 @@
-//B32_TCoupleLib.h, 12/22/23c
+//B32_TCoupleLib.h, 12/24/23b
 #pragma once
 #pragma message("B32_TCoupleLib.h, Begin, include TFT_eSPI.h, if not already included")
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
@@ -55,14 +55,18 @@ const int        wLinesBelowTop  = 3;
 
 //const uint8_t     aucLabel[][4] = {{"Head 1", "Head 2", "Head 3", "Head 4"}, {"Heat 1", "Heat 2", "Inlet" , "Outlet"}};
 
+const int16_t     sLabelFirstY                    = 3;
 const int16_t     sLeftLabelFirstX                =  0;
-const int16_t     sLeftLabelFirstY                = 35;
+const int16_t     sLeftLabelFirstY                = sLabelFirstY;
 
-const int16_t     sRightLabelFirstX               = (TFT_WIDTH / 2) + 70;
-const int16_t     sRightLabelFirstY               = 35;
+//const int16_t     sRightLabelFirstX               = (TFT_WIDTH / 2) + 70;
+const int16_t     sRightLabelFirstX               = (TFT_WIDTH / 2) + 90;
+const int16_t     sRightLabelFirstY               = sLabelFirstY;
 
+/*
 const int16_t     sXTextStart   = 0;
 const int16_t     sYTextStart   = 35;
+*/
 
 
 //Function prototypes

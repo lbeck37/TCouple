@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/23/23b";
+//const char szFileDate[]  = 12/24/23b";
 #include <B32_TCoupleLib.h>
 #include <Free_Fonts.h>
 #include <Targa15pt7b.h>
@@ -164,6 +164,7 @@ void SelectReceiverMAC(enum eBoardPinColor ePinColor){
 } //SelectReceiverMAC
 
 
+/*
 void ShowMyMAC(bool bDisplay){
   const int   wNumBytesInMAC= 6;
 
@@ -190,6 +191,41 @@ void ShowMyMAC(bool bDisplay){
 
   return;
 } //ShowMyMAC
+*/
+void ShowMyMAC(bool bDisplay){
+  const int   wNumBytesInMAC= 6;
+
+    if (bDisplay){
+      Screen << "My MAC- ";
+    }
+    else{
+      Serial << "My MAC- ";
+    }
+    for (int wByteNum= 0; wByteNum < wNumBytesInMAC; wByteNum++){
+      if (bDisplay){
+        Screen << _HEX(aucMyMACAddress[wByteNum]);
+      }
+      else{
+        Serial << _HEX(aucMyMACAddress[wByteNum]);
+      }
+      if (wByteNum != 5){
+        if (bDisplay){
+          Screen << " ";
+        }
+        else{
+          Serial << ":";
+        }
+      } //if (wByteNum!=5)
+    } //for(int wByteNum=0;...
+    if (bDisplay){
+      Screen << endl;
+    }
+    else{
+      Serial << endl;
+    }
+
+  return;
+} //ShowMyMAC
 
 
 void SetupScreen(uint8_t ucRotation){
@@ -210,18 +246,16 @@ void SetupScreen(uint8_t ucRotation){
   Screen.fillScreen   (TFT_BLACK);
 
   Screen.setTextColor   (TFT_GREEN,TFT_BLACK);
-  //Screen.setTextColor   (TFT_YELLOW,TFT_BLACK);
   Screen.setTextSize    (1);
-  Screen.setCursor      (sXTextStart, sYTextStart);
+  Screen.setCursor      (0, 0);
 
 #ifdef B32_TTGO_T_DISPLAY
   Screen.setTextFont    (3);
 #else
-  //Screen.setTextFont    (4);
-  //Screen.setFreeFont    (FSB12);
-  //Screen.setFreeFont    (FM12);
-  Screen.setFreeFont    (&Targa15pt7b);
+  //Screen.setFreeFont    (&Targa15pt7b);
+  Screen.setTextFont    (2);
 #endif  //B32_TTGO_T_DISPLAY
+
   Screen << szSketchName << " " << szFileDate << endl;
   ShowMyMAC(true);
   return;
@@ -229,48 +263,22 @@ void SetupScreen(uint8_t ucRotation){
 
 
  void UpdateScreen(stMessageStructure stReadings){
-/*
-  const int16_t   sXTextStart   = 0;
-  const int16_t   sYTextStart   = 35;
-  Screen.fillScreen     (TFT_BLACK);
-  //Screen.setTextColor   (TFT_GREEN,TFT_BLACK);
-  Screen.setTextColor   (TFT_YELLOW,TFT_BLACK);
-  Screen.setTextSize    (1);
-  Screen.setCursor      (sXTextStart, sYTextStart);
+  char     aucLeftLabel[][20]  = {"Head 1", "Head 2", "Head 3", "Head 4"};
+  char     aucRightLabel[][20] = {"Heat 1", "Heat 2", "Inlet" , "Outlet"};
 
 #ifdef B32_TTGO_T_DISPLAY
   Screen.setTextFont    (3);
 #else
-  //Screen.setTextFont    (4);
-  //Screen.setFreeFont    (FSB12);
-  //Screen.setFreeFont    (FM12);
   Screen.setFreeFont    (&Targa15pt7b);
 #endif  //B32_TTGO_T_DISPLAY
-  Screen << szSketchName << " " << szFileDate << endl;
-  ShowMyMAC(true);
-*/
 
-
-   char     aucLeftLabel[][20]  = {"Head 1", "Head 2", "Head 3", "Head 4"};
-   char     aucRightLabel[][20] = {"Heat 1", "Heat 2", "Inlet" , "Outlet"};
-
-/*
-  for (int wTCoupleNum=0; (wTCoupleNum < 5); wTCoupleNum++) {
-    Screen << "T" << wTCoupleNum << "= " << stReadings.adTCoupleDegF[wTCoupleNum] << "F, T"
-        << (wTCoupleNum + 3)  << "= " << stReadings.adTCoupleDegF[wTCoupleNum +3] << "F" << endl;
-  } //for(int wTCoupleNum=0;(wTCoupleNum<5);wTCoupleNum++)
-*/
-/*
-   char szDummy[]= "123";
-   Screen << szDummy;
-   //Screen << "ABC";
-*/
+  Screen.setTextColor(TFT_YELLOW,TFT_BLACK);
 
   for (int wLineNum= 0; wLineNum < 4; wLineNum++) {
-    Screen.setCursor(sLeftLabelFirstX, ((sLeftLabelFirstY + 3 * wDotsPerLine) + (wLineNum * wDotsPerLine)));
+    Screen.setCursor(sLeftLabelFirstX, ((sLeftLabelFirstY + 2 * wDotsPerLine) + (wLineNum * wDotsPerLine)));
     Screen << aucLeftLabel[wLineNum] << "  " << stReadings.adTCoupleDegF[wLineNum] << "F";
 
-    Screen.setCursor(sRightLabelFirstX, ((sLeftLabelFirstY + 3 * wDotsPerLine) + (wLineNum * wDotsPerLine)));
+    Screen.setCursor(sRightLabelFirstX, ((sLeftLabelFirstY + 2 * wDotsPerLine) + (wLineNum * wDotsPerLine)));
     Screen << aucRightLabel[wLineNum] << "  " << stReadings.adTCoupleDegF[wLineNum + 4] << "F" << endl;
   } //for(int wLineNum= 0...
   return;

@@ -1,4 +1,4 @@
-//B32_TCoupleLib.h, 12/24/23b
+//B32_TCoupleLib.h, 12/24/23c
 #pragma once
 #pragma message("B32_TCoupleLib.h, Begin, include TFT_eSPI.h, if not already included")
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
@@ -16,7 +16,8 @@ enum class eBoardPinColor {
   eLastPin
 }; //eBoardPinColor
 
-const int   wNumTCouples= 8;
+const int   wNumTCouples      =  8;
+const int   wMaxLabelChars    = 20;
 
 //Message Structure that is used to pass data back an forth
 typedef struct stMessageStructure {
@@ -29,6 +30,7 @@ extern uint8_t              aucMyMACAddress[];
 extern stMessageStructure   stIncomingReadings;
 extern stMessageStructure   stOutgoingReadings;
 extern stMessageStructure   stErrorReadings;
+extern stMessageStructure   stLastReadings;
 
 //extern uint8_t              auc100ByteBuffer[100];
 extern const char           szSketchName[];
@@ -50,23 +52,18 @@ extern MAX31855             TCoupleObject;
 extern TFT_eSPI             Screen;  //Class library for TTGO T-Display
 extern esp_now_peer_info_t  stPeerInfo;
 
-const int        wDotsPerLine    = 35;
-const int        wLinesBelowTop  = 3;
+const int16_t     sLineSpacing          = 35;
+const int16_t     sLeftLabelX           =  0;
+const int16_t     sLeftLabelFirstY      = 70;
 
-//const uint8_t     aucLabel[][4] = {{"Head 1", "Head 2", "Head 3", "Head 4"}, {"Heat 1", "Heat 2", "Inlet" , "Outlet"}};
+const int16_t     sRightLabelX          = 240;
+const int16_t     sRightLabelFirstY     = sLeftLabelFirstY;
 
-const int16_t     sLabelFirstY                    = 3;
-const int16_t     sLeftLabelFirstX                =  0;
-const int16_t     sLeftLabelFirstY                = sLabelFirstY;
+const int16_t     sLeftDataX           = 100;
+const int16_t     sLeftDataFirstY      = sLeftLabelFirstY;
 
-//const int16_t     sRightLabelFirstX               = (TFT_WIDTH / 2) + 70;
-const int16_t     sRightLabelFirstX               = (TFT_WIDTH / 2) + 90;
-const int16_t     sRightLabelFirstY               = sLabelFirstY;
-
-/*
-const int16_t     sXTextStart   = 0;
-const int16_t     sYTextStart   = 35;
-*/
+const int16_t     sRightDataX          = 340;
+const int16_t     sRightDataFirstY     = sLeftDataFirstY;
 
 
 //Function prototypes
@@ -77,7 +74,9 @@ void  OnDataSent                  (const uint8_t *mac_addr, esp_now_send_status_
 void  HandleDataReceived          (void);
 void  SendDataToDisplayBoard      (stMessageStructure stReadings);
 void  SetupScreen                 (uint8_t ucRotation);
-void  UpdateScreen                (stMessageStructure stReadings);
+void  DisplayLabels               (void);
+//void  UpdateScreen                (stMessageStructure stReadings);
+void  DisplayData                 (stMessageStructure stReadings);
 void  ReadAmbiant                 (void);
 void  ReadTCouples                (stMessageStructure& stReadings);
 void  PrintTemperatures           (stMessageStructure stReadings);

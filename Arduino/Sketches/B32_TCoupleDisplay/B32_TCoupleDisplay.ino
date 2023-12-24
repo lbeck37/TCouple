@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleDisplay.ino";
-const char szFileDate[]    = "12/24/23D";
+const char szFileDate[]    = "12/24/23E";
 //Thanks to Rui Santos, https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32
 //This sketch, (B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
 //communication code from the esp_now.h library.
@@ -17,6 +17,9 @@ const char szFileDate[]    = "12/24/23D";
 #include <B32_TCoupleLib.h>
 
 eBoardPinColor    eReceiverBoardPinColor    {eBoardPinColor::eBluePin};  //Display currently does not send anything
+
+char     aucLeftLabel [][wMaxLabelChars]  = {"Head 1", "Head 2", "Head 3" , "Head 4"};
+char     aucRightLabel[][wMaxLabelChars]  = {"Oil 1" , "Oil 2" , "Heater" , "Air"};
 
 // ucRotation mapping is in SetupScreen() definition in B32_TCoupleLib.cpp
 #if defined(B32_TTGO_T_DISPLAY)
@@ -46,6 +49,7 @@ void setup(){
   bool bOnDisplay= false;
   ShowMyMAC(bOnDisplay);
   SetupScreen(ucRotation);
+  DisplayLabels();
   return;
 } //setup
 
@@ -56,7 +60,8 @@ void loop(){
     Serial << "loop(): We haven't seen any data for over " << 
               (lAliveMsec/1000) << " seconds" << endl;
     ResetTimer();
-    UpdateScreen(stErrorReadings);
+    //UpdateScreen(stErrorReadings);
+    DisplayData(stErrorReadings);
   }
   return;
 }//loop

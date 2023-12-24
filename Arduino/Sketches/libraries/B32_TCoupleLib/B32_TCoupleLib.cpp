@@ -1,8 +1,9 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/22/23g";
+//const char szFileDate[]  = 12/23/23b";
 #include <B32_TCoupleLib.h>
 #include <Free_Fonts.h>
 #include <Targa15pt7b.h>
+#include <string>
 
 extern enum eBoardPinColor   eReceiverBoardPinColor;
 
@@ -14,6 +15,20 @@ const uint8_t           aucDIYMall3dot5MAC[]      = {0xC0, 0x49, 0xEF, 0x13, 0x7
 
 uint8_t                 aucReceiverMACAddress[6];
 uint8_t                 aucMyMACAddress[6];
+
+/*
+const uint8_t     aucLabel[][]                    = {{"Head 1", "Head 2", "Head 3", "Head 4"},
+                                                     {"Heat 1", "Heat 2", "Inlet" , "Outlet"}};
+
+const int16_t     sLeftLabelFirstX                =  0;
+const int16_t     sLeftLabelFirstY                = 35;
+
+const int16_t     sRightLabelFirstX               = (TFT_WIDTH / 2);
+const int16_t     sRightLabelFirstY               = 35;
+
+const int16_t     sXTextStart   = 0;
+const int16_t     sYTextStart   = 35;
+*/
 
 //ESP32 GPIO pin numbers (range from 0 to 39)
 const uint8_t           TCoupleSelect0            = 27;
@@ -193,16 +208,11 @@ void SetupScreen(uint8_t ucRotation){
   Screen.init         ();
   Screen.setRotation  (ucRotation);
   Screen.fillScreen   (TFT_BLACK);
-  return;
-}//SetupScreen
 
-
- void UpdateScreen(stMessageStructure stReadings){
-  Screen.fillScreen     (TFT_BLACK);
-  //Screen.setTextColor   (TFT_GREEN,TFT_BLACK);
-  Screen.setTextColor   (TFT_YELLOW,TFT_BLACK);
+  Screen.setTextColor   (TFT_GREEN,TFT_BLACK);
+  //Screen.setTextColor   (TFT_YELLOW,TFT_BLACK);
   Screen.setTextSize    (1);
-  Screen.setCursor      (0, 0, 2);
+  Screen.setCursor      (sXTextStart, sYTextStart);
 
 #ifdef B32_TTGO_T_DISPLAY
   Screen.setTextFont    (3);
@@ -214,12 +224,55 @@ void SetupScreen(uint8_t ucRotation){
 #endif  //B32_TTGO_T_DISPLAY
   Screen << szSketchName << " " << szFileDate << endl;
   ShowMyMAC(true);
+  return;
+}//SetupScreen
 
-  Screen << endl;
+
+ void UpdateScreen(stMessageStructure stReadings){
+/*
+  const int16_t   sXTextStart   = 0;
+  const int16_t   sYTextStart   = 35;
+  Screen.fillScreen     (TFT_BLACK);
+  //Screen.setTextColor   (TFT_GREEN,TFT_BLACK);
+  Screen.setTextColor   (TFT_YELLOW,TFT_BLACK);
+  Screen.setTextSize    (1);
+  Screen.setCursor      (sXTextStart, sYTextStart);
+
+#ifdef B32_TTGO_T_DISPLAY
+  Screen.setTextFont    (3);
+#else
+  //Screen.setTextFont    (4);
+  //Screen.setFreeFont    (FSB12);
+  //Screen.setFreeFont    (FM12);
+  Screen.setFreeFont    (&Targa15pt7b);
+#endif  //B32_TTGO_T_DISPLAY
+  Screen << szSketchName << " " << szFileDate << endl;
+  ShowMyMAC(true);
+*/
+
+
+   char     aucLeftLabel[][20]  = {"Head 1", "Head 2", "Head 3", "Head 4"};
+   char     aucRightLabel[][20] = {"Heat 1", "Heat 2", "Inlet" , "Outlet"};
+
+/*
   for (int wTCoupleNum=0; (wTCoupleNum < 5); wTCoupleNum++) {
     Screen << "T" << wTCoupleNum << "= " << stReadings.adTCoupleDegF[wTCoupleNum] << "F, T"
         << (wTCoupleNum + 3)  << "= " << stReadings.adTCoupleDegF[wTCoupleNum +3] << "F" << endl;
   } //for(int wTCoupleNum=0;(wTCoupleNum<5);wTCoupleNum++)
+*/
+/*
+   char szDummy[]= "123";
+   Screen << szDummy;
+   //Screen << "ABC";
+*/
+
+  for (int wLineNum= 0; wLineNum < 4; wLineNum++) {
+    Screen.setCursor(sLeftLabelFirstX, (sLeftLabelFirstY + (wLineNum * wDotsPerLine)));
+    Screen << aucLeftLabel[wLineNum] << "  " << stReadings.adTCoupleDegF[wLineNum] << "F";
+
+    Screen.setCursor(sRightLabelFirstX, (sLeftLabelFirstY + (wLineNum * wDotsPerLine)));
+    Screen << aucRightLabel[wLineNum] << "  " << stReadings.adTCoupleDegF[wLineNum + 4] << "F" << endl;
+  } //for(int wLineNum= 0...
   return;
 }   //UpdateScreen stMessageStructure stReadings
 

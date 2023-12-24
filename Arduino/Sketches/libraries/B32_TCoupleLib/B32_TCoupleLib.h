@@ -50,6 +50,21 @@ extern MAX31855             TCoupleObject;
 extern TFT_eSPI             Screen;  //Class library for TTGO T-Display
 extern esp_now_peer_info_t  stPeerInfo;
 
+const int        wDotsPerLine    = 35;
+const int        wLinesBelowTop  = 3;
+
+//const uint8_t     aucLabel[][4] = {{"Head 1", "Head 2", "Head 3", "Head 4"}, {"Heat 1", "Heat 2", "Inlet" , "Outlet"}};
+
+const int16_t     sLeftLabelFirstX                =  0;
+const int16_t     sLeftLabelFirstY                = 35;
+
+const int16_t     sRightLabelFirstX               = (TFT_WIDTH / 2);
+const int16_t     sRightLabelFirstY               = 35;
+
+const int16_t     sXTextStart   = 0;
+const int16_t     sYTextStart   = 35;
+
+
 //Function prototypes
 void  SetupESP_NOW                (void);
 void  OnDataRecv                  (const uint8_t *pucMACAddress,

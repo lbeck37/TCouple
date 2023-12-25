@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/24/23f";
+//const char szFileDate[]  = 12/24/23g";
 #include <B32_TCoupleLib.h>
 #include <Free_Fonts.h>
 #include <Targa15pt7b.h>
@@ -8,6 +8,7 @@
 //#include <gabriele_bad15pt7b.h>
 //#include <ObliviousFont15pt7b.h>
 #include <string>
+#include <stdio.h>
 
 extern enum eBoardPinColor   eReceiverBoardPinColor;
 
@@ -237,6 +238,8 @@ void DisplayLabels(void){
 
 
 void DisplayData(stMessageStructure stReadings){
+  char    ac100ByteBuffer[100];
+
 #ifdef B32_TTGO_T_DISPLAY
  Screen.setTextFont    (3);
 #else
@@ -254,22 +257,32 @@ void DisplayData(stMessageStructure stReadings){
    if (stLastReadings.adTCoupleDegF[wLeftIndex] != stReadings.adTCoupleDegF[wLeftIndex]){
      Screen.setCursor(sLeftDataX, (sLeftDataFirstY + (wLineNum * sLineSpacing)));
      Screen.setTextColor(TFT_BLACK,TFT_BLACK);
-     Screen << stLastReadings.adTCoupleDegF[wLeftIndex];
+     //Screen << stLastReadings.adTCoupleDegF[wLeftIndex];
+     //Screen.printf("6.2f", stLastReadings.adTCoupleDegF[wLeftIndex]);
+     sprintf(ac100ByteBuffer, "%5.0fF", stLastReadings.adTCoupleDegF[wLeftIndex]);
+     Screen << ac100ByteBuffer;
 
      Screen.setCursor(sLeftDataX, (sLeftDataFirstY + (wLineNum * sLineSpacing)));
      Screen.setTextColor(TFT_YELLOW,TFT_BLACK);
-     Screen << stReadings.adTCoupleDegF[wLeftIndex] << "F";
+     //Screen << stReadings.adTCoupleDegF[wLeftIndex] << "F";
+     //Screen.printf("6.2f", stLastReadings.adTCoupleDegF[wLeftIndex]);
+     sprintf(ac100ByteBuffer, "%5.0fF", stReadings.adTCoupleDegF[wLeftIndex]);
+     Screen << ac100ByteBuffer;
    }
 
    if (stLastReadings.adTCoupleDegF[wRightIndex] != stReadings.adTCoupleDegF[wRightIndex]){
      //Screen.setCursor(sRightDataX, ((sLeftLabelFirstY + 2 * sLineSpacing) + (wLineNum * sLineSpacing)));
      Screen.setCursor(sRightDataX, (sRightDataFirstY + (wLineNum * sLineSpacing)));
      Screen.setTextColor(TFT_BLACK,TFT_BLACK);
-     Screen << stLastReadings.adTCoupleDegF[wRightIndex];
+     //Screen << stLastReadings.adTCoupleDegF[wRightIndex];
+     sprintf(ac100ByteBuffer, "%5.0fF", stLastReadings.adTCoupleDegF[wRightIndex]);
+     Screen << ac100ByteBuffer;
 
      Screen.setCursor(sRightDataX, (sRightDataFirstY + (wLineNum * sLineSpacing)));
      Screen.setTextColor(TFT_YELLOW,TFT_BLACK);
-     Screen << stReadings.adTCoupleDegF[wRightIndex] << "F";
+     //Screen << stReadings.adTCoupleDegF[wRightIndex] << "F";
+     sprintf(ac100ByteBuffer, "%5.0fF", stReadings.adTCoupleDegF[wRightIndex]);
+     Screen << ac100ByteBuffer;
    }
  } //for(int wLineNum= 0...
  for (int wTCoupleNum= 0; wTCoupleNum < wNumTCouples; wTCoupleNum++) {

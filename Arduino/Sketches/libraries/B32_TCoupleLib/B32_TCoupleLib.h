@@ -24,6 +24,12 @@ typedef struct stMessageStructure {
   double      adTCoupleDegF[wNumTCouples];
 } stMessageStructure;
 
+/*
+typedef struct stIntMessageStructure {
+  int      awTCoupleDegF[wNumTCouples];
+} stIntMessageStructure;
+*/
+
 extern uint8_t              aucMyMACAddress[];
 
 //Create stMessageStructure structures to hold readings
@@ -58,11 +64,13 @@ const int16_t               sLeftLabelFirstY      = 70;
 const int16_t               sRightLabelX          = 240;
 const int16_t               sRightLabelFirstY     = sLeftLabelFirstY;
 
-const int16_t     sLeftDataX           = 100;
-const int16_t     sLeftDataFirstY      = sLeftLabelFirstY;
+//const int16_t               sLeftDataX           = 100;
+const int16_t               sLeftDataX           = 80;
+const int16_t               sLeftDataFirstY      = sLeftLabelFirstY;
 
-const int16_t     sRightDataX          = 340;
-const int16_t     sRightDataFirstY     = sLeftDataFirstY;
+//const int16_t               sRightDataX          = 340;
+const int16_t               sRightDataX          = 300;
+const int16_t               sRightDataFirstY     = sLeftDataFirstY;
 
 
 //Function prototypes

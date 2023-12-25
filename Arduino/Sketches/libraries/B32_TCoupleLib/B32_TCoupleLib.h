@@ -1,4 +1,4 @@
-//B32_TCoupleLib.h, 12/24/23c
+//B32_TCoupleLib.h, 12/24/23e
 #pragma once
 #pragma message("B32_TCoupleLib.h, Begin, include TFT_eSPI.h, if not already included")
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
@@ -32,7 +32,6 @@ extern stMessageStructure   stOutgoingReadings;
 extern stMessageStructure   stErrorReadings;
 extern stMessageStructure   stLastReadings;
 
-//extern uint8_t              auc100ByteBuffer[100];
 extern const char           szSketchName[];
 extern const char           szFileDate[];
 
@@ -52,12 +51,12 @@ extern MAX31855             TCoupleObject;
 extern TFT_eSPI             Screen;  //Class library for TTGO T-Display
 extern esp_now_peer_info_t  stPeerInfo;
 
-const int16_t     sLineSpacing          = 35;
-const int16_t     sLeftLabelX           =  0;
-const int16_t     sLeftLabelFirstY      = 70;
+const int16_t               sLineSpacing          = 35;
+const int16_t               sLeftLabelX           =  0;
+const int16_t               sLeftLabelFirstY      = 70;
 
-const int16_t     sRightLabelX          = 240;
-const int16_t     sRightLabelFirstY     = sLeftLabelFirstY;
+const int16_t               sRightLabelX          = 240;
+const int16_t               sRightLabelFirstY     = sLeftLabelFirstY;
 
 const int16_t     sLeftDataX           = 100;
 const int16_t     sLeftDataFirstY      = sLeftLabelFirstY;

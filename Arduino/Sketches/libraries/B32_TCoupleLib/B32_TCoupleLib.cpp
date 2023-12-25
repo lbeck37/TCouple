@@ -1,8 +1,12 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/24/23c";
+//const char szFileDate[]  = 12/24/23f";
 #include <B32_TCoupleLib.h>
 #include <Free_Fonts.h>
 #include <Targa15pt7b.h>
+//#include <Monofonto20pt7b.h>
+#include <Monofonto15pt7b.h>
+//#include <gabriele_bad15pt7b.h>
+//#include <ObliviousFont15pt7b.h>
 #include <string>
 
 extern enum eBoardPinColor   eReceiverBoardPinColor;
@@ -18,20 +22,6 @@ const uint8_t           aucDIYMall3dot5MAC[]      = {0xC0, 0x49, 0xEF, 0x13, 0x7
 
 uint8_t                 aucReceiverMACAddress[6];
 uint8_t                 aucMyMACAddress[6];
-
-/*
-const uint8_t     aucLabel[][]                    = {{"Head 1", "Head 2", "Head 3", "Head 4"},
-                                                     {"Heat 1", "Heat 2", "Inlet" , "Outlet"}};
-
-const int16_t     sLeftLabelFirstX                =  0;
-const int16_t     sLeftLabelFirstY                = 35;
-
-const int16_t     sRightLabelFirstX               = (TFT_WIDTH / 2);
-const int16_t     sRightLabelFirstY               = 35;
-
-const int16_t     sXTextStart   = 0;
-const int16_t     sYTextStart   = 35;
-*/
 
 //ESP32 GPIO pin numbers (range from 0 to 39)
 const uint8_t           TCoupleSelect0            = 27;
@@ -228,9 +218,6 @@ void SetupScreen(uint8_t ucRotation){
 
 
 void DisplayLabels(void){
-  //char     aucLeftLabel[][20]  = {"Head 1", "Head 2", "Head 3", "Head 4"};
-  //char     aucRightLabel[][20] = {"Oil 1", "Oil 2", "Heater" , "Air"};
-
 #ifdef B32_TTGO_T_DISPLAY
   Screen.setTextFont    (3);
 #else
@@ -249,54 +236,14 @@ void DisplayLabels(void){
 } //DisplayLabels
 
 
-/*
- void UpdateScreen(stMessageStructure stReadings){
-  char     aucLeftLabel[][20]  = {"Head 1", "Head 2", "Head 3", "Head 4"};
-  char     aucRightLabel[][20] = {"Heat 1", "Heat 2", "Inlet" , "Outlet"};
-
-#ifdef B32_TTGO_T_DISPLAY
-  Screen.setTextFont    (3);
-#else
-  Screen.setFreeFont    (&Targa15pt7b);
-#endif  //B32_TTGO_T_DISPLAY
-
-  Screen.setTextColor(TFT_YELLOW,TFT_BLACK);
-
-  for (int wLineNum= 0; wLineNum < 4; wLineNum++) {
-    if (stLastReadings.adTCoupleDegF[wLineNum] != stReadings.adTCoupleDegF[wLineNum]){
-      Screen.setCursor(sLeftLabelFirstX, ((sLeftLabelFirstY + 2 * sLineSpacing) + (wLineNum * sLineSpacing)));
-      Screen.setTextColor(TFT_BLACK,TFT_BLACK);
-      Screen << aucLeftLabel[wLineNum] << "  " << stReadings.adTCoupleDegF[wLineNum] << "F";
-
-      Screen.setCursor(sLeftLabelFirstX, ((sLeftLabelFirstY + 2 * sLineSpacing) + (wLineNum * sLineSpacing)));
-      Screen.setTextColor(TFT_YELLOW,TFT_BLACK);
-      Screen << aucLeftLabel[wLineNum] << "  " << stReadings.adTCoupleDegF[wLineNum] << "F";
-    }
-
-    if (stLastReadings.adTCoupleDegF[wLineNum + 4] != stReadings.adTCoupleDegF[wLineNum + 4]){
-      Screen.setCursor(sRightLabelFirstX, ((sLeftLabelFirstY + 2 * sLineSpacing) + (wLineNum * sLineSpacing)));
-      Screen.setTextColor(TFT_BLACK,TFT_BLACK);
-      Screen << aucRightLabel[wLineNum] << "  " << stReadings.adTCoupleDegF[wLineNum + 4] << "F" << endl;
-
-      Screen.setCursor(sRightLabelFirstX, ((sLeftLabelFirstY + 2 * sLineSpacing) + (wLineNum * sLineSpacing)));
-      Screen.setTextColor(TFT_YELLOW,TFT_BLACK);
-      Screen << aucRightLabel[wLineNum] << "  " << stReadings.adTCoupleDegF[wLineNum + 4] << "F" << endl;
-    }
-  } //for(int wLineNum= 0...
-  for (int wTCoupleNum= 0; wTCoupleNum < wNumTCouples; wTCoupleNum++) {
-    stLastReadings.adTCoupleDegF[wTCoupleNum]= stReadings.adTCoupleDegF[wTCoupleNum];
-  }
-  return;
-}   //UpdateScreen
-*/
 void DisplayData(stMessageStructure stReadings){
- //char     aucLeftLabel[][20]  = {"Head 1", "Head 2", "Head 3", "Head 4"};
- //char     aucRightLabel[][20] = {"Heat 1", "Heat 2", "Inlet" , "Outlet"};
-
 #ifdef B32_TTGO_T_DISPLAY
  Screen.setTextFont    (3);
 #else
- Screen.setFreeFont    (&Targa15pt7b);
+ //Screen.setFreeFont    (&Targa15pt7b);
+ Screen.setFreeFont    (&Monofonto15pt7b);
+ //Screen.setFreeFont    (&gabriele_bad15pt7b);
+ //Screen.setFreeFont    (&ObliviousFont15pt7b);
 #endif  //B32_TTGO_T_DISPLAY
 
  Screen.setTextColor(TFT_YELLOW,TFT_BLACK);
@@ -314,18 +261,6 @@ void DisplayData(stMessageStructure stReadings){
      Screen << stReadings.adTCoupleDegF[wLeftIndex] << "F";
    }
 
-/*
-   if (stLastReadings.adTCoupleDegF[wLineNum + 4] != stReadings.adTCoupleDegF[wLineNum + 4]){
-     //Screen.setCursor(sRightDataX, ((sLeftLabelFirstY + 2 * sLineSpacing) + (wLineNum * sLineSpacing)));
-     Screen.setCursor(sRightDataX, (sLeftDataFirstY + (wLineNum * sLineSpacing)));
-     Screen.setTextColor(TFT_BLACK,TFT_BLACK);
-     Screen << aucRightLabel[wLineNum] << "  " << stReadings.adTCoupleDegF[wLineNum + 4] << "F" << endl;
-
-     Screen.setCursor(sRightDataX, ((sLeftLabelFirstY + 2 * sLineSpacing) + (wLineNum * sLineSpacing)));
-     Screen.setTextColor(TFT_YELLOW,TFT_BLACK);
-     Screen << aucRightLabel[wLineNum] << "  " << stReadings.adTCoupleDegF[wLineNum + 4] << "F" << endl;
-   }
-*/
    if (stLastReadings.adTCoupleDegF[wRightIndex] != stReadings.adTCoupleDegF[wRightIndex]){
      //Screen.setCursor(sRightDataX, ((sLeftLabelFirstY + 2 * sLineSpacing) + (wLineNum * sLineSpacing)));
      Screen.setCursor(sRightDataX, (sRightDataFirstY + (wLineNum * sLineSpacing)));

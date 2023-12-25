@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleDisplay.ino";
-const char szFileDate[]    = "12/24/23E";
+const char szFileDate[]    = "12/24/23M";
 //Thanks to Rui Santos, https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32
 //This sketch, (B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
 //communication code from the esp_now.h library.
@@ -60,7 +60,6 @@ void loop(){
     Serial << "loop(): We haven't seen any data for over " << 
               (lAliveMsec/1000) << " seconds" << endl;
     ResetTimer();
-    //UpdateScreen(stErrorReadings);
     DisplayData(stErrorReadings);
   }
   return;

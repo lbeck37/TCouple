@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/24/23g";
+//const char szFileDate[]  = 12/25/23b";
 #include <B32_TCoupleLib.h>
 #include <Free_Fonts.h>
 #include <Targa15pt7b.h>
@@ -12,8 +12,8 @@
 
 extern enum eBoardPinColor   eReceiverBoardPinColor;
 
-extern char     aucLeftLabel [][wMaxLabelChars];
-extern char     aucRightLabel[][wMaxLabelChars];
+extern char             aucLeftLabel [][wMaxLabelChars];
+extern char             aucRightLabel[][wMaxLabelChars];
 
 const uint8_t           aucBlackPinMAC[]          = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //TTGO w/Black pin headers
 const uint8_t           aucWhitePinMAC[]          = {0x84, 0xCC, 0xA8, 0x60, 0xB4, 0x2C}; //TTGO w/White pin headers
@@ -156,7 +156,7 @@ void SelectReceiverMAC(enum eBoardPinColor ePinColor){
   } //for(int wMACByteNum=0;...
 
   return;
-} //SelectReceiverMAC
+} //SelectReceiverMAC PrintMyMAC(void)
 
 
 void ShowMyMAC(bool bDisplay){
@@ -185,6 +185,14 @@ void ShowMyMAC(bool bDisplay){
 
   return;
 } //ShowMyMAC
+
+
+void PrintMyMAC(void){
+  bool bOnDisplay= false;
+  ShowMyMAC(bOnDisplay);
+
+  return;
+} //PrintMyMAC
 
 
 void SetupScreen(uint8_t ucRotation){
@@ -225,7 +233,9 @@ void DisplayLabels(void){
   Screen.setFreeFont    (&Targa15pt7b);
 #endif  //B32_TTGO_T_DISPLAY
 
-  Screen.setTextColor(TFT_YELLOW,TFT_BLACK);
+  //Screen.setTextColor(TFT_YELLOW, TFT_BLACK);
+  //Screen.setTextColor(TFT_ORANGE, TFT_BLACK);
+  Screen.setTextColor(TFT_CYAN, TFT_BLACK);
   for (int wLineNum= 0; wLineNum < 4; wLineNum++) {
     Screen.setCursor(sLeftLabelX, (sLeftLabelFirstY + (wLineNum * sLineSpacing)));
     Screen << aucLeftLabel[wLineNum];
@@ -259,14 +269,14 @@ void DisplayData(stMessageStructure stReadings){
      Screen.setTextColor(TFT_BLACK,TFT_BLACK);
      //Screen << stLastReadings.adTCoupleDegF[wLeftIndex];
      //Screen.printf("6.2f", stLastReadings.adTCoupleDegF[wLeftIndex]);
-     sprintf(ac100ByteBuffer, "%5.0fF", stLastReadings.adTCoupleDegF[wLeftIndex]);
+     sprintf(ac100ByteBuffer, "%5.0ff", stLastReadings.adTCoupleDegF[wLeftIndex]);
      Screen << ac100ByteBuffer;
 
      Screen.setCursor(sLeftDataX, (sLeftDataFirstY + (wLineNum * sLineSpacing)));
      Screen.setTextColor(TFT_YELLOW,TFT_BLACK);
      //Screen << stReadings.adTCoupleDegF[wLeftIndex] << "F";
      //Screen.printf("6.2f", stLastReadings.adTCoupleDegF[wLeftIndex]);
-     sprintf(ac100ByteBuffer, "%5.0fF", stReadings.adTCoupleDegF[wLeftIndex]);
+     sprintf(ac100ByteBuffer, "%5.0ff", stReadings.adTCoupleDegF[wLeftIndex]);
      Screen << ac100ByteBuffer;
    }
 
@@ -275,13 +285,13 @@ void DisplayData(stMessageStructure stReadings){
      Screen.setCursor(sRightDataX, (sRightDataFirstY + (wLineNum * sLineSpacing)));
      Screen.setTextColor(TFT_BLACK,TFT_BLACK);
      //Screen << stLastReadings.adTCoupleDegF[wRightIndex];
-     sprintf(ac100ByteBuffer, "%5.0fF", stLastReadings.adTCoupleDegF[wRightIndex]);
+     sprintf(ac100ByteBuffer, "%5.0ff", stLastReadings.adTCoupleDegF[wRightIndex]);
      Screen << ac100ByteBuffer;
 
      Screen.setCursor(sRightDataX, (sRightDataFirstY + (wLineNum * sLineSpacing)));
      Screen.setTextColor(TFT_YELLOW,TFT_BLACK);
      //Screen << stReadings.adTCoupleDegF[wRightIndex] << "F";
-     sprintf(ac100ByteBuffer, "%5.0fF", stReadings.adTCoupleDegF[wRightIndex]);
+     sprintf(ac100ByteBuffer, "%5.0ff", stReadings.adTCoupleDegF[wRightIndex]);
      Screen << ac100ByteBuffer;
    }
  } //for(int wLineNum= 0...

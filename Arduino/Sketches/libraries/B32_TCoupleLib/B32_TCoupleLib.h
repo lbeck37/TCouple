@@ -1,4 +1,4 @@
-//B32_TCoupleLib.h, 12/24/23e
+//B32_TCoupleLib.h, 12/25/23b
 #pragma once
 #pragma message("B32_TCoupleLib.h, Begin, include TFT_eSPI.h, if not already included")
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
@@ -16,19 +16,31 @@ enum class eBoardPinColor {
   eLastPin
 }; //eBoardPinColor
 
-const int   wNumTCouples      =  8;
-const int   wMaxLabelChars    = 20;
+const int                   wNumTCouples          =  8;
+const int                   wMaxLabelChars        = 20;
+const int16_t               sLineSpacing          = 35;
+
+const int16_t               sLeftLabelX           =  0;
+const int16_t               sLeftLabelFirstY      = 70;
+
+const int16_t               sLeftDataX           = 80;
+//const int16_t               sLeftDataX           = 90;
+const int16_t               sLeftDataFirstY      = sLeftLabelFirstY;
+
+const int16_t               sRightLabelX          = 200;
+//const int16_t               sRightLabelX          = 190;
+const int16_t               sRightLabelFirstY     = sLeftLabelFirstY;
+
+
+//const int16_t               sRightDataX          = 300;
+const int16_t               sRightDataX          = 290;
+const int16_t               sRightDataFirstY     = sLeftDataFirstY;
+
 
 //Message Structure that is used to pass data back an forth
 typedef struct stMessageStructure {
   double      adTCoupleDegF[wNumTCouples];
 } stMessageStructure;
-
-/*
-typedef struct stIntMessageStructure {
-  int      awTCoupleDegF[wNumTCouples];
-} stIntMessageStructure;
-*/
 
 extern uint8_t              aucMyMACAddress[];
 
@@ -57,21 +69,6 @@ extern MAX31855             TCoupleObject;
 extern TFT_eSPI             Screen;  //Class library for TTGO T-Display
 extern esp_now_peer_info_t  stPeerInfo;
 
-const int16_t               sLineSpacing          = 35;
-const int16_t               sLeftLabelX           =  0;
-const int16_t               sLeftLabelFirstY      = 70;
-
-const int16_t               sRightLabelX          = 240;
-const int16_t               sRightLabelFirstY     = sLeftLabelFirstY;
-
-//const int16_t               sLeftDataX           = 100;
-const int16_t               sLeftDataX           = 80;
-const int16_t               sLeftDataFirstY      = sLeftLabelFirstY;
-
-//const int16_t               sRightDataX          = 340;
-const int16_t               sRightDataX          = 300;
-const int16_t               sRightDataFirstY     = sLeftDataFirstY;
-
 
 //Function prototypes
 void  SetupESP_NOW                (void);
@@ -89,6 +86,7 @@ void  ReadTCouples                (stMessageStructure& stReadings);
 void  PrintTemperatures           (stMessageStructure stReadings);
 void  PrintTemperature            (double dDegF);
 void  ShowMyMAC                   (bool bDisplay);
+void  PrintMyMAC                  (void);
 void  SetupPins                   (void);
 void  ResetTimer                  (void);
 //Last line

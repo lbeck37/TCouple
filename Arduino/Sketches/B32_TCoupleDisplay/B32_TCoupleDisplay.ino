@@ -1,11 +1,11 @@
 const char szSketchName[]  = "B32_TCoupleDisplay.ino";
-const char szFileDate[]    = "12/26/23H";
+const char szFileDate[]    = "12/26/23J";
 //Thanks to Rui Santos, https://RandomNerdTutorials.com/esp-now-two-way-communication-esp32
 //This sketch, (B32_TCoupleDisplay.ino), and B32_TCoupleModule.ino share WiFi
 //communication code from the esp_now.h library.
 
 #include <TFT_eSPI.h>
-//#include <SPI.h>
+#include <TFT_eWidget.h>
 #include <B32_TCoupleLib.h>
 
 eBoardPinColor    eReceiverBoardPinColor    {eBoardPinColor::eBluePin};  //Display currently does not send anything

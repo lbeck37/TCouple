@@ -1,4 +1,4 @@
-//Beck, 11/16/23b
+//Beck, TFT_eWidget.h, 12/26/23b
 /***************************************************************************************
 
   TFT display Widget library comprising following classes:
@@ -20,11 +20,16 @@
   #endif
 #endif
 
-// LittleFS is required for touch calibration in TFT_eSPI sketches
-#if defined (ARDUINO_ARCH_ESP8266) || defined (ESP32)
-  #include <pgmspace.h>
-  #include <FS.h>
-  #include <LittleFS.h>   //tried commented out 11/15/23, Beck
+#if defined (TOUCH_CS)
+  #pragma message("TFT_eWidget.h, TOUCH_CS is defined, do #include of FS.h and LittleFS.h")
+  // LittleFS is required for touch calibration in TFT_eSPI sketches
+  #if defined (ARDUINO_ARCH_ESP8266) || defined (ESP32)
+    #include <pgmspace.h>
+    #include <FS.h>
+    #include <LittleFS.h>   //tried commented out 11/15/23, Beck
+  #endif
+#else
+  #pragma message("TFT_eWidget.h, TOUCH_CS is NOT defined, skip #include of FS.h and LittleFS.h")
 #endif
 
 #include <TFT_eSPI.h>

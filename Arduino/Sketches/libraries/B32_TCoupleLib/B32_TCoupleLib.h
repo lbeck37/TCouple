@@ -1,6 +1,7 @@
-//B32_TCoupleLib.h, 12/25/23b
+//B32_TCoupleLib.h, 12/25/23d
 #pragma once
 #pragma message("B32_TCoupleLib.h, Begin, include TFT_eSPI.h, if not already included")
+#define TOUCH_CS
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
 #include <esp_now.h>
 #include <WiFi.h>
@@ -77,6 +78,7 @@ void  OnDataRecv                  (const uint8_t *pucMACAddress,
 void  OnDataSent                  (const uint8_t *mac_addr, esp_now_send_status_t status);
 void  HandleDataReceived          (void);
 void  SendDataToDisplayBoard      (stMessageStructure stReadings);
+bool  bCheckTouch                 (uint16_t *pusXCoordParam, uint16_t *pusYCoordParam);
 void  SetupScreen                 (uint8_t ucRotation);
 void  DisplayLabels               (void);
 //void  UpdateScreen                (stMessageStructure stReadings);

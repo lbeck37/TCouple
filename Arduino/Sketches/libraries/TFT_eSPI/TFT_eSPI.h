@@ -1,4 +1,4 @@
-//Beck, TFT_eSPI.h, 12/20/23c
+//Beck, TFT_eSPI.h, 12/26/23b
 /***************************************************
   Arduino TFT graphics library targeted at ESP8266
   and ESP32 based boards.

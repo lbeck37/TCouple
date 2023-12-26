@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/25/23b";
+//const char szFileDate[]  = 12/26/23d";
 #include <B32_TCoupleLib.h>
 #include <Free_Fonts.h>
 #include <Targa15pt7b.h>
@@ -9,6 +9,8 @@
 //#include <ObliviousFont15pt7b.h>
 #include <string>
 #include <stdio.h>
+
+#define DO_TOUCHSCREEN      false
 
 extern enum eBoardPinColor   eReceiverBoardPinColor;
 
@@ -131,6 +133,22 @@ void SendDataToDisplayBoard(stMessageStructure stReadings){
 } //SendDataToDisplayBoard
 
 
+//bool  bCheckTouch(int16_t &sXCoordinate, int16_t &sYCoordinate){
+bool  bCheckTouch(uint16_t *pusXCoordParam, uint16_t *pusYCoordParam){
+  bool bScreenTouched   = false;
+
+#if DO_TOUCHSCREEN
+  if (Screen.getTouch(pusXCoordParam, pusYCoordParam)){
+    bScreenTouched= true;
+    //Screen << "bCheckTouch(): Screen touched at: " << usYCoordinate << ", " << usXCoordinate << endl;
+    Screen << "bCheckTouch(): Screen touched at: " << *pusXCoordParam << ", " << *pusXCoordParam << endl;
+  }
+#endif  //DO_TOUCHSCREEN
+
+  return bScreenTouched;
+} //bCheckTouch
+
+
 void SelectReceiverMAC(enum eBoardPinColor ePinColor){
   //Copy MAC address one byte at a time
   for (int wMACByteNum= 0; wMACByteNum < 6; wMACByteNum++){
@@ -156,7 +174,7 @@ void SelectReceiverMAC(enum eBoardPinColor ePinColor){
   } //for(int wMACByteNum=0;...
 
   return;
-} //SelectReceiverMAC PrintMyMAC(void)
+} //SelectReceiverMAC
 
 
 void ShowMyMAC(bool bDisplay){

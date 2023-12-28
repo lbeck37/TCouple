@@ -1,56 +1,74 @@
-/* Beck, Analogue_meters.ino 12/26/23b
-  Example animated analogue meters
+/* Beck, Analogue_meters.ino 12/26/23c
+  Example animated analog meters
   Needs Font 2 (also Font 4 if using large scale label)
   Requires widget library here: https://github.com/Bodmer/TFT_eWidget*/
 
-#include <TFT_eSPI.h>     // Hardware-specific library*/
-#include <TFT_eWidget.h>  // Widget library
+#include <TFT_eSPI.h>
+#include <TFT_eWidget.h>
 
-TFT_eSPI      Screen    = TFT_eSPI();      // Invoke custom library
+TFT_eSPI      Screen          = TFT_eSPI();
 
-MeterWidget   AmpMeter          = MeterWidget(&Screen);
-MeterWidget   VoltMeter         = MeterWidget(&Screen);
-MeterWidget   OhmMeter          = MeterWidget(&Screen);
+MeterWidget   AmpMeter        = MeterWidget(&Screen);
+MeterWidget   VoltMeter       = MeterWidget(&Screen);
+MeterWidget   OhmMeter        = MeterWidget(&Screen);
 
-const int     wLoopPeriodMsec   = 35; // Display updates every 35 ms
+const int     wLoopPeriodMsec =  35; // Display updates every 35 ms
+
+uint16_t    usAmpMeterXloc    =   0;
+uint16_t    usAmpMeterYloc    =   0;
+
+uint16_t    usVoltMeterXloc   =   0;
+uint16_t    usVoltMeterYloc   = 128;
+
+uint16_t    usOhmMeterXloc    =   0;
+uint16_t    usOhmMeterYloc    = 256;
+
+float       fAmpFullScale     =   2.0;
+float       fVoltFullScale    =  10.0;
+float       fOhmFullScale     = 100.0;
+
+uint16_t    usAmpRedStart     =  75;
+uint16_t    usAmpRedEnd       = 100;
+uint16_t    usAmpOrgStart     =  50;
+uint16_t    usAmpOrgEnd       =  75;
+uint16_t    usAmpYelStart     =  25;
+uint16_t    usAmpYelEnd       =  50;
+uint16_t    usAmpGrnStart     =   0;
+uint16_t    usAmpGrnEnd       =  25;
+
+uint16_t    usVoltRedStart    =   0;
+uint16_t    usVoltRedEnd      = 100;
+uint16_t    usVoltOrgStart    =  25;
+uint16_t    usVoltOrgEnd      =  75;
+uint16_t    usVoltYelStart    =   0;
+uint16_t    usVoltYelEnd      =   0;
+uint16_t    usVoltGrnStart    =  40;
+uint16_t    usVoltGrnEnd      =  60;
+
+char  szAmpUnits[]            = "mA";
+char  szVoltUnits[]           = "V";
+char  szOhmUnits[]            = "R";
+
+char  aszAmpTick[][10]        = {"0", "0.5" , "1.0" , "1.5" , "2.0"};
+char  aszVoltTick[][10]       = {"0", "2.5" , "5.0" , "7.5" , "10.0"};
+char  aszOhmTick[][10]        = {"0", ""    , "50"  , ""    , "100"};
+
+// Meter is 239 pixels wide and 126 pixels high
+// Colour draw order is red, orange, yellow, green. So red can be full scale with green drawn
+// last on top to indicate a "safe" zone.
+// Colour zones are set as a start and end percentage of full scale (0-100)
+// No coloured zones if not defined
+// If start and end of a colour zone are the same then that colour is not used
+
+
 
 void setup(void){
-  uint16_t    usAmpMeterXloc    = 0;
-  uint16_t    usAmpMeterYloc    = 0;
+  Screen.init           ();
+  Screen.setRotation    (0);
+  Screen.fillScreen     (TFT_BLACK);
 
-  uint16_t    usVoltMeterXloc   = 0;
-  uint16_t    usVoltMeterYloc   = 128;
-
-  uint16_t    usOhmMeterXloc    = 0;
-  uint16_t    usOhmMeterYloc    = 256;
-
-  float       fAmpFullScale     = 2.0;
-  float       fVoltFullScale    = 10.0;
-  float       fOhmFullScale     = 100.0;
-
-  const char  szAmpUnits[]      = "mA";
-  const char  szVoltUnits[]     = "V";
-  const char  szOhmUnits[]      = "R";
-
-  const char  aszAmpTick[][10]  = {"0", "0.5", "1.0", "1.5", "2.0"};
-  const char  aszVoltTick[][10] = {"0", "2.5", "5", "7.5", "10"};
-  const char  aszOhmTick[][10]  = {"0", "", "50", "", "100"};
-
-  Screen.init         ();
-  Screen.setRotation  (0);
-  Screen.fillScreen   (TFT_BLACK);
-
-  Serial.begin(115200); // For debug
-
-  // Meter is 239 pixels wide and 126 pixels high
-  // Colour draw order is red, orange, yellow, green. So red can be full scale with green drawn
-  // last on top to indicate a "safe" zone.
-  // Colour zones are set as a start and end percentage of full scale (0-100)
-  // No coloured zones if not defined
-  // If start and end of a colour zone are the same then that colour is not used
-  //                     --Red--  -Org-   -Yell-  -Grn-
-  AmpMeter.setZones     (75, 100, 50, 75, 25, 50, 0, 25); // Example here red starts at 75% and ends at 100% of full scale
-  VoltMeter.setZones    (0, 100, 25, 75, 0, 0, 40, 60);
+  AmpMeter.setZones     (usAmpRedStart , usAmpRedEnd , usAmpOrgStart , usAmpOrgEnd , usAmpYelStart , usAmpYelEnd , usAmpGrnStart , usAmpGrnEnd);
+  VoltMeter.setZones    (usVoltRedStart, usVoltRedEnd, usVoltOrgStart, usVoltOrgEnd, usVoltYelStart, usVoltYelEnd, usVoltGrnStart, usVoltGrnEnd);
 
   AmpMeter.analogMeter  (usAmpMeterXloc , usAmpMeterYloc , fAmpFullScale , szAmpUnits,
                          aszAmpTick[0]  , aszAmpTick[1]  , aszAmpTick[2] , aszAmpTick[3]);
@@ -60,6 +78,7 @@ void setup(void){
 
   OhmMeter.analogMeter  (usOhmMeterXloc , usOhmMeterYloc , fOhmFullScale , szOhmUnits,
                          aszOhmTick[0]  , aszOhmTick[1]  , aszOhmTick[2] , aszOhmTick[3]);
+  return;
 } //setup
 
 
@@ -89,6 +108,7 @@ void loop(){
     fResistance= fMapValue  (fValue, (float)0.0, (float)100.0, (float)0.0, (float)100.0);
     OhmMeter.updateNeedle   (fResistance, 0);
   } //if((millis()-ulUpdateMillis)>=wLoopPeriodMsec)
+  return;
 } //loop
 
 

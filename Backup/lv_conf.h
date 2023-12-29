@@ -1,4 +1,4 @@
-/** Beck, lv_conf.h, 12/28/23b
+/** Beck, lv_conf.h, 12/29/23b
  * @file lv_conf.h
  * Configuration file for v9.0.0-dev
  */
@@ -10,7 +10,7 @@
  *    - define `LV_CONF_INCLUDE_SIMPLE`
  *    - add the path as include path
  */
-
+BAD code, should fail
 /* clang-format off */
 #if 1 /*Set it to "1" to enable content*/
 
@@ -39,10 +39,11 @@
 #define LV_USE_STDLIB_STRING    LV_STDLIB_BUILTIN
 #define LV_USE_STDLIB_SPRINTF   LV_STDLIB_BUILTIN
 
-
 #if LV_USE_STDLIB_MALLOC == LV_STDLIB_BUILTIN
     /*Size of the memory available for `lv_malloc()` in bytes (>= 2kB)*/
-    #define LV_MEM_SIZE (256 * 1024U)          /*[bytes]*/
+    //#define LV_MEM_SIZE (256 * 1024U)          /*[bytes]*/
+    #define LV_MEM_SIZE (64 * 1024U)          /*[bytes]*/
+    #pragma message("lv_conf.h, Begin, LV_MEM_SIZE set to 64K bytes")
 
     /*Size of the memory expand for `lv_malloc()` in bytes*/
     #define LV_MEM_POOL_EXPAND_SIZE 0
@@ -862,6 +863,7 @@
 
 /*Enable the examples to be built with the library*/
 #define LV_BUILD_EXAMPLES 1
+//#define LV_BUILD_EXAMPLES 0
 
 /*===================
  * DEMO USAGE

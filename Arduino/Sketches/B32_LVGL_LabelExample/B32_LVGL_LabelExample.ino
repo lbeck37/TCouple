@@ -1,6 +1,7 @@
 const char szSketchName[]  = "B32_LVGL_LabelExample.ino";
 const char szFileDate[]    = "12/28/23A";
 //#include "../lv_examples.h"
+#include "../lv_examples.h"
 #if true || LV_BUILD_EXAMPLES && LV_USE_LABEL
 #include "Arduino.h"
 #include <lvgl.h>

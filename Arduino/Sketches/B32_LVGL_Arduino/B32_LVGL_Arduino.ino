@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_LVGL_Arduino.ino";
-const char szFileDate[]    = "12/27/23C";
+const char szFileDate[]    = "12/28/23E";
 /*Using LVGL with Arduino requires some extra steps:
  *Be sure to read the docs here: https://docs.lvgl.io/master/get-started/platforms/arduino.html  */
 
@@ -20,9 +20,9 @@ const char szFileDate[]    = "12/27/23C";
 static const uint16_t   screenWidth  = 480;
 static const uint16_t   screenHeight = 320;
 
-//static lv_disp_draw_buf_t         draw_buf;
+static lv_disp_draw_buf_t         draw_buf;
 //static lv_disp_buf_t         draw_buf;
-static lv_draw_buf_t         draw_buf;
+//static lv_draw_buf_t         draw_buf;
 
 static lv_color_t                 buf[ (screenWidth * screenHeight / 10)];
 
@@ -31,9 +31,9 @@ TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
 //Function protos
 void setup              (void);
 void loop               (void);
-void my_print           (lv_log_level_t   level       , const char *buf);
-void my_disp_flush      (lv_disp_t        *disp       , const lv_area_t  *area, lv_color_t *color_p );
-void my_touchpad_read   (lv_indev_t *     indev_driver, lv_indev_data_t  *data);
+void my_print           (lv_log_level_t   level         , const char *buf);
+void my_disp_flush      (lv_disp_drv_t    *disp         , const lv_area_t  *area, lv_color_t *color_p );
+void my_touchpad_read   (lv_indev_drv_t   *indev_driver , lv_indev_data_t  *data);
 
 #if LV_USE_LOG != 0   //Serial debugging
   void my_print(lv_log_level_t level, const char * buf ){
@@ -44,7 +44,8 @@ void my_touchpad_read   (lv_indev_t *     indev_driver, lv_indev_data_t  *data);
 #endif  //LV_USE_LOG!=0
 
 /* Display flushing */
-void my_disp_flush(lv_disp_t *disp, const lv_area_t *area, lv_color_t *color_p)
+//void my_disp_flush(lv_disp_t *disp, const lv_area_t *area, lv_color_t *color_p)
+void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p)
 {
   uint32_t w = ( area->x2 - area->x1 + 1 );
   uint32_t h = ( area->y2 - area->y1 + 1 );
@@ -60,7 +61,8 @@ void my_disp_flush(lv_disp_t *disp, const lv_area_t *area, lv_color_t *color_p)
 } //my_disp_flush
 
 
-void my_touchpad_read(lv_indev_t * indev_driver, lv_indev_data_t * data){ ///*Read the touchpad*/
+//void my_touchpad_read(lv_indev_t * indev_driver, lv_indev_data_t * data){ ///*Read the touchpad*/
+void my_touchpad_read(lv_indev_drv_t * indev_driver, lv_indev_data_t * data){ ///*Read the touchpad*/
   uint16_t touchX, touchY;
 
 #if DO_TOUCH
@@ -117,7 +119,8 @@ void setup(){
   lv_disp_draw_buf_init( &draw_buf, buf, NULL, screenWidth * screenHeight / 10 );
 
   /*Initialize the display*/
-  static lv_disp_t    disp_drv;
+  //static lv_disp_t    disp_drv;
+  static lv_disp_drv_t    disp_drv;
 
   lv_disp_drv_init( &disp_drv );
 
@@ -129,7 +132,8 @@ void setup(){
   lv_disp_drv_register( &disp_drv );
 
   /*Initialize the (dummy) input device driver*/
-  static lv_indev_t     indev_drv;
+  //static lv_indev_t     indev_drv;
+  static lv_indev_drv_t     indev_drv;
 
   lv_indev_drv_init(&indev_drv);
   indev_drv.type      = LV_INDEV_TYPE_POINTER;
@@ -145,9 +149,9 @@ void setup(){
    * online: https://docs.lvgl.io/master/examples.html
    * source codes: https://github.com/lvgl/lvgl/tree/e7f88efa5853128bf871dde335c0ca8da9eb7731/examples */
    //lv_example_btn_1();
- 
+
    /*Or try out a demo. Don't forget to enable the demos in lv_conf.h. E.g. LV_USE_DEMOS_WIDGETS*/
-  lv_demo_widgets();
+  //lv_demo_widgets();
   // lv_demo_benchmark();
   // lv_demo_keypad_encoder();
   // lv_demo_music();

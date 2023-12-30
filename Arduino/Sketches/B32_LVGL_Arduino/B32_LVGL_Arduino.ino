@@ -1,14 +1,17 @@
 const char szSketchName[]  = "B32_LVGL_Arduino.ino";
-const char szFileDate[]    = "12/29/23M";
+const char szFileDate[]    = "12/29/23Q";
 
 #include <lvgl.h>
 #include <TFT_eSPI.h>
+//#include <B32_TCoupleLib.h>
 #include <Streaming.h>
 
 #define DO_TOUCH      false
 #define DO_LOGGING    false
 
 #define BLOG          millis()
+
+const uint8_t                 ucRotation    = 3;     //DIYmall 3.5" touchscreen, Landscape, USB on the left
 
 /*Change to your screen resolution*/
 static const uint16_t         usScreenWidth  = 480;
@@ -22,6 +25,7 @@ TFT_eSPI TFTScreen = TFT_eSPI(usScreenWidth, usScreenHeight); /* TFT instance */
 
 //Function protos
 void setup              (void);
+void DisplayHeading     (void);
 void SetupLVGL          (void);
 void loop               (void);
 void DisplayText        (char *szText);
@@ -39,6 +43,8 @@ void setup(){
   //Set up LVGL graphics library
   SetupLVGL();
 
+  DisplayHeading();
+
   //Display a couple lines
   DisplayText("First text");
   DisplayText("Second text");
@@ -47,6 +53,24 @@ void setup(){
   Serial << BLOG << " setup(): Done" << endl;
   return;
 } //setup
+
+
+void DisplayHeading(void){
+  //TFTScreen.init            ();
+  Serial << BLOG << " DisplayHeading(): Write Sketch name and date to screen using TFTScreen calls" << endl;
+  TFTScreen.setRotation     (ucRotation);
+  TFTScreen.fillScreen      (TFT_BLACK);
+
+  TFTScreen.setTextColor    (TFT_GREEN,TFT_BLACK);
+  TFTScreen.setTextSize     (1);
+  TFTScreen.setCursor       (0, 0);
+  TFTScreen.setTextFont     (2);
+
+  TFTScreen << szSketchName << " " << szFileDate << endl;
+  //ShowMyMAC(true);
+
+  return;
+} //DisplayHeading
 
 
 void SetupLVGL(void){
@@ -63,8 +87,8 @@ void SetupLVGL(void){
   Serial << BLOG << " SetupLVGL(): Call TFTScreen.begin()" << endl;
   TFTScreen.begin();
 
-  Serial << BLOG << " SetupLVGL(): Call TFTScreen.setRotation(3)" << endl;
-  TFTScreen.setRotation(3); /*DIYMall 3.5" touchscreen, Landscape, USB on the left */
+  Serial << BLOG << " SetupLVGL(): Call TFTScreen.setRotation(ucRotation)" << endl;
+  TFTScreen.setRotation(ucRotation);
 
 #if DO_TOUCH
   /*Set the touchscreen calibration data,

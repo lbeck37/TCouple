@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/27/23b";
+//const char szFileDate[]  = 12/29/23b";
 #include <B32_TCoupleLib.h>
 #include <Free_Fonts.h>
 #include <Targa15pt7b.h>
@@ -219,7 +219,7 @@ void SetupScreen(uint8_t ucRotation){
   //Screen.setRotation  (0);  //0 WM: L, USB L  / DIY: P, USB Bot/ ED: P, USB UR/ TT: P, USB Bot
   //Screen.setRotation  (1);  //1 WM: P, USB Top/ DIY: L, USB R  / ED: L, USB UL/ TT: L, USB R
   //Screen.setRotation  (2);  //2 ED: P  USB LL /
-  //Screen.setRotation  (3);  //3 ED: L, USB LR / TT: L, USB L
+  //Screen.setRotation  (3);  //3 ED: L, USB LR / DIY: L, USB L  / TT: L, USB L
   //Screen.setRotation  (4);  //4 ED: P, USB LL, text right-to-left
   //Screen.fillScreen   (LB_BLACK);
 

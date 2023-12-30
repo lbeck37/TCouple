@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_LVGL_Arduino.ino";
-const char szFileDate[]    = "12/29/23Q";
+const char szFileDate[]    = "12/29/23R";
 
 #include <lvgl.h>
 #include <TFT_eSPI.h>
@@ -25,7 +25,7 @@ TFT_eSPI TFTScreen = TFT_eSPI(usScreenWidth, usScreenHeight); /* TFT instance */
 
 //Function protos
 void setup              (void);
-void DisplayHeading     (void);
+void DisplayTFTHeading  (void);
 void SetupLVGL          (void);
 void loop               (void);
 void DisplayText        (char *szText);
@@ -43,7 +43,7 @@ void setup(){
   //Set up LVGL graphics library
   SetupLVGL();
 
-  DisplayHeading();
+  DisplayTFTHeading();
 
   //Display a couple lines
   DisplayText("First text");
@@ -55,9 +55,9 @@ void setup(){
 } //setup
 
 
-void DisplayHeading(void){
+void DisplayTFTHeading(void){
   //TFTScreen.init            ();
-  Serial << BLOG << " DisplayHeading(): Write Sketch name and date to screen using TFTScreen calls" << endl;
+  Serial << BLOG << " DisplayTFTHeading(): Write Sketch name and date to screen using TFTScreen calls" << endl;
   TFTScreen.setRotation     (ucRotation);
   TFTScreen.fillScreen      (TFT_BLACK);
 
@@ -70,7 +70,7 @@ void DisplayHeading(void){
   //ShowMyMAC(true);
 
   return;
-} //DisplayHeading
+} //DisplayTFTHeading
 
 
 void SetupLVGL(void){

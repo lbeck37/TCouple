@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_LVGL_Arduino.ino";
-const char szFileDate[]    = "12/29/23K";
+const char szFileDate[]    = "12/29/23M";
 
 #include <lvgl.h>
 #include <TFT_eSPI.h>
@@ -24,7 +24,7 @@ TFT_eSPI TFTScreen = TFT_eSPI(usScreenWidth, usScreenHeight); /* TFT instance */
 void setup              (void);
 void SetupLVGL          (void);
 void loop               (void);
-void DisplayText        (void);
+void DisplayText        (char *szText);
 #if DO_LOGGING
   void my_print         (lv_log_level_t   level         , const char *stColorPixelsBuffer);
 #endif
@@ -34,13 +34,15 @@ void my_touchpad_read   (lv_indev_drv_t   *pstIndevDrv    , lv_indev_data_t  *ps
 
 void setup(){
   Serial.begin( 115200 ); /* prepare for possible serial debug */
-  Serial << endl << BLOG << "setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
+  Serial << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
   //Set up LVGL graphics library
   SetupLVGL();
 
-  /* Create simple label */
-  DisplayText();
+  //Display a couple lines
+  DisplayText("First text");
+  DisplayText("Second text");
+  DisplayText("Third text");
 
   Serial << BLOG << " setup(): Done" << endl;
   return;
@@ -114,8 +116,8 @@ void loop(){
 } //loop
 
 
-void DisplayText(void){
-  Serial << BLOG << " DisplayText(): Begin" << endl;
+void DisplayText(char *szText){
+  Serial << BLOG << " DisplayText(): Display |"  << szText << "|" << endl;
 
   /*Create a white label, set its text and align it to the center*/
   Serial << BLOG << " DisplayText(): Call lv_label_create(lv_scr_act())" << endl;

@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_LVGL_Arduino.ino";
-const char szFileDate[]    = "12/29/23R";
+const char szFileDate[]    = "12/30/23J";
 
 #include <lvgl.h>
 #include <TFT_eSPI.h>
@@ -28,7 +28,7 @@ void setup              (void);
 void DisplayTFTHeading  (void);
 void SetupLVGL          (void);
 void loop               (void);
-void DisplayText        (char *szText);
+void DisplayText        (const char *szText);
 #if DO_LOGGING
   void my_print         (lv_log_level_t   level         , const char *stColorPixelsBuffer);
 #endif
@@ -46,9 +46,8 @@ void setup(){
   DisplayTFTHeading();
 
   //Display a couple lines
-  DisplayText("First text");
-  DisplayText("Second text");
-  DisplayText("Third text");
+  //DisplayText("Hello world, 12/30/23C");
+  DisplayText(szFileDate);
 
   Serial << BLOG << " setup(): Done" << endl;
   return;
@@ -140,25 +139,49 @@ void loop(){
 } //loop
 
 
-void DisplayText(char *szText){
-  Serial << BLOG << " DisplayText(): Display |"  << szText << "|" << endl;
+void DisplayText(const char *szText){
+  static lv_style_t     stMyStyle;
+  lv_obj_t              *pstSketchNameLabel   = lv_label_create(lv_scr_act());
+  lv_obj_t              *pstFileDateLabel     = lv_label_create(lv_scr_act());
 
-  /*Create a white label, set its text and align it to the center*/
+  //Serial << BLOG << " DisplayText(): Display |"  << szText << "|" << endl;
+  Serial << BLOG << " DisplayText(): Display Sketch name and date" << endl;
+
+  Serial << BLOG << " DisplayText(): Call lv_style_init(&stMyStyle)" << endl;
+  lv_style_init                 (&stMyStyle);
+
+  Serial << BLOG << " DisplayText(): Call lv_style_set_text_font(&stMyStyle, &lv_font_montserrat_48)" << endl;
+  lv_style_set_text_font        (&stMyStyle, &lv_font_montserrat_48);
+
+  /*Create a label, set its text and align it to the center*/
+/*
   Serial << BLOG << " DisplayText(): Call lv_label_create(lv_scr_act())" << endl;
   lv_obj_t *pstLabelObj= lv_label_create(lv_scr_act());
+*/
 
   /*Change the active screen's background color*/
-  Serial << BLOG << " DisplayText(): Call lv_obj_set_style_bg_color(lv_scr_act(),...)" << endl;
-  lv_obj_set_style_bg_color     (lv_scr_act(), lv_color_hex(0x003a57), LV_PART_MAIN);
+  Serial << BLOG << " DisplayText(): Call lv_obj_set_style_bg_color(lv_scr_act(),lv_color_hex(0x000000),LV_PART_MAIN)" << endl;
+  //lv_obj_set_style_bg_color     (lv_scr_act(), lv_color_hex(0x003a57), LV_PART_MAIN);
+  lv_obj_set_style_bg_color     (lv_scr_act(), lv_color_hex(0x000000), LV_PART_MAIN);
 
-  Serial << BLOG << " DisplayText(): Call lv_obj_set_style_text_color(lv_scr_act(),...)" << endl;
+  Serial << BLOG << " DisplayText(): Call lv_obj_set_style_text_color(lv_scr_act(),lv_color_hex(0xffffff),LV_PART_MAIN)" << endl;
   lv_obj_set_style_text_color   (lv_scr_act(), lv_color_hex(0xffffff), LV_PART_MAIN);
 
-  Serial << BLOG << " DisplayText(): Call lv_label_set_text(pstLabelObj, Hello world...)" << endl;
-  lv_label_set_text             (pstLabelObj, "Hello world, 12/29/23BB");
+  Serial << BLOG << " DisplayText(): Call lv_label_set_text(pstLabelObj, szSketchName)" << endl;
+  lv_label_set_text             (pstSketchNameLabel, szSketchName);
 
-  Serial << BLOG << " DisplayText(): Call lv_obj_align(pstLabelObj, LV_ALIGN_CENTER,...)" << endl;
-  lv_obj_align                  (pstLabelObj, LV_ALIGN_CENTER, 0, 0);
+  Serial << BLOG << " DisplayText(): Call lv_label_set_text(pstFileDateLabel, szFileDate)" << endl;
+  lv_label_set_text             (pstFileDateLabel, szFileDate);
+
+  Serial << BLOG << " DisplayText(): Call lv_style_set_text_font(&stMyStyle, &lv_font_montserrat_28)" << endl;
+  lv_style_set_text_font        (&stMyStyle, &lv_font_montserrat_28);
+
+  Serial << BLOG << " DisplayText(): Call lv_obj_align(pstSketchNameLabel, LV_ALIGN_IN_TOP_MID,0,0)" << endl;
+  //lv_obj_align                  (pstSketchNameLabel, LV_ALIGN_CENTER, 0, 0);
+  lv_obj_align                  (pstSketchNameLabel, LV_ALIGN_TOP_MID, 0, 0);
+
+  Serial << BLOG << " DisplayText(): Call lv_obj_align(pstFileDateLabel, LV_ALIGN_IN_BOTTOM_MID,0,0)" << endl;
+  lv_obj_align                  (pstFileDateLabel, LV_ALIGN_BOTTOM_MID, 0, 0);
 
   Serial << BLOG << " DisplayText(): Done" << endl;
   return;

@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_LVGL_Arduino.ino";
-const char szFileDate[]    = "1/1/24G";
+const char szFileDate[]    = "1/1/24L";
 
 #include <lvgl.h>
 #include <TFT_eSPI.h>
@@ -14,9 +14,22 @@ static const uint16_t         usPanelHeight = 320;
 
 const uint8_t                 ucRotation    = 3;     //DIYmall 3.5", Landscape, USB on the left
 
-const lv_color_t              stColorWhite  = lv_color_hex(0xffffff);
-const lv_color_t              stColorBlack  = lv_color_hex(0x000000);
-const lv_color_t              stColorRed900 = lv_color_hex(0xB71C1C);   //Google Mateial Design color
+
+//Light Google Material Design colors
+const lv_color_t              stColorWhite        = lv_color_hex(0xffffff);
+const lv_color_t              stColorYellow200    = lv_color_hex(0xFFF59D);
+const lv_color_t              stColorYellowA100   = lv_color_hex(0xFFFF8D);
+const lv_color_t              stColorOrange200    = lv_color_hex(0xFFCC80);
+const lv_color_t              stColorOrange600    = lv_color_hex(0xFB8C00);
+
+//Dark Google Material Design colors
+const lv_color_t              stColorBlack        = lv_color_hex(0x000000);
+const lv_color_t              stColorRed900       = lv_color_hex(0xB71C1C);
+const lv_color_t              stColorPurple900    = lv_color_hex(0x4A148C);
+const lv_color_t              stColorIndigo900    = lv_color_hex(0x1A237E);
+const lv_color_t              stColorTeal900      = lv_color_hex(0x004D40);
+const lv_color_t              stColorGreen900     = lv_color_hex(0x1B5E20);
+const lv_color_t              stColorBlueGray900  = lv_color_hex(0x263238);
 
 static lv_style_t             stMyStyle;
 static lv_disp_drv_t          stDisplay;
@@ -71,10 +84,16 @@ static void CreateStyle(void){
   lv_style_set_text_font        (&stMyStyle, &lv_font_montserrat_48);
 
   Serial << BLOG << " CreateStyle(): Call lv_obj_set_style_bg_color(lv_scr_act(),stColorRed900,LV_PART_MAIN)" << endl;
-  lv_obj_set_style_bg_color     (lv_scr_act(), stColorRed900, LV_PART_MAIN);
+  //lv_obj_set_style_bg_color     (lv_scr_act(), stColorRed900, LV_PART_MAIN);
+  //lv_obj_set_style_bg_color     (lv_scr_act(), stColorPurple900, LV_PART_MAIN);
+  //lv_obj_set_style_bg_color     (lv_scr_act(), stColorBlueGray900, LV_PART_MAIN);
+  lv_obj_set_style_bg_color     (lv_scr_act(), stColorBlack, LV_PART_MAIN);
 
   Serial << BLOG << " CreateStyle(): Call lv_obj_set_style_text_color(lv_scr_act(),stColorWhite,LV_PART_MAIN)" << endl;
-  lv_obj_set_style_text_color   (lv_scr_act(), stColorWhite, LV_PART_MAIN);
+  //lv_obj_set_style_text_color   (lv_scr_act(), stColorWhite, LV_PART_MAIN);
+  //lv_obj_set_style_text_color   (lv_scr_act(), stColorYellow100, LV_PART_MAIN);
+  //lv_obj_set_style_text_color   (lv_scr_act(), stColorYellowA100, LV_PART_MAIN);
+  lv_obj_set_style_text_color   (lv_scr_act(), stColorOrange600, LV_PART_MAIN);
 
   return;
 } //CreateStyle

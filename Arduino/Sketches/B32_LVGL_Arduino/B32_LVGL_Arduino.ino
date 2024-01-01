@@ -1,17 +1,14 @@
 const char szSketchName[]  = "B32_LVGL_Arduino.ino";
-const char szFileDate[]    = "1/1/24E";
+const char szFileDate[]    = "1/1/24G";
 
 #include <lvgl.h>
 #include <TFT_eSPI.h>
-//#include <B32_TCoupleLib.h>
 #include <Streaming.h>
 
 #define DO_TOUCH      false
 #define DO_LOGGING    false
+#define BLOG          millis()
 
-#define BLOG    millis()
-
-/*Change to your screen resolution*/
 static const uint16_t         usPanelWidth  = 480;
 static const uint16_t         usPanelHeight = 320;
 
@@ -30,30 +27,25 @@ static lv_color_t             stColorPixelsBuffer[(usPanelWidth * usPanelHeight 
 TFT_eSPI                      TFTPanel      = TFT_eSPI(usPanelWidth, usPanelHeight);  //TFT_eSPI acts as display driver
 
 //Function protos
-void setup                  (void);
-void DisplayTFTHeading      (void);
-void SetupLVGL              (void);
-void loop                   (void);
-static void CreateStyle     (void);
-void DisplayText            (const char *szText);
+void setup                    (void);
+void loop                     (void);
+static void CreateStyle       (void);
+void SetupLVGL                (void);
+void DisplayText              (const char *szText);
+void MyDispFlush              (lv_disp_drv_t  *pstDispDrv , const lv_area_t *pstAreaCoords, lv_color_t *stPixels );
+void my_touchpad_read         (lv_indev_drv_t *pstIndevDrv, lv_indev_data_t *pstIndevData);
 #if DO_LOGGING
-  void my_print             (lv_log_level_t level, const char *stColorPixelsBuffer);
+  void my_print               (lv_log_level_t level, const char *stColorPixelsBuffer);
 #endif
-void MyDispFlush            (lv_disp_drv_t  *pstDispDrv , const lv_area_t *pstAreaCoords, lv_color_t *stPixels );
-void my_touchpad_read       (lv_indev_drv_t *pstIndevDrv, lv_indev_data_t *pstIndevData);
+void DisplayTFTHeading        (void);
 
 
 void setup(){
-  Serial.begin( 115200 ); /* prepare for possible serial debug */
-  Serial << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
+  Serial.begin(115200);
+  Serial << endl << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
-  //Set up LVGL graphics library
   Serial << BLOG << " setup(): Call SetupLVGL()" << endl;
   SetupLVGL();
-
-  //DisplayTFTHeading();
-
-  //DisplayText(szFileDate);
 
   Serial << BLOG << " setup(): Done" << endl;
   return;
@@ -88,60 +80,6 @@ static void CreateStyle(void){
 } //CreateStyle
 
 
-void DisplayText(const char *szText){
-  //static lv_style_t     stMyStyle;
-
-  //lv_obj_t                *pstSketchNameLabel   = lv_label_create(lv_scr_act());
-  //lv_obj_t                *pstFileDateLabel     = lv_label_create(lv_scr_act());
-
-  //Serial << BLOG << " DisplayText(): Display |"  << szText << "|" << endl;
-  Serial << BLOG << " DisplayText(): Display Sketch name and date" << endl;
-
-/*
-  Serial << BLOG << " DisplayText(): Call lv_style_init(&stMyStyle)" << endl;
-  lv_style_init                 (&stMyStyle);
-
-  Serial << BLOG << " DisplayText(): Call lv_style_set_text_font(&stMyStyle, &lv_font_montserrat_48)" << endl;
-  lv_style_set_text_font        (&stMyStyle, &lv_font_montserrat_48);
-*/
-/*
-  Serial << BLOG << " DisplayText(): Call CreateStyle()" << endl;
-  CreateStyle();
-*/
-
-/*
-  Serial << BLOG << " DisplayText(): Call lv_obj_set_style_bg_color(lv_scr_act(),stColorRed900,LV_PART_MAIN)" << endl;
-  lv_obj_set_style_bg_color     (lv_scr_act(), stColorRed900, LV_PART_MAIN);
-
-  Serial << BLOG << " DisplayText(): Call lv_obj_set_style_text_color(lv_scr_act(),stColorWhite,LV_PART_MAIN)" << endl;
-  lv_obj_set_style_text_color   (lv_scr_act(), stColorWhite, LV_PART_MAIN);
-*/
-
-/*
-  Serial << BLOG << " DisplayText(): Call lv_label_set_text(pstLabelObj, szSketchName)" << endl;
-  lv_label_set_text             (pstSketchNameLabel, szSketchName);
-
-  Serial << BLOG << " DisplayText(): Call lv_label_set_text(pstFileDateLabel, szFileDate)" << endl;
-  lv_label_set_text             (pstFileDateLabel, szFileDate);
-*/
-/*
-  Serial << BLOG << " DisplayText(): Call lv_style_set_text_font(&stMyStyle, &lv_font_montserrat_28)" << endl;
-  lv_style_set_text_font        (&stMyStyle, &lv_font_montserrat_28);
-*/
-/*
-  Serial << BLOG << " DisplayText(): Call lv_obj_align(pstSketchNameLabel, LV_ALIGN_IN_TOP_MID,0,0)" << endl;
-  //lv_obj_align                  (pstSketchNameLabel, LV_ALIGN_CENTER, 0, 0);
-  lv_obj_align                  (pstSketchNameLabel, LV_ALIGN_TOP_MID, 0, 0);
-
-  Serial << BLOG << " DisplayText(): Call lv_obj_align(pstFileDateLabel, LV_ALIGN_IN_BOTTOM_MID,0,0)" << endl;
-  lv_obj_align                  (pstFileDateLabel, LV_ALIGN_BOTTOM_MID, 0, 0);
-*/
-
-  Serial << BLOG << " DisplayText(): Done" << endl;
-  return;
-} //DisplayText
-
-
 void SetupLVGL(void){
   Serial << BLOG << " SetupLVGL(): LVGL V" << lv_version_major() << "." << lv_version_minor() << "." << lv_version_patch() << endl;
   Serial << BLOG << " SetupLVGL(): Call lv_init()" << endl;
@@ -152,7 +90,6 @@ void SetupLVGL(void){
   lv_log_register_print_cb(my_print); /* register print function for debugging */
 #endif  //DO_LOGGING&&(LV_USE_LOG!=0)
   Serial << BLOG << " SetupLVGL(): Call TFTPanel.init()" << endl;
-  //TFTPanel.begin();
   TFTPanel.init();
 
   Serial << BLOG << " SetupLVGL(): Call TFTPanel.setRotation(ucRotation)" << endl;
@@ -206,7 +143,7 @@ void SetupLVGL(void){
 
   lv_label_set_text             (pstSketchNameLabel , szSketchName);
   lv_label_set_text             (pstFileDateLabel   , szFileDate);
-  lv_label_set_text             (pstCenterLabel     , "Hello K&R");
+  lv_label_set_text             (pstCenterLabel     , "Hello K&R, from The Dude");
 
   lv_obj_align                  (pstSketchNameLabel , LV_ALIGN_TOP_MID    , 0, 0);
   lv_obj_align                  (pstFileDateLabel   , LV_ALIGN_BOTTOM_MID , 0, 0);
@@ -217,13 +154,11 @@ void SetupLVGL(void){
 } //SetupLVGL
 
 
-#if DO_LOGGING && (LV_USE_LOG != 0)
-void my_print(lv_log_level_t level, const char *stColorPixelsBuffer){
-  LV_UNUSED(level);
-  Serial.flush();
+void DisplayText(const char *szText){
+  Serial << BLOG << " DisplayText(): Begin" << endl;
+  Serial << BLOG << " DisplayText(): Done" << endl;
   return;
-} //my_print
-#endif  //DO_LOGGING&&(LV_USE_LOG!=0)
+} //DisplayText
 
 
 void MyDispFlush(lv_disp_drv_t *pstDispDrv, const lv_area_t *pstAreaCoords, lv_color_t *stPixels){
@@ -268,8 +203,17 @@ void my_touchpad_read(lv_indev_drv_t *pstIndevDrv, lv_indev_data_t *pstIndevData
 } //my_touchpad_read
 
 
+#if DO_LOGGING && (LV_USE_LOG != 0)
+void my_print(lv_log_level_t level, const char *stColorPixelsBuffer){
+  LV_UNUSED(level);
+  Serial.flush();
+  return;
+} //my_print
+#endif  //DO_LOGGING&&(LV_USE_LOG!=0)
+
+
 void DisplayTFTHeading(void){
-  //TFTPanel.init            ();
+  //I think LVGL blanks the screen before writing so this won't stay on the screen
   Serial << BLOG << " DisplayTFTHeading(): Write Sketch name and date to panel using TFTPanel object calls" << endl;
   TFTPanel.setRotation     (ucRotation);
   TFTPanel.fillScreen      (TFT_BLACK);

@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_LVGL_Arduino.ino";
-const char szFileDate[]    = "1/1/24X";
+const char szFileDate[]    = "1/1/24AA";
 
 #include <lvgl.h>
 #include <TFT_eSPI.h>
@@ -79,15 +79,15 @@ void loop(){
 
 
 static void CreateStyle(void){
-  //static lv_style_t     stMyStyle;
   Serial << BLOG << " CreateStyle(): Call lv_style_init(&stMyStyle)" << endl;
   lv_style_init                 (&stMyStyle);
 
   Serial << BLOG << " CreateStyle(): Call lv_obj_set_style_bg_color(lv_scr_act(),stDefaultBGColor,LV_PART_MAIN)" << endl;
   lv_obj_set_style_bg_color     (lv_scr_act(), stDefaultBGColor, LV_PART_MAIN);
 
-  Serial << BLOG << " CreateStyle(): Call lv_style_set_text_font(&stMyStyle, &lv_font_montserrat_48)" << endl;
-  lv_style_set_text_font        (&stMyStyle, &lv_font_montserrat_48);
+  Serial << BLOG << " CreateStyle(): Call lv_style_set_text_font(&stMyStyle, &lv_font_montserrat_32)" << endl;
+  //lv_style_set_text_font        (&stMyStyle, &lv_font_montserrat_48);
+  lv_style_set_text_font        (&stMyStyle, &lv_font_montserrat_32);
 
   Serial << BLOG << " CreateStyle(): Call lv_obj_set_style_text_color(lv_scr_act(),stDefaultTextColor,LV_PART_MAIN)" << endl;
   lv_obj_set_style_text_color   (lv_scr_act(), stDefaultTextColor, LV_PART_MAIN);

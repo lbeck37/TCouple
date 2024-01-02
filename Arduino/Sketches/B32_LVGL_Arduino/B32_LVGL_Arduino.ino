@@ -1,9 +1,10 @@
 const char szSketchName[]  = "B32_LVGL_Arduino.ino";
-const char szFileDate[]    = "1/1/24AA";
+const char szFileDate[]    = "1/2/24F";
 
 #include <lvgl.h>
 #include <TFT_eSPI.h>
 #include <Streaming.h>
+//#include "lvgl/lvgl.h"
 
 #define DO_TOUCH      false
 #define DO_LOGGING    false
@@ -16,14 +17,19 @@ const uint8_t                 ucRotation    = 3;     //DIYmall 3.5", Landscape, 
 
 
 //Light Google Material Design colors
-const lv_color_t              stColorWhite        = lv_color_hex(0xffffff);
+const lv_color_t              stColorBlack        = lv_color_hex(0x000000);
+const lv_color_t              stColorWhite        = lv_color_hex(0xFFFFFF);
+const lv_color_t              stColorRed          = lv_color_hex(0xFF0000);
+const lv_color_t              stColorGreen        = lv_color_hex(0x00FF00);
+const lv_color_t              stColorBlue         = lv_color_hex(0x0000FF);
+const lv_color_t              stColorLightBlue    = lv_color_hex(0x7F7FFF);
+const lv_color_t              stColorLightYellow  = lv_color_hex(0xFFFFA0);
 const lv_color_t              stColorYellow200    = lv_color_hex(0xFFF59D);
 const lv_color_t              stColorYellowA100   = lv_color_hex(0xFFFF8D);
 const lv_color_t              stColorOrange200    = lv_color_hex(0xFFCC80);
 const lv_color_t              stColorOrange600    = lv_color_hex(0xFB8C00);
 
 //Dark Google Material Design colors
-const lv_color_t              stColorBlack        = lv_color_hex(0x000000);
 const lv_color_t              stColorRed900       = lv_color_hex(0xB71C1C);
 const lv_color_t              stColorPurple900    = lv_color_hex(0x4A148C);
 const lv_color_t              stColorIndigo900    = lv_color_hex(0x1A237E);
@@ -32,9 +38,13 @@ const lv_color_t              stColorGreen900     = lv_color_hex(0x1B5E20);
 const lv_color_t              stColorBlueGray900  = lv_color_hex(0x263238);
 
 
-//Darks tried: stColorRed900, stColorPurple900, stColorBlueGray900
-//Lights tried:stColorWhite,stColorYellow100,stColorYellowA100,stColorOrange600,stColorGreen900
-static lv_color_t             stDefaultTextColor  = stColorYellowA100;
+//Text color
+//Tried: stColorWhite,stColorYellow100,stColorYellowA100,stColorOrange600,
+//  stColorGreen900,stColorBlue,stColorLightBlue,stColorLightYellow
+static lv_color_t             stDefaultTextColor  = stColorLightYellow;
+
+//Background color
+//Tried: stColorBlack,stColorBlueGray900,stColorPurple900,stColorRed900,stColorRed
 static lv_color_t             stDefaultBGColor    = stColorBlack;
 
 static lv_style_t             stMyStyle;
@@ -48,8 +58,10 @@ TFT_eSPI                      TFTPanel      = TFT_eSPI(usPanelWidth, usPanelHeig
 //Function protos
 void setup                    (void);
 void loop                     (void);
-static void CreateStyle       (void);
+static void SetupStyles       (void);
 void SetupLVGL                (void);
+void SetupTouchscreen         (void);
+void SetupLogging             (void);
 void DisplayText              (const char *szText);
 void MyDispFlush              (lv_disp_drv_t  *pstDispDrv , const lv_area_t *pstAreaCoords, lv_color_t *stPixels );
 void my_touchpad_read         (lv_indev_drv_t *pstIndevDrv, lv_indev_data_t *pstIndevData);
@@ -63,8 +75,13 @@ void setup(){
   Serial.begin(115200);
   Serial << endl << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
-  Serial << BLOG << " setup(): Call SetupLVGL()" << endl;
+  Serial << BLOG << " setup(): Call SetupLVGL(), SetupLogging, SetupLogging()" << endl;
   SetupLVGL();
+  SetupTouchscreen();
+  SetupLogging();
+  SetupStyles();
+
+  DisplayText("Hello K&R, from The Dude");
 
   Serial << BLOG << " setup(): Done" << endl;
   return;
@@ -78,22 +95,23 @@ void loop(){
 } //loop
 
 
-static void CreateStyle(void){
-  Serial << BLOG << " CreateStyle(): Call lv_style_init(&stMyStyle)" << endl;
+static void SetupStyles(void){
+  Serial << BLOG << " SetupStyles(): Call lv_style_init(&stMyStyle)" << endl;
   lv_style_init                 (&stMyStyle);
 
-  Serial << BLOG << " CreateStyle(): Call lv_obj_set_style_bg_color(lv_scr_act(),stDefaultBGColor,LV_PART_MAIN)" << endl;
+  Serial << BLOG << " SetupStyles(): Call lv_obj_set_style_bg_color(lv_scr_act(),stDefaultBGColor,LV_PART_MAIN)" << endl;
   lv_obj_set_style_bg_color     (lv_scr_act(), stDefaultBGColor, LV_PART_MAIN);
 
-  Serial << BLOG << " CreateStyle(): Call lv_style_set_text_font(&stMyStyle, &lv_font_montserrat_32)" << endl;
+  Serial << BLOG << " SetupStyles(): Call lv_style_set_text_font(&stMyStyle, &lv_font_montserrat_32)" << endl;
   //lv_style_set_text_font        (&stMyStyle, &lv_font_montserrat_48);
-  lv_style_set_text_font        (&stMyStyle, &lv_font_montserrat_32);
+  //lv_style_set_text_font        (&stMyStyle, &lv_font_montserrat_32);
+  lv_style_set_text_font        (&stMyStyle, &lv_font_montserrat_30);
 
-  Serial << BLOG << " CreateStyle(): Call lv_obj_set_style_text_color(lv_scr_act(),stDefaultTextColor,LV_PART_MAIN)" << endl;
+  Serial << BLOG << " SetupStyles(): Call lv_obj_set_style_text_color(lv_scr_act(),stDefaultTextColor,LV_PART_MAIN)" << endl;
   lv_obj_set_style_text_color   (lv_scr_act(), stDefaultTextColor, LV_PART_MAIN);
 
   return;
-} //CreateStyle
+} //SetupStyles
 
 
 void SetupLVGL(void){
@@ -101,30 +119,14 @@ void SetupLVGL(void){
   Serial << BLOG << " SetupLVGL(): Call lv_init()" << endl;
   lv_init();
 
-#if DO_LOGGING && (LV_USE_LOG != 0)
-  Serial << BLOG << " SetupLVGL(): Call lv_log_register_print_cb(my_print)" << endl;
-  lv_log_register_print_cb(my_print); /* register print function for debugging */
-#endif  //DO_LOGGING&&(LV_USE_LOG!=0)
   Serial << BLOG << " SetupLVGL(): Call TFTPanel.init()" << endl;
   TFTPanel.init();
 
   Serial << BLOG << " SetupLVGL(): Call TFTPanel.setRotation(ucRotation)" << endl;
   TFTPanel.setRotation(ucRotation);
 
-#if DO_TOUCH
-  /*Set the touchscreen calibration data,
-   the actual data for your display can be acquired using
-   the Generic -> Touch_calibrate example from the TFT_eSPI library*/
-  uint16_t calData[5] = { 275, 3620, 264, 3532, 1 };
-  Serial << BLOG << " SetupLVGL(): Call TFTPanel.setTouch(calData)" << endl;
-  TFTPanel.setTouch(calData);
-#endif
-
   Serial << BLOG << " SetupLVGL(): Call lv_disp_draw_buf_init(&stDisplayBuffer, stColorPixelsBuffer,...)" << endl;
   lv_disp_draw_buf_init(&stDisplayBuffer, stColorPixelsBuffer, NULL, usPanelWidth * usPanelHeight / 10 );
-
-  /*Initialize the display*/
-  //static lv_disp_drv_t    disp_drv;
 
   Serial << BLOG << " SetupLVGL(): Call lv_disp_drv_init(calData)" << endl;
   lv_disp_drv_init(&stDisplay);
@@ -137,9 +139,23 @@ void SetupLVGL(void){
   Serial << BLOG << " SetupLVGL(): Call lv_disp_drv_register(&stDisplay)" << endl;
   lv_disp_drv_register(&stDisplay);
 
+  Serial << BLOG << " SetupLVGL(): Done" << endl;
+  return;
+} //SetupLVGL
+
+
+void SetupTouchscreen(void){
+#if DO_TOUCH
+  /*Set the touchscreen calibration data,
+   the actual data for your display can be acquired using
+   the Generic -> Touch_calibrate example from the TFT_eSPI library*/
+  uint16_t calData[5] = { 275, 3620, 264, 3532, 1 };
+  Serial << BLOG << " SetupLVGL(): Call TFTPanel.setTouch(calData)" << endl;
+  TFTPanel.setTouch(calData);
+#endif
+
   /*Initialize the (dummy) input device driver*/
   //static lv_indev_drv_t     indev_drv;
-
   Serial << BLOG << " SetupLVGL(): Call lv_indev_drv_init(&stTouchPad)" << endl;
   lv_indev_drv_init(&stTouchPad);
 
@@ -149,33 +165,35 @@ void SetupLVGL(void){
   Serial << BLOG << " SetupLVGL(): Call lv_indev_drv_register(&stTouchPad)" << endl;
   lv_indev_drv_register(&stTouchPad);
 
-  Serial << BLOG << " SetupLVGL(): Call CreateStyle()" << endl;
-  CreateStyle();
-
-  Serial << BLOG << " SetupLVGL(): Use lv_label_create(),lv_label_set_text(),lv_obj_align()" << endl;
-  static lv_obj_t    *pstSketchNameLabel   = lv_label_create(lv_scr_act());
-  static lv_obj_t    *pstFileDateLabel     = lv_label_create(lv_scr_act());
-  static lv_obj_t    *pstCenterLabel       = lv_label_create(lv_scr_act());
-
-  lv_label_set_text             (pstSketchNameLabel , szSketchName);
-  lv_label_set_text             (pstFileDateLabel   , szFileDate);
-  lv_label_set_text             (pstCenterLabel     , "Hello K&R, from The Dude");
-
-  lv_obj_add_style              (pstSketchNameLabel, &stMyStyle, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-  lv_obj_align                  (pstSketchNameLabel , LV_ALIGN_TOP_MID    , 0, 0);
-  lv_obj_align                  (pstFileDateLabel   , LV_ALIGN_BOTTOM_MID , 0, 0);
-
-  //lv_obj_set_style_local_text_font(pstCenterLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_48);
-  lv_obj_align                  (pstCenterLabel     , LV_ALIGN_CENTER     , 0, 0);
-
-  Serial << BLOG << " SetupLVGL(): Done" << endl;
   return;
-} //SetupLVGL
+} //SetupTouchscreen
+
+
+void SetupLogging(void){
+#if DO_LOGGING && (LV_USE_LOG != 0)
+  Serial << BLOG << " SetupLVGL(): Call lv_log_register_print_cb(my_print)" << endl;
+  lv_log_register_print_cb(my_print); /* register print function for debugging */
+#endif  //DO_LOGGING&&(LV_USE_LOG!=0)
+  return;
+} //SetupLogging
 
 
 void DisplayText(const char *szText){
   Serial << BLOG << " DisplayText(): Begin" << endl;
+  static lv_obj_t     *pstSketchNameLabel   = lv_label_create(lv_scr_act());
+  static lv_obj_t     *pstFileDateLabel     = lv_label_create(lv_scr_act());
+  static lv_obj_t     *pstCenterLabel       = lv_label_create(lv_scr_act());
+
+  lv_label_set_text   (pstSketchNameLabel , szSketchName);
+  lv_label_set_text   (pstFileDateLabel   , szFileDate);
+  lv_label_set_text   (pstCenterLabel     , szText);
+
+  lv_obj_add_style    (pstSketchNameLabel, &stMyStyle, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+  lv_obj_align        (pstSketchNameLabel , LV_ALIGN_TOP_MID    , 0, 0);
+  lv_obj_align        (pstFileDateLabel   , LV_ALIGN_BOTTOM_MID , 0, 0);
+  lv_obj_align        (pstCenterLabel     , LV_ALIGN_CENTER     , 0, 0);
+
   Serial << BLOG << " DisplayText(): Done" << endl;
   return;
 } //DisplayText

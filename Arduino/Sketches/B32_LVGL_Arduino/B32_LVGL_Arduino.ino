@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_LVGL_Arduino.ino";
-const char szFileDate[]    = "1/1/24L";
+const char szFileDate[]    = "1/1/24X";
 
 #include <lvgl.h>
 #include <TFT_eSPI.h>
@@ -30,6 +30,12 @@ const lv_color_t              stColorIndigo900    = lv_color_hex(0x1A237E);
 const lv_color_t              stColorTeal900      = lv_color_hex(0x004D40);
 const lv_color_t              stColorGreen900     = lv_color_hex(0x1B5E20);
 const lv_color_t              stColorBlueGray900  = lv_color_hex(0x263238);
+
+
+//Darks tried: stColorRed900, stColorPurple900, stColorBlueGray900
+//Lights tried:stColorWhite,stColorYellow100,stColorYellowA100,stColorOrange600,stColorGreen900
+static lv_color_t             stDefaultTextColor  = stColorYellowA100;
+static lv_color_t             stDefaultBGColor    = stColorBlack;
 
 static lv_style_t             stMyStyle;
 static lv_disp_drv_t          stDisplay;
@@ -74,26 +80,17 @@ void loop(){
 
 static void CreateStyle(void){
   //static lv_style_t     stMyStyle;
-  lv_obj_t              *pstSketchNameLabel   = lv_label_create(lv_scr_act());
-  lv_obj_t              *pstFileDateLabel     = lv_label_create(lv_scr_act());
-
   Serial << BLOG << " CreateStyle(): Call lv_style_init(&stMyStyle)" << endl;
   lv_style_init                 (&stMyStyle);
+
+  Serial << BLOG << " CreateStyle(): Call lv_obj_set_style_bg_color(lv_scr_act(),stDefaultBGColor,LV_PART_MAIN)" << endl;
+  lv_obj_set_style_bg_color     (lv_scr_act(), stDefaultBGColor, LV_PART_MAIN);
 
   Serial << BLOG << " CreateStyle(): Call lv_style_set_text_font(&stMyStyle, &lv_font_montserrat_48)" << endl;
   lv_style_set_text_font        (&stMyStyle, &lv_font_montserrat_48);
 
-  Serial << BLOG << " CreateStyle(): Call lv_obj_set_style_bg_color(lv_scr_act(),stColorRed900,LV_PART_MAIN)" << endl;
-  //lv_obj_set_style_bg_color     (lv_scr_act(), stColorRed900, LV_PART_MAIN);
-  //lv_obj_set_style_bg_color     (lv_scr_act(), stColorPurple900, LV_PART_MAIN);
-  //lv_obj_set_style_bg_color     (lv_scr_act(), stColorBlueGray900, LV_PART_MAIN);
-  lv_obj_set_style_bg_color     (lv_scr_act(), stColorBlack, LV_PART_MAIN);
-
-  Serial << BLOG << " CreateStyle(): Call lv_obj_set_style_text_color(lv_scr_act(),stColorWhite,LV_PART_MAIN)" << endl;
-  //lv_obj_set_style_text_color   (lv_scr_act(), stColorWhite, LV_PART_MAIN);
-  //lv_obj_set_style_text_color   (lv_scr_act(), stColorYellow100, LV_PART_MAIN);
-  //lv_obj_set_style_text_color   (lv_scr_act(), stColorYellowA100, LV_PART_MAIN);
-  lv_obj_set_style_text_color   (lv_scr_act(), stColorOrange600, LV_PART_MAIN);
+  Serial << BLOG << " CreateStyle(): Call lv_obj_set_style_text_color(lv_scr_act(),stDefaultTextColor,LV_PART_MAIN)" << endl;
+  lv_obj_set_style_text_color   (lv_scr_act(), stDefaultTextColor, LV_PART_MAIN);
 
   return;
 } //CreateStyle
@@ -156,16 +153,20 @@ void SetupLVGL(void){
   CreateStyle();
 
   Serial << BLOG << " SetupLVGL(): Use lv_label_create(),lv_label_set_text(),lv_obj_align()" << endl;
-  lv_obj_t    *pstSketchNameLabel   = lv_label_create(lv_scr_act());
-  lv_obj_t    *pstFileDateLabel     = lv_label_create(lv_scr_act());
-  lv_obj_t    *pstCenterLabel       = lv_label_create(lv_scr_act());
+  static lv_obj_t    *pstSketchNameLabel   = lv_label_create(lv_scr_act());
+  static lv_obj_t    *pstFileDateLabel     = lv_label_create(lv_scr_act());
+  static lv_obj_t    *pstCenterLabel       = lv_label_create(lv_scr_act());
 
   lv_label_set_text             (pstSketchNameLabel , szSketchName);
   lv_label_set_text             (pstFileDateLabel   , szFileDate);
   lv_label_set_text             (pstCenterLabel     , "Hello K&R, from The Dude");
 
+  lv_obj_add_style              (pstSketchNameLabel, &stMyStyle, LV_PART_MAIN | LV_STATE_DEFAULT);
+
   lv_obj_align                  (pstSketchNameLabel , LV_ALIGN_TOP_MID    , 0, 0);
   lv_obj_align                  (pstFileDateLabel   , LV_ALIGN_BOTTOM_MID , 0, 0);
+
+  //lv_obj_set_style_local_text_font(pstCenterLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_48);
   lv_obj_align                  (pstCenterLabel     , LV_ALIGN_CENTER     , 0, 0);
 
   Serial << BLOG << " SetupLVGL(): Done" << endl;

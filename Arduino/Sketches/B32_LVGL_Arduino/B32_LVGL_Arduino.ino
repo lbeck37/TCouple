@@ -1,10 +1,9 @@
 const char szSketchName[]  = "B32_LVGL_Arduino.ino";
-const char szFileDate[]    = "1/2/24M";
+const char szFileDate[]    = "1/2/24ZB";
 
 #include <lvgl.h>
 #include <TFT_eSPI.h>
 #include <Streaming.h>
-//#include "lvgl/lvgl.h"
 
 #define DO_TOUCH      false
 #define DO_LOGGING    false
@@ -14,7 +13,6 @@ static const uint16_t         usPanelWidth  = 480;
 static const uint16_t         usPanelHeight = 320;
 
 const uint8_t                 ucRotation    = 3;     //DIYmall 3.5", Landscape, USB on the left
-
 
 //Light Google Material Design colors
 const lv_color_t              stColorBlack        = lv_color_hex(0x000000);
@@ -37,22 +35,28 @@ const lv_color_t              stColorTeal900      = lv_color_hex(0x004D40);
 const lv_color_t              stColorGreen900     = lv_color_hex(0x1B5E20);
 const lv_color_t              stColorBlueGray900  = lv_color_hex(0x263238);
 
-
 //Text color
 //Tried: stColorWhite,stColorYellow100,stColorYellowA100,stColorOrange600,
 //  stColorGreen900,stColorBlue,stColorLightBlue,stColorLightYellow
 static lv_color_t             stDefaultTextColor  = stColorWhite;
 static lv_color_t             stTinyTextColor     = stColorLightBlue;
-static lv_color_t             stTitleColor        = stColorOrange600;
+static lv_color_t             stTitleTextColor    = stColorOrange600;
+static lv_color_t             stDataTextColor     = stColorRed;
+static lv_color_t             stLocationTextColor = stColorGreen;
 
 //Background color
 //Tried: stColorBlack,stColorBlueGray900,stColorPurple900,stColorRed900,stColorRed
 static lv_color_t             stDefaultBGColor    = stColorBlack;
 
+const lv_font_t               *pTinyTextFont      = &lv_font_montserrat_12;
+const lv_font_t               *pTitleTextFont     = &lv_font_montserrat_30;
+const lv_font_t               *pDataTextFont      = &lv_font_montserrat_24;
+const lv_font_t               *pLocationTextFont  = &lv_font_montserrat_30;
+
 static lv_style_t             stTinyTextStyle;
-static lv_style_t             stTitleStyle;
-static lv_style_t             stLocationStyle;
-//static lv_style_t             stDataStyle;
+static lv_style_t             stTitleTextStyle;
+static lv_style_t             stDataTextStyle;
+static lv_style_t             stLocationTextStyle;
 
 static lv_disp_drv_t          stDisplay;
 static lv_indev_drv_t         stTouchPad;
@@ -65,18 +69,14 @@ TFT_eSPI                      TFTPanel      = TFT_eSPI(usPanelWidth, usPanelHeig
 void setup                    (void);
 void loop                     (void);
 void SetupStyles              (void);
-void SetupTinyTextStyle       (void);
-void SetupTitleStyle          (void);
-void DisplayText              (const char *szText);
+void SetupTextStyle           (lv_style_t *pTextStyle, const lv_font_t *pTextFont, lv_color_t stTextColor);
+void DisplayText              (void);
 void SetupLVGL                (void);
 void SetupTouchscreen         (void);
 void SetupLogging             (void);
-void MyDispFlush              (lv_disp_drv_t *pstDispDrv, const lv_area_t *pstArea, lv_color_t *stPixels);
+void MyDispFlush              (lv_disp_drv_t  *pstDispDrv, const lv_area_t *pstArea, lv_color_t *stPixels);
 void my_touchpad_read         (lv_indev_drv_t *pstIndevDrv, lv_indev_data_t *pstIndevData);
-#if true | DO_LOGGING
-  void my_print               (lv_log_level_t level, const char *stColorPixelsBuffer);
-#endif
-void DisplayTFTHeading        (void);
+void my_print                 (lv_log_level_t cLevel, const char *stColorPixelsBuffer);
 
 
 void setup(){
@@ -89,7 +89,7 @@ void setup(){
   SetupLogging();
   SetupStyles();
 
-  DisplayText("Hello K&R, from The Dude");
+  DisplayText();
 
   Serial << BLOG << " setup(): Done" << endl;
   return;
@@ -104,64 +104,49 @@ void loop(){
 
 
 void SetupStyles(void){
-  SetupTinyTextStyle  ();
-  SetupTitleStyle     ();
+  SetupTextStyle  (&stTinyTextStyle    , pTinyTextFont    , stTinyTextColor);
+  SetupTextStyle  (&stTitleTextStyle   , pTitleTextFont   , stTitleTextColor);
+  SetupTextStyle  (&stDataTextStyle    , pDataTextFont    , stDataTextColor);
+  SetupTextStyle  (&stLocationTextStyle, pLocationTextFont, stLocationTextColor);
   return;
 } //SetupStyles
 
 
-void SetupTitleStyle(void){
-  Serial << BLOG << " SetupTitleStyle(): Call lv_style_init(&stTitleStyle)" << endl;
-  lv_style_init                 (&stTitleStyle);
+void SetupTextStyle(lv_style_t *pTextStyle, const lv_font_t *pTextFont, lv_color_t stTextColor){
+  Serial << BLOG << " SetupTextStyle(): Call lv_style_init(pTextStyle)" << endl;
+  lv_style_init                 (pTextStyle);
 
-  Serial << BLOG << " SetupTitleStyle(): Call lv_obj_set_style_bg_color(lv_scr_act(),stDefaultBGColor,LV_PART_MAIN)" << endl;
-  lv_obj_set_style_bg_color     (lv_scr_act(), stDefaultBGColor, LV_PART_MAIN);
+  Serial << BLOG << " SetupTextStyle(): Call lv_style_set_text_font(pTextStyle,pTextFont)" << endl;
+  lv_style_set_text_font        (pTextStyle, pTextFont);
 
-  Serial << BLOG << " SetupTitleStyle(): Call lv_style_set_text_font(&stTitleStyle, &lv_font_montserrat_30)" << endl;
-  //lv_style_set_text_font        (&stMyStyle, &lv_font_montserrat_48);
-  //lv_style_set_text_font        (&stMyStyle, &lv_font_montserrat_32);
-  lv_style_set_text_font        (&stTitleStyle, &lv_font_montserrat_30);
-
-  Serial << BLOG << " SetupTitleStyle(): Call lv_obj_set_style_text_color(lv_scr_act(),stDefaultTextColor,LV_PART_MAIN)" << endl;
-  lv_obj_set_style_text_color   (lv_scr_act(), stTitleColor, LV_PART_MAIN);
+  Serial << BLOG << " SetupTextStyle(): Call lv_style_set__text_color(pTextStyle,stTextColor)" << endl;
+  lv_style_set_text_color       (pTextStyle, stTextColor);
 
   return;
-} //SetupTitleStyle
+} //SetupTextStyle
 
 
-void SetupTinyTextStyle(void){
-  Serial << BLOG << " SetupTinyTextStyle(): Call lv_style_init(&stTitleStyle)" << endl;
-  lv_style_init                 (&stTinyTextStyle);
-
-  Serial << BLOG << " SetupTinyTextStyle(): Call lv_obj_set_style_bg_color(lv_scr_act(),stDefaultBGColor,LV_PART_MAIN)" << endl;
-  lv_obj_set_style_bg_color     (lv_scr_act(), stDefaultBGColor, LV_PART_MAIN);
-
-  Serial << BLOG << " SetupTinyTextStyle(): Call lv_style_set_text_font(&stTinyTextStyle, &lv_font_montserrat_10)" << endl;
-  lv_style_set_text_font        (&stTinyTextStyle, &lv_font_montserrat_12);
-
-  Serial << BLOG << " SetupStyles(): Call lv_obj_set_style_text_color(lv_scr_act(),stDefaultTextColor,LV_PART_MAIN)" << endl;
-  lv_obj_set_style_text_color   (lv_scr_act(), stTinyTextColor, LV_PART_MAIN);
-
-  return;
-} //SetupTinyTextStyle
-
-
-void DisplayText(const char *szText){
+void DisplayText(void){
   Serial << BLOG << " DisplayText(): Begin" << endl;
   static lv_obj_t     *pstSketchNameLabel   = lv_label_create(lv_scr_act());
   static lv_obj_t     *pstFileDateLabel     = lv_label_create(lv_scr_act());
-  static lv_obj_t     *pstCenterLabel       = lv_label_create(lv_scr_act());
+  static lv_obj_t     *pstLocationLabel     = lv_label_create(lv_scr_act());
+  static lv_obj_t     *pstDataLabel         = lv_label_create(lv_scr_act());
 
   lv_label_set_text   (pstSketchNameLabel, szSketchName);
   lv_label_set_text   (pstFileDateLabel  , szFileDate);
-  lv_label_set_text   (pstCenterLabel    , szText);
+  lv_label_set_text   (pstLocationLabel  , "Left");
+  lv_label_set_text   (pstDataLabel      , "Right");
 
-  lv_obj_add_style    (pstSketchNameLabel, &stTitleStyle   , LV_PART_MAIN | LV_STATE_DEFAULT);
-  lv_obj_add_style    (pstFileDateLabel  , &stTinyTextStyle, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_add_style    (pstSketchNameLabel, &stTitleTextStyle   , LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_add_style    (pstFileDateLabel  , &stTinyTextStyle    , LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_add_style    (pstLocationLabel  , &stLocationTextStyle, LV_PART_MAIN | LV_STATE_DEFAULT);
+  lv_obj_add_style    (pstDataLabel      , &stDataTextStyle    , LV_PART_MAIN | LV_STATE_DEFAULT);
 
-  lv_obj_align        (pstSketchNameLabel, LV_ALIGN_TOP_MID    , 0, 0);
-  lv_obj_align        (pstFileDateLabel  , LV_ALIGN_BOTTOM_MID , 0, 0);
-  lv_obj_align        (pstCenterLabel    , LV_ALIGN_CENTER     , 0, 0);
+  lv_obj_align        (pstSketchNameLabel, LV_ALIGN_TOP_MID   , 0, 0);
+  lv_obj_align        (pstFileDateLabel  , LV_ALIGN_BOTTOM_MID, 0, 0);
+  lv_obj_align        (pstLocationLabel  , LV_ALIGN_LEFT_MID  , 0, 0);
+  lv_obj_align        (pstDataLabel      , LV_ALIGN_RIGHT_MID , 0, 0);
 
   Serial << BLOG << " DisplayText(): Done" << endl;
   return;
@@ -192,6 +177,9 @@ void SetupLVGL(void){
 
   Serial << BLOG << " SetupLVGL(): Call lv_disp_drv_register(&stDisplay)" << endl;
   lv_disp_drv_register(&stDisplay);
+
+  Serial << BLOG << " SetupLVGL(): Call lv_obj_set_style_bg_color(lv_scr_act(),stDefaultBGColor,LV_PART_MAIN)" << endl;
+  lv_obj_set_style_bg_color     (lv_scr_act(), stDefaultBGColor, LV_PART_MAIN);
 
   Serial << BLOG << " SetupLVGL(): Done" << endl;
   return;
@@ -274,28 +262,9 @@ void my_touchpad_read(lv_indev_drv_t *pstIndevDrv, lv_indev_data_t *pstIndevData
 } //my_touchpad_read
 
 
-#if DO_LOGGING && (LV_USE_LOG != 0)
-void my_print(lv_log_level_t level, const char *stColorPixelsBuffer){
-  LV_UNUSED(level);
+void my_print(lv_log_level_t cLevel, const char *stColorPixelsBuffer){
+  LV_UNUSED(cLevel);
   Serial.flush();
   return;
 } //my_print
-#endif  //DO_LOGGING&&(LV_USE_LOG!=0)
-
-
-void DisplayTFTHeading(void){
-  //I think LVGL blanks the screen before writing so this won't stay on the screen
-  Serial << BLOG << " DisplayTFTHeading(): Write Sketch name and date to panel using TFTPanel object calls" << endl;
-  TFTPanel.setRotation     (ucRotation);
-  TFTPanel.fillScreen      (TFT_BLACK);
-
-  TFTPanel.setTextColor    (TFT_GREEN,TFT_BLACK);
-  TFTPanel.setTextSize     (1);
-  TFTPanel.setCursor       (0, 0);
-  TFTPanel.setTextFont     (2);
-
-  TFTPanel << szSketchName << " " << szFileDate << endl;
-  //ShowMyMAC(true);
-  return;
-} //DisplayTFTHeading
 //Last line.

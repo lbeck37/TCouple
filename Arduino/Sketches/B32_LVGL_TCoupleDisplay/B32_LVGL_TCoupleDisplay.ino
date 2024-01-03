@@ -1,13 +1,19 @@
 const char szSketchName[]  = "B32_LVGL_TCoupleDisplay.ino";
-const char szFileDate[]    = "1/2/24A";
+const char szFileDate[]    = "1/2/24C";
 
 #include <lvgl.h>
 #include <TFT_eSPI.h>
+#include <B32_TCoupleLib.h>
 #include <Streaming.h>
 
 #define DO_TOUCH      false
 #define DO_LOGGING    false
 #define BLOG          millis()
+
+eBoardPinColor    eReceiverBoardPinColor    {eBoardPinColor::eBluePin};  //Display currently does not send anything
+
+char     aucLeftLabel [][wMaxLabelChars]  = {"Cyl 1", "Cyl 2", "Cyl 3" , "Cyl 4"};
+char     aucRightLabel[][wMaxLabelChars]  = {"Oil In" , "Oil Out" , "Heater" , "Air"};
 
 static const uint16_t         usPanelWidth  = 480;
 static const uint16_t         usPanelHeight = 320;
@@ -82,6 +88,9 @@ void my_print                 (lv_log_level_t cLevel, const char *stColorPixelsB
 void setup(){
   Serial.begin(115200);
   Serial << endl << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
+
+  Serial << BLOG << " setup(): Call SetupESP_NOW()" << endl;
+  SetupESP_NOW();
 
   Serial << BLOG << " setup(): Call SetupLVGL(), SetupLogging, SetupLogging()" << endl;
   SetupLVGL();

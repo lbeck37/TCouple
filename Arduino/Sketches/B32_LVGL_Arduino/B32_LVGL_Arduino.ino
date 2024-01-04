@@ -1,6 +1,7 @@
 const char szSketchName[]  = "B32_LVGL_Arduino.ino";
-const char szFileDate[]    = "1/2/24ZC";
+const char szFileDate[]    = "1/4/24C";
 
+#include <Arduino.h>
 #include <lvgl.h>
 #include <TFT_eSPI.h>
 #include <Streaming.h>
@@ -9,8 +10,13 @@ const char szFileDate[]    = "1/2/24ZC";
 #define DO_LOGGING    false
 #define BLOG          millis()
 
-static const uint16_t         usPanelWidth  = 480;
-static const uint16_t         usPanelHeight = 320;
+#ifndef B32_TTGO_T_DISPLAY
+  static const uint16_t         usPanelWidth  = 480;
+  static const uint16_t         usPanelHeight = 320;
+#else
+  static const uint16_t         usPanelWidth  = 240;
+  static const uint16_t         usPanelHeight = 135;
+#endif
 
 const uint8_t                 ucRotation    = 3;     //DIYmall 3.5", Landscape, USB on the left
 
@@ -68,6 +74,7 @@ TFT_eSPI                      TFTPanel      = TFT_eSPI(usPanelWidth, usPanelHeig
 //Function protos
 void setup                    (void);
 void loop                     (void);
+void PrintHeapAndPSRAMSizes   (void);
 void SetupStyles              (void);
 void SetupTextStyle           (lv_style_t *pTextStyle, const lv_font_t *pTextFont, lv_color_t stTextColor);
 void DisplayText              (void);
@@ -82,8 +89,9 @@ void my_print                 (lv_log_level_t cLevel, const char *stColorPixelsB
 void setup(){
   Serial.begin(115200);
   Serial << endl << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
+  PrintRAMSizes();
 
-  Serial << BLOG << " setup(): Call SetupLVGL(), SetupLogging, SetupLogging()" << endl;
+  Serial << BLOG << " setup():Call SetupLVGL(),SetupLogging,SetupLogging,SetupStyles" << endl;
   SetupLVGL();
   SetupTouchscreen();
   SetupLogging();
@@ -91,7 +99,9 @@ void setup(){
 
   DisplayText();
 
-  Serial << BLOG << " setup(): Done" << endl;
+  PrintRAMSizes();
+  //Serial << BLOG << " setup(): Done" << endl;
+  Serial << BLOG << " setup(): " << szSketchName << ", " << szFileDate << ", is done." << endl;
   return;
 } //setup
 
@@ -101,6 +111,26 @@ void loop(){
   delay(5);
   return;
 } //loop
+
+
+void PrintRAMSizes(){
+  int wTotalHeapBytes= ESP.getHeapSize();
+  int wFreeHeapBytes = ESP.getFreeHeap();
+  int wUsedHeapBytes = (wTotalHeapBytes - wFreeHeapBytes);
+
+  int wTotalPSRAMBytes= ESP.getPsramSize();
+  int wFreePSRAMBytes = ESP.getFreePsram();
+  int wUsedPSRAMBytes = (wTotalPSRAMBytes - wFreePSRAMBytes);
+
+  Serial << BLOG << " PrintRAMSizes(): Total Heap  Bytes= " << wTotalHeapBytes << endl;
+  Serial << BLOG << " PrintRAMSizes(): Free Heap   Bytes= " << wFreeHeapBytes  << endl;
+  Serial << BLOG << " PrintRAMSizes(): Used Heap   Bytes= " << wUsedHeapBytes  << endl;
+
+  Serial << BLOG << " PrintRAMSizes(): Total PSRAM Bytes= " << wTotalPSRAMBytes << endl;
+  Serial << BLOG << " PrintRAMSizes(): Free PSRAM  Bytes= " << wFreePSRAMBytes  << endl;
+  Serial << BLOG << " PrintRAMSizes(): Used PSRAM  Bytes= " << wUsedPSRAMBytes  << endl;
+  return;
+} //PrintRAMSizes
 
 
 void SetupStyles(void){

@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_LVGL_TCoupleDisplay.ino";
-const char szFileDate[]    = "1/2/24C";
+const char szFileDate[]    = "1/3/24B";
 
 #include <lvgl.h>
 #include <TFT_eSPI.h>

@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_LVGL_Arduino.ino";
-const char szFileDate[]    = "1/4/24C";
+const char szFileDate[]    = "1/5/24B";
 
 #include <Arduino.h>
 #include <lvgl.h>
@@ -10,7 +10,8 @@ const char szFileDate[]    = "1/4/24C";
 #define DO_LOGGING    false
 #define BLOG          millis()
 
-#ifndef B32_TTGO_T_DISPLAY
+#if false
+//#ifndef B32_TTGO_T_DISPLAY
   static const uint16_t         usPanelWidth  = 480;
   static const uint16_t         usPanelHeight = 320;
 #else
@@ -74,7 +75,7 @@ TFT_eSPI                      TFTPanel      = TFT_eSPI(usPanelWidth, usPanelHeig
 //Function protos
 void setup                    (void);
 void loop                     (void);
-void PrintHeapAndPSRAMSizes   (void);
+void PrintRAMSizes            (void);
 void SetupStyles              (void);
 void SetupTextStyle           (lv_style_t *pTextStyle, const lv_font_t *pTextFont, lv_color_t stTextColor);
 void DisplayText              (void);

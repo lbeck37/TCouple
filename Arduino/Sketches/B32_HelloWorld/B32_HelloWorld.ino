@@ -1,14 +1,14 @@
 #define INCLUDE_ALL true
 #if INCLUDE_ALL
   const char szSketchName[]  = "B32_HelloWorld.ino";
-  const char szFileDate[]    = "1/4/24E";
+  const char szFileDate[]    = "1/5/24G";
 
   #include <Streaming.h>
   #define BLOG          millis()
   //Function protos
   void setup                    (void);
   void loop                     (void);
-  void PrintRAMSizes            (void);
+  void PrintChipInfo            (void);
 #endif
 
 #include "Arduino.h"
@@ -17,10 +17,11 @@
 void setup(void){
   Serial.begin(115200);
   //delay(500);
-  Serial.println("\nBeckE32_HelloWorld.ino: setup(): Hello World! 1/5/24e");
+  //Serial.println("\nBeckE32_HelloWorld.ino: setup(): Hello World! 1/5/24e");
+  Serial << endl << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
 #if INCLUDE_ALL
-  PrintRAMSizes();
+  PrintChipInfo();
 #endif
   return;
 } //setup
@@ -33,7 +34,7 @@ void loop(void){
 
 
 #if INCLUDE_ALL
-  void PrintRAMSizes(){
+  void PrintChipInfo(){
     int wTotalHeapBytes= ESP.getHeapSize();
     int wFreeHeapBytes = ESP.getFreeHeap();
     int wUsedHeapBytes = (wTotalHeapBytes - wFreeHeapBytes);
@@ -42,14 +43,20 @@ void loop(void){
     int wFreePSRAMBytes = ESP.getFreePsram();
     int wUsedPSRAMBytes = (wTotalPSRAMBytes - wFreePSRAMBytes);
 
-    Serial << BLOG << " PrintRAMSizes(): Total Heap  Bytes= " << wTotalHeapBytes << endl;
-    Serial << BLOG << " PrintRAMSizes(): Free Heap   Bytes= " << wFreeHeapBytes  << endl;
-    Serial << BLOG << " PrintRAMSizes(): Used Heap   Bytes= " << wUsedHeapBytes  << endl;
+    Serial << BLOG << " PrintChipInfo(): Total Heap  Bytes= " << wTotalHeapBytes << endl;
+    Serial << BLOG << " PrintChipInfo(): Free Heap   Bytes= " << wFreeHeapBytes  << endl;
+    Serial << BLOG << " PrintChipInfo(): Used Heap   Bytes= " << wUsedHeapBytes  << endl;
 
-    Serial << BLOG << " PrintRAMSizes(): Total PSRAM Bytes= " << wTotalPSRAMBytes << endl;
-    Serial << BLOG << " PrintRAMSizes(): Free PSRAM  Bytes= " << wFreePSRAMBytes  << endl;
-    Serial << BLOG << " PrintRAMSizes(): Used PSRAM  Bytes= " << wUsedPSRAMBytes  << endl;
+    Serial << BLOG << " PrintChipInfo(): Total PSRAM Bytes= " << wTotalPSRAMBytes << endl;
+    Serial << BLOG << " PrintChipInfo(): Free PSRAM  Bytes= " << wFreePSRAMBytes  << endl;
+    Serial << BLOG << " PrintChipInfo(): Used PSRAM  Bytes= " << wUsedPSRAMBytes  << endl;
+
+    Serial << BLOG << " PrintChipInfo(): Chip Model       = " << ESP.getChipModel()       << endl;
+    Serial << BLOG << " PrintChipInfo(): Chip version     = " << ESP.getChipRevision()    << endl;
+    Serial << BLOG << " PrintChipInfo(): Number of cores  = " << ESP.getChipCores()       << endl;
+    Serial << BLOG << " PrintChipInfo(): Flash Chip Size  = " << ESP.getFlashChipSize()   << endl;
+    Serial << BLOG << " PrintChipInfo(): Flash Chip Speed = " << ESP.getFlashChipSpeed()  << endl;
     return;
-  } //PrintRAMSizes
+  } //PrintChipInfo
 #endif
 //Last line.

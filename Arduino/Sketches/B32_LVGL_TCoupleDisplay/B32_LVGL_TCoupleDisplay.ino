@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_LVGL_TCoupleDisplay.ino";
-const char szFileDate[]    = "1/3/24B";
+const char szFileDate[]    = "1/5/24D";
 
 #include <lvgl.h>
 #include <TFT_eSPI.h>
@@ -12,8 +12,8 @@ const char szFileDate[]    = "1/3/24B";
 
 eBoardPinColor    eReceiverBoardPinColor    {eBoardPinColor::eBluePin};  //Display currently does not send anything
 
-char     aucLeftLabel [][wMaxLabelChars]  = {"Cyl 1", "Cyl 2", "Cyl 3" , "Cyl 4"};
-char     aucRightLabel[][wMaxLabelChars]  = {"Oil In" , "Oil Out" , "Heater" , "Air"};
+char     aucLeftLabel [][wMaxLabelChars]  = {"Cyl 1"  , "Cyl 2"   , "Cyl 3"  , "Cyl 4"};
+char     aucRightLabel[][wMaxLabelChars]  = {"Oil In" , "Oil Out" , "Heater" , "Air"  };
 
 static const uint16_t         usPanelWidth  = 480;
 static const uint16_t         usPanelHeight = 320;
@@ -67,9 +67,17 @@ static lv_style_t             stLocationTextStyle;
 static lv_disp_drv_t          stDisplay;
 static lv_indev_drv_t         stTouchPad;
 static lv_disp_draw_buf_t     stDisplayBuffer;     //See src\hal\lv_hal_disp.h
-static lv_color_t             stColorPixelsBuffer[(usPanelWidth * usPanelHeight / 10)];
+//static lv_color_t             astColorPixelsBuffer[(usPanelWidth * usPanelHeight / 10)];
 
-TFT_eSPI                      TFTPanel      = TFT_eSPI(usPanelWidth, usPanelHeight);  //TFT_eSPI acts as display driver
+//Allocate frame buffer from PSRAM, 4MB available
+const int                     wSizeOf_lv_color_t    = sizeof(lv_color_t);
+const int                     wPixelsPerPanel       = (usPanelWidth * usPanelHeight);
+const int                     wCompFactor           = 10;   //Rule of thumb?
+const int                     wBytesToAllocate      = (wSizeOf_lv_color_t * (wPixelsPerPanel / wCompFactor));
+lv_color_t                    *astColorPixelsBuffer = (lv_color_t*)ps_malloc(wBytesToAllocate);
+
+//TFT_eSPI acts as the display driver
+TFT_eSPI                      TFTPanel            = TFT_eSPI(usPanelWidth, usPanelHeight);
 
 //Function protos
 void setup                    (void);
@@ -82,7 +90,7 @@ void SetupTouchscreen         (void);
 void SetupLogging             (void);
 void MyDispFlush              (lv_disp_drv_t  *pstDispDrv, const lv_area_t *pstArea, lv_color_t *stPixels);
 void my_touchpad_read         (lv_indev_drv_t *pstIndevDrv, lv_indev_data_t *pstIndevData);
-void my_print                 (lv_log_level_t cLevel, const char *stColorPixelsBuffer);
+void my_print                 (lv_log_level_t cLevel, const char *astColorPixelsBuffer);
 
 
 void setup(){
@@ -173,8 +181,8 @@ void SetupLVGL(void){
   Serial << BLOG << " SetupLVGL(): Call TFTPanel.setRotation(ucRotation)" << endl;
   TFTPanel.setRotation(ucRotation);
 
-  Serial << BLOG << " SetupLVGL(): Call lv_disp_draw_buf_init(&stDisplayBuffer, stColorPixelsBuffer,...)" << endl;
-  lv_disp_draw_buf_init(&stDisplayBuffer, stColorPixelsBuffer, NULL, usPanelWidth * usPanelHeight / 10 );
+  Serial << BLOG << " SetupLVGL(): Call lv_disp_draw_buf_init(&stDisplayBuffer, astColorPixelsBuffer,...)" << endl;
+  lv_disp_draw_buf_init(&stDisplayBuffer, astColorPixelsBuffer, NULL, usPanelWidth * usPanelHeight / 10 );
 
   Serial << BLOG << " SetupLVGL(): Call lv_disp_drv_init(calData)" << endl;
   lv_disp_drv_init(&stDisplay);
@@ -271,7 +279,7 @@ void my_touchpad_read(lv_indev_drv_t *pstIndevDrv, lv_indev_data_t *pstIndevData
 } //my_touchpad_read
 
 
-void my_print(lv_log_level_t cLevel, const char *stColorPixelsBuffer){
+void my_print(lv_log_level_t cLevel, const char *astColorPixelsBuffer){
   LV_UNUSED(cLevel);
   Serial.flush();
   return;

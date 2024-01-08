@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_LVGL_TCoupleDisplay.ino";
-const char szFileDate[]    = "1/6/24B";
+const char szFileDate[]    = "1/7/24c";
 
 #include <lvgl.h>
 #include <TFT_eSPI.h>
@@ -8,6 +8,8 @@ const char szFileDate[]    = "1/6/24B";
 
 #define DO_TOUCH      false
 #define DO_LOGGING    false
+#define DO_STYLE      false
+
 #define BLOG          millis()
 
 eBoardPinColor    eReceiverBoardPinColor    {eBoardPinColor::eBluePin};  //Display currently does not send anything
@@ -54,10 +56,12 @@ static lv_color_t             stLocationTextColor = stColorGreen;
 //Tried: stColorBlack,stColorBlueGray900,stColorPurple900,stColorRed900,stColorRed
 static lv_color_t             stDefaultBGColor    = stColorBlack;
 
+#if DO_STYLE
 const lv_font_t               *pTinyTextFont      = &lv_font_montserrat_12;
 const lv_font_t               *pTitleTextFont     = &lv_font_montserrat_30;
 const lv_font_t               *pDataTextFont      = &lv_font_montserrat_24;
 const lv_font_t               *pLocationTextFont  = &lv_font_montserrat_30;
+#endif
 
 static lv_style_t             stTinyTextStyle;
 static lv_style_t             stTitleTextStyle;
@@ -82,9 +86,11 @@ TFT_eSPI                      TFTPanel            = TFT_eSPI(usPanelWidth, usPan
 //Function protos
 void setup                    (void);
 void loop                     (void);
+#if DO_STYLE
 void SetupStyles              (void);
 void SetupTextStyle           (lv_style_t *pTextStyle, const lv_font_t *pTextFont, lv_color_t stTextColor);
 void DisplayText              (void);
+#endif
 void SetupLVGL                (void);
 void SetupTouchscreen         (void);
 void SetupLogging             (void);
@@ -104,9 +110,10 @@ void setup(){
   SetupLVGL();
   SetupTouchscreen();
   SetupLogging();
+#if DO_STYLE
   SetupStyles();
-
   DisplayText();
+#endif
 
   Serial << BLOG << " setup(): Done" << endl;
   return;
@@ -120,6 +127,7 @@ void loop(){
 } //loop
 
 
+#if DO_STYLE
 void SetupStyles(void){
   SetupTextStyle  (&stTinyTextStyle    , pTinyTextFont    , stTinyTextColor);
   SetupTextStyle  (&stTitleTextStyle   , pTitleTextFont   , stTitleTextColor);
@@ -168,7 +176,7 @@ void DisplayText(void){
   Serial << BLOG << " DisplayText(): Done" << endl;
   return;
 } //DisplayText
-
+#endif
 
 void SetupLVGL(void){
   Serial << BLOG << " SetupLVGL(): LVGL V" << lv_version_major() << "." << lv_version_minor() << "." << lv_version_patch() << endl;

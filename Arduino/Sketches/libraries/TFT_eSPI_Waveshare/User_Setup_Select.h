@@ -1,3 +1,4 @@
+//Beck, User_Setup_Select.h, 1/8/24c
 // This header file contains a list of user setup files and defines which one the
 // compiler uses when the IDE performs a Verify/Compile or Upload.
 //
@@ -22,9 +23,13 @@
 //   User configuration selection lines are below    //
 ///////////////////////////////////////////////////////
 
-// Only ONE line below should be uncommented to define your setup.  Add extra lines and files as needed.
-
-#include <User_Setup.h>           // Default setup is root library folder
+#if true
+  //Only ONE line below should be uncommented to define your setup.  Add extra lines and files as needed.
+  #include <User_Setup.h>           //Old out-of-date setup file
+#else
+  //Do not un-comment any lines
+  #include <TFT_eSPI_DriverSelect.h>
+#endif
 
 //#include <User_Setups/Setup1_ILI9341.h>  // Setup file for ESP8266 configured for my ILI9341
 //#include <User_Setups/Setup2_ST7735.h>   // Setup file for ESP8266 configured for my ST7735

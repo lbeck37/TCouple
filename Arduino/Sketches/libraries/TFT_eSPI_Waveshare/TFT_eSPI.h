@@ -1,3 +1,4 @@
+//Beck, TFT_eSPI.h, 1/8/24b
 /***************************************************
   Arduino TFT graphics library targeted at ESP8266
   and ESP32 based boards.
@@ -29,7 +30,10 @@
 //Standard support
 #include <Arduino.h>
 #include <Print.h>
+
+#pragma message("TFT_eSPI.h: Include SPI.h if TFT_PARALLEL_8_BIT is not defined")
 #if !defined (TFT_PARALLEL_8_BIT) && !defined (RP2040_PIO_INTERFACE)
+  #pragma message("TFT_eSPI.h: TFT_PARALLEL_8_BIT is not defined, include SPI.h")
   #include <SPI.h>
 #endif
 /***************************************************************************************

@@ -361,7 +361,7 @@ SPI3_HOST = 2
     #define GPIO_CLR_REG GPIO.out_w1tc
     #define GPIO_SET_REG GPIO.out_w1ts
   #endif
-
+//Bad code please stop compiling
   // Create a bit set lookup table for data bus - wastes 1kbyte of RAM but speeds things up dramatically
   // can then use e.g. GPIO.out_w1ts = set_mask(0xFF); to set data bus to 0xFF
   #define PARALLEL_INIT_TFT_DATA_BUS               \

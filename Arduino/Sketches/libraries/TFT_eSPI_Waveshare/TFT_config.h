@@ -1,4 +1,4 @@
-
+//Beck, TFT_config.h, 1/8/24b
 ///////////////////////////////////////////////////////////
 /*           Support file for ESP32 IDF use              */
 /*              See library docs folder                  */
@@ -20,6 +20,8 @@
 
 #ifndef TFT_CONFIG_H
 #define TFT_CONFIG_H
+
+#pragma message("TFT_config.h: This include is for ESP-IDF, not for AIDE or Sloeber")
 
 #include "sdkconfig.h"
 
@@ -171,6 +173,7 @@
 // 8 BIT PARALLEL BUS
 #ifdef CONFIG_TFT_PARALLEL_8_BIT
 
+    #pragma message("TFT_config.h, CONFIG_TFT_PARALLEL_8_BIT is defined, do #define TFT_PARALLEL_8_BIT")
     #define TFT_PARALLEL_8_BIT
 
     #if CONFIG_TFT_D0 == -1

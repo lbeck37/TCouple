@@ -1,5 +1,5 @@
-const char szSketchName[]  = "B32_LVGL_Arduino.ino";
-const char szFileDate[]    = "1/9/2W";
+const char szSketchName[]  = "B32_LVGL_Waveshare.ino";
+const char szFileDate[]    = "1/10/24d";
 #pragma message("B32_LVGL_Arduino.ino, Begin compile")
 
 #include <Arduino.h>
@@ -43,6 +43,7 @@ void my_print                 (lv_log_level_t cLevel, const char *stColorPixelsB
 void setup(){
   Serial.begin(115200);
   Serial << endl << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
+  Serial << endl << BLOG << " setup(): Sketch: Print RAM sizes at beginning of Sketch" << endl;
   PrintRAMSizes();
 
   Serial << BLOG << " setup():Call SetupLVGL(),SetupLogging,SetupLogging,SetupStyles" << endl;
@@ -53,6 +54,7 @@ void setup(){
 
   DisplayText();
 
+  Serial << endl << BLOG << " setup(): Sketch: Print RAM sizes at end of Sketch" << endl;
   PrintRAMSizes();
   Serial << BLOG << " setup(): " << szSketchName << ", " << szFileDate << ", is done." << endl;
   return;
@@ -141,11 +143,13 @@ void SetupLVGL(void){
   Serial << BLOG << " SetupLVGL(): Call lv_init()" << endl;
   lv_init();
 
+/*
   Serial << BLOG << " SetupLVGL(): Call TFTPanel.init()" << endl;
   TFTPanel.init();
 
   Serial << BLOG << " SetupLVGL(): Call TFTPanel.setRotation(ucRotation)" << endl;
   TFTPanel.setRotation(ucRotation);
+*/
 
   Serial << BLOG << " SetupLVGL(): Call lv_disp_draw_buf_init(&stDisplayBuffer, stColorPixelsBuffer,...)" << endl;
   lv_disp_draw_buf_init(&stDisplayBuffer, stColorPixelsBuffer, NULL, usPanelWidth * usPanelHeight / 10 );

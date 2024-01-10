@@ -6,6 +6,9 @@
 //
 //   If this file is edited correctly then all the library example sketches should
 //   run without the need to make any more changes for a particular hardware setup!
+#pragma once
+#pragma message("Setup50_SSD1963_Parallel.h, 1/10/24b: Begin")
+
 #define USER_SETUP_ID 50
 // ##################################################################################
 //
@@ -24,6 +27,9 @@
 
 //#define TFT_RGB_ORDER TFT_RGB  // Colour order Red-Green-Blue
 #define TFT_RGB_ORDER TFT_BGR  // Colour order Blue-Green-Red
+
+#define B32_TFT_WIDTH     800
+#define B32_TFT_HEIGHT    480
 
 // ##################################################################################
 //

@@ -1,21 +1,15 @@
 //Larry Beck, TFT_eSPI_DriverSelect.h
 #pragma once
-#pragma message("TFT_eSPI_DriverSelect.h, 1/9/24c: Begin")
+#pragma message("TFT_eSPI_DriverSelect.h, 1/9/24f: Begin")
 
-/*
-#ifdef B32_ILI9341
-  #pragma message("TFT_eSPI_DriverSelect.h, Include TFT_eSPI_DriverSelect.h, B32_ILI9341 is defined")
-#else
-  #pragma message("TFT_eSPI_DriverSelect.h, Include TFT_eSPI_DriverSelect.h, B32_ILI9341 is not defined")
-#endif
-#ifdef B32_TTGO_T_DISPLAY
-  #pragma message("TFT_eSPI_DriverSelect.h, B32_TTGO_T_DISPLAY is defined")
-#endif
-*/
-
-#ifdef B32_RAW_8BIT_PARALLEL    //1/9/24 I think this has changed
+#ifdef TFT_PARALLEL_8_BIT
   //Waveshare 4.3",800x480,ESP32-S3, 8M PSRAM,4MB usable
-  #pragma message("TFT_eSPI_DriverSelect.h, Driver is B32_RAW_8BIT_PARALLEL, don't include anything")
+  #pragma message("TFT_eSPI_DriverSelect.h, Driver is TFT_PARALLEL_8_BIT, don't include anything")
+  #pragma message("TFT_eSPI_DriverSelect.h, Define TFT_WIDTH, TFT_HEIGHT, B32_TFT_WIDTH, B32_TFT_HEIGHT")
+  #define TFT_WIDTH         800
+  #define TFT_HEIGHT        480
+  #define B32_TFT_WIDTH     TFT_WIDTH
+  #define B32_TFT_HEIGHT    TFT_HEIGHT
 #endif
 
 #ifdef B32_ILI9341

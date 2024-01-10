@@ -1,4 +1,4 @@
-//Beck, User_Setup_select, 12/21/23b
+//Beck, User_Setup_Select.h, 1/9/24c
 // This header file contains a list of user setup files and defines which one the
 // compiler uses when the IDE performs a Verify/Compile or Upload.
 //
@@ -18,7 +18,11 @@
 #pragma once
 #ifndef USER_SETUP_LOADED               //  Lets PlatformIO users define settings in
                                         //  platformio.ini, see notes in "Tools" folder.
-#include <TFT_eSPI_DriverSelect.h>      //Beck- Created by me
+
+#pragma message("User_Setup_Select.h, #include <TFT_eSPI_DriverSelect.h>")
+#include <TFT_eSPI_DriverSelect.h>
+//#include <CheapYellowBoard_TFT_eSPI/TFT_eSPI_DriverSelect.h>  //TFT_eSPI_DriverSelect.h was created by #RandD (L Beck)
+
 ///////////////////////////////////////////////////////
 //   User configuration selection lines are below    //
 ///////////////////////////////////////////////////////

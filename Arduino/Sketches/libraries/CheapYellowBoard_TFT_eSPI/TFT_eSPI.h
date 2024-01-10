@@ -1,4 +1,4 @@
-//Beck, TFT_eSPI.h, 12/26/23b
+//Beck, TFT_eSPI.h, 1/9/24b
 /***************************************************
   Arduino TFT graphics library targeted at ESP8266
   and ESP32 based boards.
@@ -66,7 +66,9 @@
   #endif
 #endif
 
+#pragma message("TFT_eSPI.h, #include<User_Setup_Select.h>")
 #include <User_Setup_Select.h>
+//#include <CheapYellowBoard_TFT_eSPI/User_Setup_Select.h>
 
 // Handle FLASH based storage e.g. PROGMEM
 #if defined(ARDUINO_ARCH_RP2040)

@@ -1,24 +1,23 @@
-//Beck, Setup21_ILI9488.h, 12/22/23d
-#define USER_SETUP_ID 21
+//Larry Beck, Setup21_ILI9488.h
+#pragma once
+#pragma message("Setup21_ILI9488.h, 1/9/24c: Begin define of SPI pins and display settings, Sunnton 480x320")
 
+#define USER_SETUP_ID       21
 #define ILI9488_DRIVER
 
-#define DO_DIYMALL_3dot5_DISPLAY      true
-#if DO_DIYMALL_3dot5_DISPLAY
-  #pragma message("Setup21_ILI9488.h, defining SPI pins and display characteristics")
-  #define TFT_WIDTH          480
-  #define TFT_HEIGHT         320
-  #define TFT_MOSI            13
-  #define TFT_SCLK            14
-  #define TFT_CS              15
-  #define TFT_DC               2
-  #define TFT_RST             12
-  #define TFT_BL              27          // Display backlight control pin for Walmart ESP32-2432S0 32
-  #define TFT_BACKLIGHT_ON    HIGH        // HIGH or LOW are options
-  #define TFT_RGB_ORDER       TFT_BGR     // Color order Blue-Green-Red
-  #define TFT_INVERSION_OFF
-  //#define TFT_INVERSION_ON
-#endif  //DO_DIYMALL_3dot5_DISPLAY
+//test #define TFT_WIDTH          480
+//#define TFT_HEIGHT         320
+#define TFT_MOSI            13
+#define TFT_SCLK            14
+#define TFT_CS              15
+#define TFT_DC               2
+#define TFT_RST             12
+#define TFT_BL              27          // Display backlight control pin for Walmart ESP32-2432S0 32
+#define TFT_BACKLIGHT_ON    HIGH        // HIGH or LOW are options
+#define TFT_RGB_ORDER       TFT_BGR     // Color order Blue-Green-Red
+#define TFT_INVERSION_OFF
+//#define TFT_INVERSION_ON
+//#endif  //DO_DIYMALL_3dot5_DISPLAY
 
 
 #define LOAD_GLCD   // Font 1. Original Adafruit 8 pixel font needs ~1820 bytes in FLASH
@@ -32,7 +31,6 @@
 #define LOAD_FONT5
 
 #define SMOOTH_FONT
-
 
 #define SPI_FREQUENCY       27000000
 #define SPI_READ_FREQUENCY  16000000  //Optional reduced SPI frequency for reading TFT
@@ -48,3 +46,4 @@
 #define TFT_DC    2  // Data Command control pin
 #define TFT_RST   4  // Reset pin (could connect to RST pin)
 */
+//Last line.

@@ -1,12 +1,18 @@
 //Larry Beck, Setup21_ILI9488.h
 #pragma once
-#pragma message("Setup21_ILI9488.h, 1/9/24c: Begin define of SPI pins and display settings, Sunnton 480x320")
+#pragma message("Setup21_ILI9488.h, 1/9/24d: Begin define of SPI pins and display settings, Sunnton 480x320")
 
 #define USER_SETUP_ID       21
 #define ILI9488_DRIVER
 
-//test #define TFT_WIDTH          480
-//#define TFT_HEIGHT         320
+#if false
+  #define TFT_WIDTH          480
+  #define TFT_HEIGHT         320
+#else
+  #define B32_TFT_WIDTH     480
+  #define B32_TFT_HEIGHT    320
+#endif
+
 #define TFT_MOSI            13
 #define TFT_SCLK            14
 #define TFT_CS              15
@@ -17,8 +23,6 @@
 #define TFT_RGB_ORDER       TFT_BGR     // Color order Blue-Green-Red
 #define TFT_INVERSION_OFF
 //#define TFT_INVERSION_ON
-//#endif  //DO_DIYMALL_3dot5_DISPLAY
-
 
 #define LOAD_GLCD   // Font 1. Original Adafruit 8 pixel font needs ~1820 bytes in FLASH
 #define LOAD_FONT2  // Font 2. Small 16 pixel high font, needs ~3534 bytes in FLASH, 96 characters

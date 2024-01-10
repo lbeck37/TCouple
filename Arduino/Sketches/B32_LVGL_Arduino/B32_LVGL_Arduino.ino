@@ -1,11 +1,11 @@
 const char szSketchName[]  = "B32_LVGL_Arduino.ino";
-const char szFileDate[]    = "1/9/24j";
+const char szFileDate[]    = "1/9/24T";
 #pragma message("B32_LVGL_Arduino.ino, Begin compile")
 
 #include <Arduino.h>
 #include <lvgl.h>
 #include <TFT_eSPI.h>
-//#include <B32_LVGL_GraphicsLib.h>
+#include <B32_LVGL_GraphicsLib.h>
 #include <Streaming.h>
 
 #define DO_TOUCH      false
@@ -13,20 +13,20 @@ const char szFileDate[]    = "1/9/24j";
 #define BLOG          millis()
 
 #if true
-//#ifndef B32_TTGO_T_DISPLAY
+  static const uint16_t         usPanelWidth  = B32_TFT_WIDTH;
+  static const uint16_t         usPanelHeight = B32_TFT_HEIGHT;
+#else
   static const uint16_t         usPanelWidth  = 480;
   static const uint16_t         usPanelHeight = 320;
-#else
+#endif
+
+#if false
   static const uint16_t         usPanelWidth  = 240;
   static const uint16_t         usPanelHeight = 135;
 #endif
-/*
-static const uint16_t         usPanelWidth  = TFT_WIDTH;
-static const uint16_t         usPanelHeight = TFT_HEIGHT;
-*/
 
 const uint8_t                 ucRotation    = 3;     //DIYmall 3.5", Landscape, USB on the left
-#if true
+#if false
   //Light Google Material Design colors
   const lv_color_t              stColorBlack        = lv_color_hex(0x000000);
   const lv_color_t              stColorWhite        = lv_color_hex(0xFFFFFF);
@@ -75,9 +75,14 @@ const uint8_t                 ucRotation    = 3;     //DIYmall 3.5", Landscape, 
 static lv_disp_drv_t          stDisplay;
 static lv_indev_drv_t         stTouchPad;
 static lv_disp_draw_buf_t     stDisplayBuffer;     //See src\hal\lv_hal_disp.h
-static lv_color_t             stColorPixelsBuffer[(usPanelWidth * usPanelHeight / 10)];
 
-TFT_eSPI                      TFTPanel      = TFT_eSPI(usPanelWidth, usPanelHeight);  //TFT_eSPI acts as display driver
+#if true
+  static lv_color_t             stColorPixelsBuffer[(usPanelWidth * usPanelHeight / 10)];
+  TFT_eSPI                      TFTPanel      = TFT_eSPI(usPanelWidth, usPanelHeight);  //TFT_eSPI acts as display driver
+#else
+  static lv_color_t             stColorPixelsBuffer[(480 * 320 / 10)];
+  TFT_eSPI                      TFTPanel      = TFT_eSPI(480, 320);  //TFT_eSPI acts as display driver
+#endif
 
 //Function protos
 void setup                    (void);

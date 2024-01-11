@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_LVGL_Waveshare.ino";
-const char szFileDate[]    = "1/10/24m";
+const char szFileDate[]    = "1/10/24n";
 #pragma message("B32_LVGL_Arduino.ino, Begin compile")
 
 #include <Arduino.h>
@@ -62,13 +62,11 @@ void setup(){
   return;
 } //setup
 
-
 void loop(){
   lv_timer_handler(); /* let the GUI do its work */
   delay(5);
   return;
 } //loop
-
 
 void PrintRAMSizes(){
   int wTotalHeapBytes= ESP.getHeapSize();
@@ -203,7 +201,6 @@ void SetupLogging(void){
   return;
 } //SetupLogging
 
-
 void MyDispFlush(lv_disp_drv_t *pstDispDrv, const lv_area_t *pstArea, lv_color_t *stPixels){
   Serial << BLOG << " MyDispFlush(): Begin" << endl;
   uint32_t w = ((pstArea->x2 - pstArea->x1) + 1);
@@ -217,7 +214,6 @@ void MyDispFlush(lv_disp_drv_t *pstDispDrv, const lv_area_t *pstArea, lv_color_t
   lv_disp_flush_ready    (pstDispDrv);
   return;
 } //MyDispFlush
-
 
 void my_touchpad_read(lv_indev_drv_t *pstIndevDrv, lv_indev_data_t *pstIndevData){ ///*Read the touchpad*/
   uint16_t touchX, touchY;
@@ -242,7 +238,6 @@ void my_touchpad_read(lv_indev_drv_t *pstIndevDrv, lv_indev_data_t *pstIndevData
   } //if(!touched)else
   return;
 } //my_touchpad_read
-
 
 void my_print(lv_log_level_t cLevel, const char *stColorPixelsBuffer){
   LV_UNUSED(cLevel);

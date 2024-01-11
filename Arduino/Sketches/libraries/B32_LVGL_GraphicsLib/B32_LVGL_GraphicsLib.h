@@ -1,6 +1,6 @@
 //Larry Beck, B32_LVGL_GraphicsLib.h
 #pragma once
-#pragma message("B32_LVGL_GraphicsLib.h, 1/9/24c: Begin define of SPI pins and display settings, Sunnton 480x320")
+#pragma message("B32_LVGL_GraphicsLib.h, 1/9/24c: Begin declaring colors and fonts")
 #include <lvgl.h>
 
 //Light Google Material Design colors
@@ -38,9 +38,14 @@ static lv_color_t             stLocationTextColor = stColorGreen;
 static lv_color_t             stDefaultBGColor    = stColorBlack;
 
 const lv_font_t               *pTinyTextFont      = &lv_font_montserrat_12;
+/*
 const lv_font_t               *pTitleTextFont     = &lv_font_montserrat_30;
 const lv_font_t               *pDataTextFont      = &lv_font_montserrat_24;
 const lv_font_t               *pLocationTextFont  = &lv_font_montserrat_30;
+*/
+const lv_font_t               *pTitleTextFont     = &lv_font_montserrat_16;
+const lv_font_t               *pDataTextFont      = &lv_font_montserrat_16;
+const lv_font_t               *pLocationTextFont  = &lv_font_montserrat_16;
 
 static lv_style_t             stTinyTextStyle;
 static lv_style_t             stTitleTextStyle;

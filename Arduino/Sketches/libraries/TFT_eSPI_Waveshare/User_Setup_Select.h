@@ -1,4 +1,10 @@
 //Beck, User_Setup_Select.h, 1/8/24c
+#pragma once
+#pragma message("User_Setup_Select.h, 1/10/24c: Begin")
+
+//*** DO NOT use this the old way  described for uncommenting.
+//*** Instead, go to TFT_eSPI_DriverSelect.h add an #ifdef on the display type
+//*** Also add a -D option to the C++ compiler command line
 // This header file contains a list of user setup files and defines which one the
 // compiler uses when the IDE performs a Verify/Compile or Upload.
 //
@@ -23,7 +29,7 @@
 //   User configuration selection lines are below    //
 ///////////////////////////////////////////////////////
 
-#if true
+#if false
   //Only ONE line below should be uncommented to define your setup.  Add extra lines and files as needed.
   #include <User_Setup.h>           //Old out-of-date setup file
 #else

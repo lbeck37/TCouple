@@ -1,21 +1,7 @@
-//Beck, TFT_eSPI.h, 1/8/24b
-/***************************************************
-  Arduino TFT graphics library targeted at ESP8266
-  and ESP32 based boards.
-
-  This is a stand-alone library that contains the
-  hardware driver, the graphics functions and the
-  proportional fonts.
-
-  The built-in fonts 4, 6, 7 and 8 are Run Length
-  Encoded (RLE) to reduce the FLASH footprint.
-
-  Last review/edit by Bodmer: 04/02/22
- ****************************************************/
-
-// Stop fonts etc being loaded multiple times
-#ifndef _TFT_eSPIH_
-#define _TFT_eSPIH_
+//#ifndef _TFT_eSPIH_
+//#define _TFT_eSPIH_
+#pragma once
+#pragma message("TFT_eSPI.h, 1/10/24b: Begin")
 
 #define TFT_ESPI_VERSION "2.5.34"
 
@@ -31,10 +17,12 @@
 #include <Arduino.h>
 #include <Print.h>
 
-#pragma message("TFT_eSPI.h: Include SPI.h if TFT_PARALLEL_8_BIT is not defined")
+
 #if !defined (TFT_PARALLEL_8_BIT) && !defined (RP2040_PIO_INTERFACE)
   #pragma message("TFT_eSPI.h: TFT_PARALLEL_8_BIT is not defined, include SPI.h")
   #include <SPI.h>
+#else
+  #pragma message("TFT_eSPI.h: TFT_PARALLEL_8_BIT is defined, SPI.h not included")
 #endif
 /***************************************************************************************
 **                         Section 2: Load library and processor specific header files
@@ -1012,4 +1000,4 @@ fastBlend(A alpha, F fgc, B bgc)
 // Load the Sprite Class
 #include "Extensions/Sprite.h"
 
-#endif // ends #ifndef _TFT_eSPIH_
+//#endif // ends #ifndef _TFT_eSPIH_

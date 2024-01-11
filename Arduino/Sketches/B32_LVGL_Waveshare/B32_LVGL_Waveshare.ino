@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_LVGL_Waveshare.ino";
-const char szFileDate[]    = "1/10/24d";
+const char szFileDate[]    = "1/10/24e";
 #pragma message("B32_LVGL_Arduino.ino, Begin compile")
 
 #include <Arduino.h>
@@ -42,10 +42,12 @@ void my_print                 (lv_log_level_t cLevel, const char *stColorPixelsB
 
 void setup(){
   Serial.begin(115200);
+  delay(500);
   Serial << endl << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
   Serial << endl << BLOG << " setup(): Sketch: Print RAM sizes at beginning of Sketch" << endl;
   PrintRAMSizes();
 
+/*
   Serial << BLOG << " setup():Call SetupLVGL(),SetupLogging,SetupLogging,SetupStyles" << endl;
   SetupLVGL();
   SetupTouchscreen();
@@ -53,6 +55,7 @@ void setup(){
   SetupStyles();
 
   DisplayText();
+*/
 
   Serial << endl << BLOG << " setup(): Sketch: Print RAM sizes at end of Sketch" << endl;
   PrintRAMSizes();

@@ -1,6 +1,5 @@
-//Larry Beck, TFT_eSPI_DriverSelect.h
 #pragma once
-#pragma message("TFT_eSPI_DriverSelect.h, 1/10/24b: Begin")
+#pragma message("CheapYellowBoard_TFT_eSPI/TFT_eSPI_DriverSelect.h, 1/10/24c: Begin")
 
 #ifdef TFT_PARALLEL_8_BIT
   //Waveshare 4.3",800x480,ESP32-S3, 8M PSRAM,4MB usable

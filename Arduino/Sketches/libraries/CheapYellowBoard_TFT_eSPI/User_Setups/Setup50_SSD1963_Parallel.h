@@ -7,7 +7,7 @@
 //   If this file is edited correctly then all the library example sketches should
 //   run without the need to make any more changes for a particular hardware setup!
 #pragma once
-#pragma message("Setup50_SSD1963_Parallel.h, 1/10/24b: Begin")
+#pragma message("CheapYellowBoard_TFT_eSPI/User_Setups/Setup50_SSD1963_Parallel.h, 1/10/24b: Begin")
 
 #define USER_SETUP_ID 50
 // ##################################################################################

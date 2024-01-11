@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_LVGL_Waveshare.ino";
-const char szFileDate[]    = "1/10/24e";
+const char szFileDate[]    = "1/10/24m";
 #pragma message("B32_LVGL_Arduino.ino, Begin compile")
 
 #include <Arduino.h>
@@ -47,7 +47,7 @@ void setup(){
   Serial << endl << BLOG << " setup(): Sketch: Print RAM sizes at beginning of Sketch" << endl;
   PrintRAMSizes();
 
-/*
+#if true
   Serial << BLOG << " setup():Call SetupLVGL(),SetupLogging,SetupLogging,SetupStyles" << endl;
   SetupLVGL();
   SetupTouchscreen();
@@ -55,8 +55,7 @@ void setup(){
   SetupStyles();
 
   DisplayText();
-*/
-
+#endif
   Serial << endl << BLOG << " setup(): Sketch: Print RAM sizes at end of Sketch" << endl;
   PrintRAMSizes();
   Serial << BLOG << " setup(): " << szSketchName << ", " << szFileDate << ", is done." << endl;
@@ -146,13 +145,13 @@ void SetupLVGL(void){
   Serial << BLOG << " SetupLVGL(): Call lv_init()" << endl;
   lv_init();
 
-/*
+#if false
   Serial << BLOG << " SetupLVGL(): Call TFTPanel.init()" << endl;
   TFTPanel.init();
 
   Serial << BLOG << " SetupLVGL(): Call TFTPanel.setRotation(ucRotation)" << endl;
   TFTPanel.setRotation(ucRotation);
-*/
+#endif
 
   Serial << BLOG << " SetupLVGL(): Call lv_disp_draw_buf_init(&stDisplayBuffer, stColorPixelsBuffer,...)" << endl;
   lv_disp_draw_buf_init(&stDisplayBuffer, stColorPixelsBuffer, NULL, usPanelWidth * usPanelHeight / 10 );
@@ -179,18 +178,18 @@ void SetupLVGL(void){
 void SetupTouchscreen(void){
 #if DO_TOUCH
   uint16_t calData[5] = { 275, 3620, 264, 3532, 1 };
-  Serial << BLOG << " SetupLVGL(): Call TFTPanel.setTouch(calData)" << endl;
+  Serial << BLOG << " SetupTouchscreen(): Call TFTPanel.setTouch(calData)" << endl;
   TFTPanel.setTouch(calData);
 #endif
   /*Initialize the (dummy) input device driver*/
   //static lv_indev_drv_t     indev_drv;
-  Serial << BLOG << " SetupLVGL(): Call lv_indev_drv_init(&stTouchPad)" << endl;
+  Serial << BLOG << " SetupTouchscreen(): Call lv_indev_drv_init(&stTouchPad)" << endl;
   lv_indev_drv_init(&stTouchPad);
 
   stTouchPad.type      = LV_INDEV_TYPE_POINTER;
   stTouchPad.read_cb   = my_touchpad_read;
 
-  Serial << BLOG << " SetupLVGL(): Call lv_indev_drv_register(&stTouchPad)" << endl;
+  Serial << BLOG << " SetupTouchscreen(): Call lv_indev_drv_register(&stTouchPad)" << endl;
   lv_indev_drv_register(&stTouchPad);
   return;
 } //SetupTouchscreen
@@ -198,7 +197,7 @@ void SetupTouchscreen(void){
 
 void SetupLogging(void){
 #if DO_LOGGING && (LV_USE_LOG != 0)
-  Serial << BLOG << " SetupLVGL(): Call lv_log_register_print_cb(my_print)" << endl;
+  Serial << BLOG << " SetupTouchscreen(): Call lv_log_register_print_cb(my_print)" << endl;
   lv_log_register_print_cb(my_print); /* register print function for debugging */
 #endif  //DO_LOGGING&&(LV_USE_LOG!=0)
   return;

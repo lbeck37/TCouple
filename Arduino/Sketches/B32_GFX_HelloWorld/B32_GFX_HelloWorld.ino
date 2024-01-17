@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_GFX_HelloWorld.ino";
-const char szFileDate[]    = "1/16/24a";
+const char szFileDate[]    = "1/16/24b";
 
 /*******************************************************************************
  * Start of Arduino_GFX setting
@@ -23,23 +23,42 @@ const char szFileDate[]    = "1/16/24a";
  ******************************************************************************/
 #include <Arduino_GFX_Library.h>
 
+#if false
+  #define GFX_BL DF_GFX_BL // default backlight pin, you may replace DF_GFX_BL to actual backlight pin
+
+  /* More dev device declaration: https://github.com/moononournation/Arduino_GFX/wiki/Dev-Device-Declaration */
+  #if defined(DISPLAY_DEV_KIT)
+    Arduino_GFX *gfx = create_default_Arduino_GFX();
+  #else /* !defined(DISPLAY_DEV_KIT) */
+    /* More data bus class: https://github.com/moononournation/Arduino_GFX/wiki/Data-Bus-Class */
+    Arduino_DataBus *bus = create_default_Arduino_DataBus();
+
+    /* More display class: https://github.com/moononournation/Arduino_GFX/wiki/Display-Class */
+    Arduino_GFX *gfx = new Arduino_ILI9341(bus, DF_GFX_RST, 0 /* rotation */, false /* IPS */);
+  #endif /* !defined(DISPLAY_DEV_KIT) */
+  /*******************************************************************************
+   * End of Arduino_GFX setting
+   ******************************************************************************/
+#else
 #define GFX_BL DF_GFX_BL // default backlight pin, you may replace DF_GFX_BL to actual backlight pin
 
-/* More dev device declaration: https://github.com/moononournation/Arduino_GFX/wiki/Dev-Device-Declaration */
-#if defined(DISPLAY_DEV_KIT)
-Arduino_GFX *gfx = create_default_Arduino_GFX();
-#else /* !defined(DISPLAY_DEV_KIT) */
+const int8_t    cDE_Pin           =  5;
+const int8_t    cVsyncPin         =  3;
+const int8_t    cHsyncPin         = 46;
+const int8_t    cPclkPin          =  7;
+
+const int8_t    acRedPin[]        = { 1,  2, 42, 41, 40};
+const int8_t    acBluePin[]       = {14, 38, 18, 17, 10};
+const int8_t    acGreenPin[]      = {39,  0, 45, 48, 47, 21};
 
 /* More data bus class: https://github.com/moononournation/Arduino_GFX/wiki/Data-Bus-Class */
 Arduino_DataBus *bus = create_default_Arduino_DataBus();
 
+
 /* More display class: https://github.com/moononournation/Arduino_GFX/wiki/Display-Class */
 Arduino_GFX *gfx = new Arduino_ILI9341(bus, DF_GFX_RST, 0 /* rotation */, false /* IPS */);
 
-#endif /* !defined(DISPLAY_DEV_KIT) */
-/*******************************************************************************
- * End of Arduino_GFX setting
- ******************************************************************************/
+#endif
 
 void setup(void)
 {

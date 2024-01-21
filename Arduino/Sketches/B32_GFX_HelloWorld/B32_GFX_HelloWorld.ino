@@ -1,7 +1,8 @@
 const char szSketchName[]  = "B32_GFX_HelloWorld.ino";
-const char szFileDate[]    = "1/20/24d";
+const char szFileDate[]    = "1/20/24f";
 
-#include <Arduino_GFX_Library.h>
+//#include <Arduino_GFX_Library.h>
+#include <B32_RGBDisplayLib.h>
 
 #if false
   #define GFX_BL DF_GFX_BL // default backlight pin, you may replace DF_GFX_BL to actual backlight pin
@@ -20,6 +21,7 @@ const char szFileDate[]    = "1/20/24d";
    * End of Arduino_GFX setting
    ******************************************************************************/
 #else
+/*
 #define GFX_BL DF_GFX_BL // default backlight pin, you may replace DF_GFX_BL to actual backlight pin
 
 const uint16_t  usPanelWidth      = 800;
@@ -57,13 +59,15 @@ const bool      bUseBigEndian     = false;
 const uint16_t  usDEIdleHigh      = 0;
 const uint16_t  usPclkIdleHigh    = 0;
 
-/*
+
 const int8_t    cRotation         = 0;
 const bool      bAutoFlush        = true;
 Arduino_DataBus *pArduino_DataBus = NULL;
+
 */
 
-/* More data bus class: https://github.com/moononournation/Arduino_GFX/wiki/Data-Bus-Class */
+/*
+ More data bus class: https://github.com/moononournation/Arduino_GFX/wiki/Data-Bus-Class
 Arduino_ESP32RGBPanel *pRGBPanel = new Arduino_ESP32RGBPanel(
         cDE_Pin      , cVsyncPin    , cHsyncPin    , cPclkPin,
         acRedPin  [0], acRedPin  [1], acRedPin  [2], acRedPin  [3], acRedPin  [4],
@@ -75,6 +79,7 @@ Arduino_ESP32RGBPanel *pRGBPanel = new Arduino_ESP32RGBPanel(
 
 
 Arduino_RGB_Display *pRGBDisplay = new Arduino_RGB_Display(usPanelWidth, usPanelHeight, pRGBPanel);
+*/
 #endif
 
 
@@ -111,7 +116,8 @@ void loop(){
   pRGBDisplay->setCursor(random(pRGBDisplay->width()), random(pRGBDisplay->height()));
   pRGBDisplay->setTextColor(random(0xffff), random(0xffff));
   pRGBDisplay->setTextSize(random(6) /* x scale */, random(6) /* y scale */, random(2) /* pixel_margin */);
-  pRGBDisplay->println("Hello World!");
+  //pRGBDisplay->println("Hello World!");
+  pRGBDisplay->println("Hello Dude!");
 
   delay(1000); // 1 second
 } //loop

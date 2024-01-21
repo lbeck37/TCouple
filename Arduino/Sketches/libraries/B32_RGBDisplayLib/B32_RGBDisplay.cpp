@@ -1,4 +1,4 @@
-//B32_RGBDisplay.cpp, 1/20/24a
+//B32_RGBDisplay.cpp, 1/20/24b
 #include <B32_RGBDisplayLib.h>
 
 #define GFX_BL DF_GFX_BL // default backlight pin, you may replace DF_GFX_BL to actual backlight pin
@@ -38,11 +38,7 @@ const bool      bUseBigEndian     = false;
 const uint16_t  usDEIdleHigh      = 0;
 const uint16_t  usPclkIdleHigh    = 0;
 
-/*
-const int8_t    cRotation         = 0;
-const bool      bAutoFlush        = true;
-Arduino_DataBus *pArduino_DataBus = NULL;
-*/
+
 Arduino_ESP32RGBPanel *pRGBPanel = new Arduino_ESP32RGBPanel(
         cDE_Pin      , cVsyncPin    , cHsyncPin    , cPclkPin,
         acRedPin  [0], acRedPin  [1], acRedPin  [2], acRedPin  [3], acRedPin  [4],
@@ -54,9 +50,4 @@ Arduino_ESP32RGBPanel *pRGBPanel = new Arduino_ESP32RGBPanel(
 
 
 Arduino_RGB_Display *pRGBDisplay = new Arduino_RGB_Display(usPanelWidth, usPanelHeight, pRGBPanel);
-
-void CreateRGBDisplay(void){
-  return;
-} //CreateRGBDisplay
-
 //Last line

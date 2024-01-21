@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_GFX_HelloWorld.ino";
-const char szFileDate[]    = "1/21/24q";
+const char szFileDate[]    = "1/21/24r";
 
 #include <B32_RGBDisplayLib.h>
 #include <Streaming.h>
@@ -13,7 +13,7 @@ void  SetupDisplay    (void);
 
 void setup(void){
   Serial.begin(115200);
-  Serial << BLOG << endl << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
+  Serial << endl << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
   Serial << BLOG << " setup(): Hello World!" << endl;
   Serial << BLOG << " setup(): Display Hello World! in random sizes, colors and positions. (Looks crazy :)" << endl;
 

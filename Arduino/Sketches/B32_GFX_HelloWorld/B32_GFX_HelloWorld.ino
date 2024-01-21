@@ -1,12 +1,12 @@
 const char szSketchName[]  = "B32_GFX_HelloWorld.ino";
-const char szFileDate[]    = "1/21/24e";
+const char szFileDate[]    = "1/21/24q";
 
 #include <B32_RGBDisplayLib.h>
 #include <Streaming.h>
 
-#define BLOG          millis()    //Ued in logging
+#define BLOG          millis()    //Used in logging
 
-//Function protos
+//Function prototypes for compiler
 void  setup           (void);
 void  loop            (void);
 void  SetupDisplay    (void);
@@ -19,16 +19,31 @@ void setup(void){
 
   SetupDisplay();
 
+  Serial << BLOG << " setup(): Done" << endl;
   return;
 } //setup
 
 
 void loop(){
-  pRGBDisplay->setCursor      (random(pRGBDisplay->width()), random(pRGBDisplay->height()));
-  pRGBDisplay->setTextColor   (random(0xffff), random(0xffff));
-  pRGBDisplay->setTextSize    (random(6) /* x scale */, random(6) /* y scale */, random(2) /* pixel_margin */);
+  uint16_t  usDisplayWidth   = random(pRGBDisplay->width());
+  uint16_t  usDisplayHeight  = random(pRGBDisplay->height());
+  uint16_t  usTextColor      = random(0xffff);
+  uint16_t  usTextBGColor    = random(0xffff);
 
-  pRGBDisplay->println("Hello World!");
+  uint8_t   ucTextXscale     = random(6);
+  uint8_t   ucTextYscale     = random(6);
+  uint8_t   ucPixelMargin    = random(2);
+
+  Serial << BLOG << " loop():"
+      " usDisplayWidth= " <<  usDisplayWidth << ", usDisplayHeight= " << usDisplayHeight <<
+      ", ucTextXscale= "  << ucTextXscale    << ", ucTextYscale= "    << ucTextYscale <<
+      ", ucPixelMargin= " << ucPixelMargin   << endl;
+
+  pRGBDisplay->setCursor      (usDisplayWidth, usDisplayHeight);
+  pRGBDisplay->setTextColor   (usTextColor   , usTextBGColor);
+  pRGBDisplay->setTextSize    (ucTextXscale  , ucTextYscale, ucPixelMargin);
+
+  pRGBDisplay->println        ("Hello World!");
 
   delay(1000); //Milliseconds
   return;
@@ -36,20 +51,16 @@ void loop(){
 
 
 void SetupDisplay(void){
-#ifdef GFX_EXTRA_PRE_INIT
-  GFX_EXTRA_PRE_INIT();
-#endif
-
-  // Init Display
+  Serial << BLOG << " SetupDisplay(): Call pRGBDisplay->begin()" << endl;
   if (!pRGBDisplay->begin()){
-    Serial.println("pRGBDisplay->begin() failed!");
+    Serial << BLOG << " SetupDisplay(): pRGBDisplay->begin() failed" << endl;
   }
-  pRGBDisplay->fillScreen(BLACK);
+  else{
+    Serial << BLOG << " SetupDisplay(): Clear screen with call to pRGBDisplay->fillScreen(BLACK)" << endl;
+    pRGBDisplay->fillScreen(BLACK);
+  }
 
-#ifdef GFX_BL   //Turn on LCD backlight
-  pinMode(GFX_BL, OUTPUT);
-  digitalWrite(GFX_BL, HIGH);
-#endif
+  delay(1000);
   return;
 } //SetupDisplay
 //Last line.

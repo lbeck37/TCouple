@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_GFX_HelloWorld.ino";
-const char szFileDate[]    = "1/21/24r";
+const char szFileDate[]    = "1/23/24b";
 
 #include <B32_RGBDisplayLib.h>
 #include <Streaming.h>
@@ -35,7 +35,7 @@ void loop(){
   uint8_t   ucPixelMargin    = random(2);
 
   Serial << BLOG << " loop():"
-      " usDisplayWidth= " <<  usDisplayWidth << ", usDisplayHeight= " << usDisplayHeight <<
+      " usDisplayWidth= " << usDisplayWidth  << ", usDisplayHeight= " << usDisplayHeight <<
       ", ucTextXscale= "  << ucTextXscale    << ", ucTextYscale= "    << ucTextYscale <<
       ", ucPixelMargin= " << ucPixelMargin   << endl;
 

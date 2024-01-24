@@ -1,4 +1,4 @@
-//B32_RGBDisplayLib.h, 1/23/24g
+//B32_RGBDisplayLib.h, 1/23/24h
 #pragma once
 #include <Arduino_GFX_Library.h>
 
@@ -29,24 +29,18 @@ class RGBScreen{
     char     aucLeftLabel [4][wMaxLabelChars]  = {"Cyl 1"  , "Cyl 2"   , "Cyl 3"  , "Cyl 4"};
     char     aucRightLabel[4][wMaxLabelChars]  = {"Oil In" , "Oil Out" , "Heater" , "Air"  };
 
-    //const int16_t   sLineSpacing          = 35;
-    //const int16_t   sLineSpacing          = 50;
     const int16_t   sLineSpacing          = 70;
 
     const int16_t   sLeftLabelX           =  0;
-    //const int16_t   sLeftLabelFirstY      = 70;
     const int16_t   sLeftLabelFirstY      = 100;
 
-    //const int16_t   sLeftDataX            = 80;
     const int16_t   sLeftDataX            = 120;
     const int16_t   sLeftDataFirstY       = sLeftLabelFirstY;
 
-    //const int16_t   sRightLabelX          = 200;
     const int16_t   sRightLabelX          = 300;
     const int16_t   sRightLabelFirstY     = sLeftLabelFirstY;
 
 
-    //const int16_t   sRightDataX           = 290;
     const int16_t   sRightDataX           = 440;
     const int16_t   sRightDataFirstY      = sLeftDataFirstY;
 

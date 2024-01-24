@@ -52,7 +52,7 @@ void RGBScreen::DisplayLabels(void){
   uint8_t   ucTextYscale     = 5;
   uint8_t   ucPixelMargin    = 2;
 
-  pRGBDisplay->setTextColor   (CYAN, BLACK);
+  pRGBDisplay->setTextColor   (YELLOW, BLACK);
   pRGBDisplay->setTextSize    (ucTextXscale, ucTextYscale, ucPixelMargin);
 
   for (int wLineNum= 0; wLineNum < 4; wLineNum++) {

@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_GFX_HelloWorld.ino";
-const char szFileDate[]    = "1/24/24b";
+const char szFileDate[]    = "1/24/24J";
 
 #include <B32_RGBDisplayLib.h>
 #include <Streaming.h>
@@ -23,6 +23,7 @@ void setup(void){
 
   pScreen= new RGBScreen(800, 480);
   pScreen->SetupDisplay();
+  pScreen->ShowMyMAC();
 
   Serial << BLOG << " setup(): Done" << endl;
   return;
@@ -33,7 +34,7 @@ void loop(){
   //pScreen->RandomDisplay();
   pScreen->DisplayLabels();
   pScreen->CreateData();
-  pScreen->DisplayData();
+  //pScreen->DisplayData();
   delay(1000); //Milliseconds
   return;
 } //loop

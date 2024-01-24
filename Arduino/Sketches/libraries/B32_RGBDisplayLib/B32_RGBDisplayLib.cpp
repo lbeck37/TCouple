@@ -1,4 +1,4 @@
-//B32_RGBDisplayLib.cpp, 1/24/24b
+//B32_RGBDisplayLib.cpp, 1/24/24d
 #include <B32_RGBDisplayLib.h>
 #include <Streaming.h>
 
@@ -32,6 +32,47 @@ RGBScreen::~RGBScreen(void){
 } //RGBScreen destructor
 
 
+void RGBScreen::ShowMyMAC(void){
+  const int   wNumBytesInMAC      = 6;
+  uint8_t     ucXscale            = 2;
+  uint8_t     ucYscale            = 2;
+  int16_t     sStartX             = 0;
+  int16_t     sStartY             = (usScreenHeight - 20);
+
+  pRGBDisplay->setTextColor   (uwMACColor , uwBGColor);
+  pRGBDisplay->setTextSize    (ucXscale, ucYscale);
+  pRGBDisplay->setCursor      (sStartX      , sStartY);
+
+  //*pRGBDisplay << szSketchName[] << ", " << szFileDate[] << ", MAC-";
+  *pRGBDisplay << szSketchName << "," << szFileDate << ",MAC-";
+  for (int wByteNum= 0; wByteNum < wNumBytesInMAC; wByteNum++){
+    //Add a leading 0 if necessary
+    if(aucMyMACAddress[wByteNum] <= 0xF){
+      *pRGBDisplay << "0";
+    }
+    *pRGBDisplay << _HEX(aucMyMACAddress[wByteNum]);
+    if (wByteNum != 5){
+      *pRGBDisplay << " ";
+    } //if (wByteNum!=5)
+  } //for(int wByteNum=0;...
+
+    Serial << "My MAC- ";
+    for (int wByteNum= 0; wByteNum < wNumBytesInMAC; wByteNum++){
+      //Add a leading 0 if necessary
+      if(aucMyMACAddress[wByteNum] <= 0xF){
+        Serial << "0";
+      }
+      Serial << _HEX(aucMyMACAddress[wByteNum]);
+      if (wByteNum != 5){
+        Serial << ":";
+      } //if (wByteNum!=5)
+    } //for(int wByteNum=0;...
+    Serial << endl;
+
+  return;
+} //ShowMyMAC
+
+
 void RGBScreen::CreateData(void){
   //Create dummy data to display, instead of actual TCouple readings
   static double   dDummyAddDegF= 0.00;
@@ -60,12 +101,22 @@ void RGBScreen::SetupDisplay(void){
 
 
 void RGBScreen::DisplayLabels(void){
-  uint8_t   ucTextXscale      = 5;
-  uint8_t   ucTextYscale      = 5;
-  uint8_t   ucPixelMargin     = 2;
+  uint8_t   ucTitleXscale       = 6;
+  uint8_t   ucTitleYscale       = 6;
+  int16_t   sTitleX             = 130;
+  int16_t   sTitleY             = 0;
 
-  pRGBDisplay->setTextColor   (uwLabelColor, BLACK);
-  pRGBDisplay->setTextSize    (ucTextXscale, ucTextYscale, ucPixelMargin);
+  uint8_t   ucLabelXscale       = 5;
+  uint8_t   ucLabelYscale       = 5;
+  //uint8_t   ucPixelMargin       = 2;
+
+  pRGBDisplay->setTextColor   (uwTitleColor , uwBGColor);
+  pRGBDisplay->setTextSize    (ucTitleXscale, ucTitleYscale);
+  pRGBDisplay->setCursor      (sTitleX      , sTitleY);
+  *pRGBDisplay << "Bug Temperatures";
+
+  pRGBDisplay->setTextColor   (uwLabelColor, uwBGColor);
+  pRGBDisplay->setTextSize    (ucLabelXscale, ucLabelYscale);
 
   for (int wLineNum= 0; wLineNum < 4; wLineNum++) {
     pRGBDisplay->setCursor(sLeftLabelX, (sLeftLabelFirstY + (wLineNum * sLineSpacing)));
@@ -87,12 +138,12 @@ void RGBScreen::DisplayData(void){
    int wRightIndex  = wLineNum + 4;
    if (stLastReadings.adTCoupleDegF[wLeftIndex] != stReadings.adTCoupleDegF[wLeftIndex]){
      pRGBDisplay->setCursor(sLeftDataX, (sLeftDataFirstY + (wLineNum * sLineSpacing)));
-     pRGBDisplay->setTextColor(BLACK, BLACK);
+     pRGBDisplay->setTextColor(uwBGColor, uwBGColor);
      sprintf(ac100ByteBuffer, "%3.0ff", stLastReadings.adTCoupleDegF[wLeftIndex]);
      *pRGBDisplay << ac100ByteBuffer;
 
      pRGBDisplay->setCursor(sLeftDataX, (sLeftDataFirstY + (wLineNum * sLineSpacing)));
-     pRGBDisplay->setTextColor(uwDataColor, BLACK);
+     pRGBDisplay->setTextColor(uwDataColor, uwBGColor);
      sprintf(ac100ByteBuffer, "%3.0ff", stReadings.adTCoupleDegF[wLeftIndex]);
      *pRGBDisplay << ac100ByteBuffer;
    }
@@ -100,12 +151,12 @@ void RGBScreen::DisplayData(void){
    if (stLastReadings.adTCoupleDegF[wRightIndex] != stReadings.adTCoupleDegF[wRightIndex]){
      //Screen.setCursor(sRightDataX, ((sLeftLabelFirstY + 2 * sLineSpacing) + (wLineNum * sLineSpacing)));
      pRGBDisplay->setCursor(sRightDataX, (sRightDataFirstY + (wLineNum * sLineSpacing)));
-     pRGBDisplay->setTextColor(BLACK, BLACK);
+     pRGBDisplay->setTextColor(uwBGColor, uwBGColor);
      sprintf(ac100ByteBuffer, "%5.0ff", stLastReadings.adTCoupleDegF[wRightIndex]);
      *pRGBDisplay << ac100ByteBuffer;
 
      pRGBDisplay->setCursor(sRightDataX, (sRightDataFirstY + (wLineNum * sLineSpacing)));
-     pRGBDisplay->setTextColor(uwDataColor, BLACK);
+     pRGBDisplay->setTextColor(uwDataColor, uwBGColor);
      sprintf(ac100ByteBuffer, "%5.0ff", stReadings.adTCoupleDegF[wRightIndex]);
      *pRGBDisplay << ac100ByteBuffer;
    }

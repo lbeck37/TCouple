@@ -1,4 +1,4 @@
-//B32_RGBDisplayLib.h, 1/24/24b
+//B32_RGBDisplayLib.h, 1/24/24c
 #pragma once
 #include <Arduino_GFX_Library.h>
 
@@ -10,26 +10,32 @@ typedef struct stMessageStruct {
   double      adTCoupleDegF[wNumTCouples];
 } stMessageStruct;
 
+extern const char           szSketchName[];
+extern const char           szFileDate[];
+
 class RGBScreen{
   public:
     RGBScreen             (uint16_t usWidthPixels= 800, uint16_t usHeightPixels= 480);
     ~RGBScreen            (void);   //destructor
+    void  ShowMyMAC       (void);
+    void  CreateData      (void);
     void  SetupDisplay    (void);
     void  DisplayLabels   (void);
-    //void  CreateData      (stMessageStruct& stReadings);
-    void  CreateData      (void);
-    //void  DisplayData     (stMessageStruct stReadings);
     void  DisplayData     (void);
     void  RandomDisplay   (void);
   private:
     stMessageStruct       stReadings;
     stMessageStruct       stLastReadings;
 
+    uint8_t         aucMyMACAddress[6];
     uint16_t        usScreenWidth;
     uint16_t        usScreenHeight;
 
+    uint16_t        uwBGColor             = BLACK;
+    uint16_t        uwMACColor            = CYAN;
+    uint16_t        uwTitleColor          = CYAN;
     uint16_t        uwLabelColor          = YELLOW;
-    uint16_t        uwDataColor           = CYAN;
+    uint16_t        uwDataColor           = GREEN;
 
     const int8_t    cDE_Pin               =  5;
     const int8_t    cVsyncPin             =  3;
@@ -40,10 +46,9 @@ class RGBScreen{
     const int8_t    acBluePin[5]          = {14, 38, 18, 17, 10};
     const int8_t    acGreenPin[6]         = {39,  0, 45, 48, 47, 21};
 
-    //const int                   wNumTCouples          =  8;
-    static const int  wMaxLabelChars      = 20;
-    char     aucLeftLabel [4][wMaxLabelChars]  = {"Cyl 1"  , "Cyl 2"   , "Cyl 3"  , "Cyl 4"};
-    char     aucRightLabel[4][wMaxLabelChars]  = {"Oil In" , "Oil Out" , "Heater" , "Air"  };
+    static const int  wMaxLabelChars            = 20;
+    char     aucLeftLabel [4][wMaxLabelChars]   = {"Cyl 1"  , "Cyl 2"   , "Cyl 3"  , "Cyl 4"};
+    char     aucRightLabel[4][wMaxLabelChars]   = {"Oil In" , "Oil Out" , "Heater" , "Air"  };
 
     const int16_t   sLineSpacing          = 70;
 

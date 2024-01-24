@@ -1,4 +1,4 @@
-//B32_RGBDisplayLib.cpp, 1/23/24d
+//B32_RGBDisplayLib.cpp, 1/24/24b
 #include <B32_RGBDisplayLib.h>
 #include <Streaming.h>
 
@@ -32,6 +32,18 @@ RGBScreen::~RGBScreen(void){
 } //RGBScreen destructor
 
 
+void RGBScreen::CreateData(void){
+  //Create dummy data to display, instead of actual TCouple readings
+  static double   dDummyAddDegF= 0.00;
+
+  dDummyAddDegF += 0.10;
+  for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
+    stReadings.adTCoupleDegF[wTCoupleNum]= (100.00 + (wTCoupleNum * 10.00) + dDummyAddDegF);
+  } //for(int wTCoupleNum=0;...
+  return;
+}   //CreateData
+
+
 void RGBScreen::SetupDisplay(void){
   Serial << BLOG << " SetupDisplay(): Call pRGBDisplay->begin()" << endl;
   if (!pRGBDisplay->begin()){
@@ -48,11 +60,11 @@ void RGBScreen::SetupDisplay(void){
 
 
 void RGBScreen::DisplayLabels(void){
-  uint8_t   ucTextXscale     = 5;
-  uint8_t   ucTextYscale     = 5;
-  uint8_t   ucPixelMargin    = 2;
+  uint8_t   ucTextXscale      = 5;
+  uint8_t   ucTextYscale      = 5;
+  uint8_t   ucPixelMargin     = 2;
 
-  pRGBDisplay->setTextColor   (YELLOW, BLACK);
+  pRGBDisplay->setTextColor   (uwLabelColor, BLACK);
   pRGBDisplay->setTextSize    (ucTextXscale, ucTextYscale, ucPixelMargin);
 
   for (int wLineNum= 0; wLineNum < 4; wLineNum++) {
@@ -64,6 +76,48 @@ void RGBScreen::DisplayLabels(void){
   } //for(int wLineNum= 0...
   return;
 } //DisplayLabels
+
+
+void RGBScreen::DisplayData(void){
+  char      ac100ByteBuffer[100];
+
+  //pRGBDisplay->setFreeFont    (&Monofonto15pt7b);
+
+ //pRGBDisplay->setTextColor(CYAN, BLACK);
+
+ for (int wLineNum= 0; wLineNum < 4; wLineNum++) {
+   int wLeftIndex   = wLineNum;
+   int wRightIndex  = wLineNum + 4;
+   if (stLastReadings.adTCoupleDegF[wLeftIndex] != stReadings.adTCoupleDegF[wLeftIndex]){
+     pRGBDisplay->setCursor(sLeftDataX, (sLeftDataFirstY + (wLineNum * sLineSpacing)));
+     pRGBDisplay->setTextColor(BLACK, BLACK);
+     sprintf(ac100ByteBuffer, "%5.0ff", stLastReadings.adTCoupleDegF[wLeftIndex]);
+     *pRGBDisplay << ac100ByteBuffer;
+
+     pRGBDisplay->setCursor(sLeftDataX, (sLeftDataFirstY + (wLineNum * sLineSpacing)));
+     pRGBDisplay->setTextColor(uwDataColor, BLACK);
+     sprintf(ac100ByteBuffer, "%5.0ff", stReadings.adTCoupleDegF[wLeftIndex]);
+     *pRGBDisplay << ac100ByteBuffer;
+   }
+
+   if (stLastReadings.adTCoupleDegF[wRightIndex] != stReadings.adTCoupleDegF[wRightIndex]){
+     //Screen.setCursor(sRightDataX, ((sLeftLabelFirstY + 2 * sLineSpacing) + (wLineNum * sLineSpacing)));
+     pRGBDisplay->setCursor(sRightDataX, (sRightDataFirstY + (wLineNum * sLineSpacing)));
+     pRGBDisplay->setTextColor(BLACK, BLACK);
+     sprintf(ac100ByteBuffer, "%5.0ff", stLastReadings.adTCoupleDegF[wRightIndex]);
+     *pRGBDisplay << ac100ByteBuffer;
+
+     pRGBDisplay->setCursor(sRightDataX, (sRightDataFirstY + (wLineNum * sLineSpacing)));
+     pRGBDisplay->setTextColor(uwDataColor, BLACK);
+     sprintf(ac100ByteBuffer, "%5.0ff", stReadings.adTCoupleDegF[wRightIndex]);
+     *pRGBDisplay << ac100ByteBuffer;
+   }
+ } //for(int wLineNum= 0...
+ for (int wTCoupleNum= 0; wTCoupleNum < wNumTCouples; wTCoupleNum++) {
+   stLastReadings.adTCoupleDegF[wTCoupleNum]= stReadings.adTCoupleDegF[wTCoupleNum];
+ }
+ return;
+}   //DisplayData
 
 
 void RGBScreen::RandomDisplay(void){

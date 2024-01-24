@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_GFX_HelloWorld.ino";
-const char szFileDate[]    = "1/23/24k";
+const char szFileDate[]    = "1/24/24b";
 
 #include <B32_RGBDisplayLib.h>
 #include <Streaming.h>
@@ -32,6 +32,8 @@ void setup(void){
 void loop(){
   //pScreen->RandomDisplay();
   pScreen->DisplayLabels();
+  pScreen->CreateData();
+  pScreen->DisplayData();
   delay(1000); //Milliseconds
   return;
 } //loop

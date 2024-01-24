@@ -28,8 +28,8 @@ class RGBScreen{
     uint16_t        usScreenWidth;
     uint16_t        usScreenHeight;
 
-    uint16_t  uwLabelColor                = YELLOW;
-    uint16_t  uwDataColor                 = CYAN;
+    uint16_t        uwLabelColor          = YELLOW;
+    uint16_t        uwDataColor           = CYAN;
 
     const int8_t    cDE_Pin               =  5;
     const int8_t    cVsyncPin             =  3;
@@ -52,7 +52,7 @@ class RGBScreen{
 
     //const int16_t   sLeftDataX            = 120;
     //const int16_t   sLeftDataX            = 180;
-    const int16_t   sLeftDataX            = 170;
+    const int16_t   sLeftDataX            = 200;
     const int16_t   sLeftDataFirstY       = sLeftLabelFirstY;
 
     //const int16_t   sRightLabelX          = 300;
@@ -61,8 +61,8 @@ class RGBScreen{
 
 
     //const int16_t   sRightDataX           = 440;
-    //const int16_t   sRightDataX           = 600;
-    const int16_t   sRightDataX           = 590;
+    const int16_t   sRightDataX           = 600;
+    //const int16_t   sRightDataX           = 590;
     const int16_t   sRightDataFirstY      = sLeftDataFirstY;
 
     //Following from https://github.com/dronecz/ESP32_S3_HMI

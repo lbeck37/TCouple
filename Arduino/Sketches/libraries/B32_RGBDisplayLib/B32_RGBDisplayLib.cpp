@@ -81,22 +81,19 @@ void RGBScreen::DisplayLabels(void){
 void RGBScreen::DisplayData(void){
   char      ac100ByteBuffer[100];
 
-  //pRGBDisplay->setFreeFont    (&Monofonto15pt7b);
-
- //pRGBDisplay->setTextColor(CYAN, BLACK);
-
+ //pRGBDisplay->setFreeFont  (&Monofonto15pt7b);
  for (int wLineNum= 0; wLineNum < 4; wLineNum++) {
    int wLeftIndex   = wLineNum;
    int wRightIndex  = wLineNum + 4;
    if (stLastReadings.adTCoupleDegF[wLeftIndex] != stReadings.adTCoupleDegF[wLeftIndex]){
      pRGBDisplay->setCursor(sLeftDataX, (sLeftDataFirstY + (wLineNum * sLineSpacing)));
      pRGBDisplay->setTextColor(BLACK, BLACK);
-     sprintf(ac100ByteBuffer, "%5.0ff", stLastReadings.adTCoupleDegF[wLeftIndex]);
+     sprintf(ac100ByteBuffer, "%3.0ff", stLastReadings.adTCoupleDegF[wLeftIndex]);
      *pRGBDisplay << ac100ByteBuffer;
 
      pRGBDisplay->setCursor(sLeftDataX, (sLeftDataFirstY + (wLineNum * sLineSpacing)));
      pRGBDisplay->setTextColor(uwDataColor, BLACK);
-     sprintf(ac100ByteBuffer, "%5.0ff", stReadings.adTCoupleDegF[wLeftIndex]);
+     sprintf(ac100ByteBuffer, "%3.0ff", stReadings.adTCoupleDegF[wLeftIndex]);
      *pRGBDisplay << ac100ByteBuffer;
    }
 

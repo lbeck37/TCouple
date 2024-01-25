@@ -86,6 +86,11 @@ void RGBScreen::CreateData(void){
 
 
 void RGBScreen::SetupDisplay(void){
+  //Initialize the last displayed values.
+  for (int wTCoupleNum=0; (wTCoupleNum < wNumTCouples); wTCoupleNum++) {
+    stLastReadings.adTCoupleDegF[wTCoupleNum]= 0.00;
+  } //for(int wTCoupleNum=0;...
+
   Serial << BLOG << " SetupDisplay(): Call pRGBDisplay->begin()" << endl;
   if (!pRGBDisplay->begin()){
     Serial << BLOG << " SetupDisplay(): pRGBDisplay->begin() failed" << endl;

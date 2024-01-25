@@ -3,7 +3,7 @@
 #pragma message("B32_TCoupleLib.h, Begin, include TFT_eSPI.h, if not already included")
 //#define TOUCH_CS
 
-#include <lvgl.h>
+//#include <lvgl.h>
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
 #include <esp_now.h>
 #include <WiFi.h>

@@ -1,4 +1,4 @@
-//B32_TCoupleLib.h, 1/26/24b, was 12/27/23b
+//B32_TCoupleLib.h, 1/26/24c, was 12/27/23b
 #pragma once
 #pragma message("B32_TCoupleLib.h, Begin, include TFT_eSPI.h, if not already included")
 //#define TOUCH_CS
@@ -16,6 +16,7 @@ enum class eBoardPinColor {
   eBlackPin,
   e3dot2NoPin,
   eDIYMall3dot5NoPin,
+  eWaveshare4dot3A,
   eLastPin
 }; //eBoardPinColor
 

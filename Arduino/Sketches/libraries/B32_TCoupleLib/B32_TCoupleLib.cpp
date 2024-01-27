@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 1/26/24b was 12/29/23b";
+//const char szFileDate[]  = 1/26/24c was 12/29/23b";
 #include <B32_TCoupleLib.h>
 #include <Free_Fonts.h>
 #include <Targa15pt7b.h>
@@ -17,11 +17,15 @@ extern enum eBoardPinColor   eReceiverBoardPinColor;
 extern char             aucLeftLabel [][wMaxLabelChars];
 extern char             aucRightLabel[][wMaxLabelChars];
 
-const uint8_t           aucBlackPinMAC[]          = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //TTGO w/Black pin headers
-const uint8_t           aucWhitePinMAC[]          = {0x84, 0xCC, 0xA8, 0x60, 0xB4, 0x2C}; //TTGO w/White pin headers
-const uint8_t           aucBluePinMAC[]           = {0x3C, 0x61, 0x05, 0x0B, 0xC5, 0x14}; //TTGO w/Blue  pin headers
+//TTGO boards with different color pin headers
+const uint8_t           aucBlackPinMAC[]          = {0xB0, 0xB2, 0x1C, 0x4F, 0x28, 0x0C}; //Black pin headers
+const uint8_t           aucWhitePinMAC[]          = {0x84, 0xCC, 0xA8, 0x60, 0xB4, 0x2C}; //White pin headers
+const uint8_t           aucBluePinMAC[]           = {0x3C, 0x61, 0x05, 0x0B, 0xC5, 0x14}; //Blue  pin headers
+
 const uint8_t           auc3dot2MAC[]             = {0xE0, 0x5A, 0x1B, 0xA2, 0x74, 0x1C}; //Walmart 3.2"
-const uint8_t           aucDIYMall3dot5MAC[]      = {0xC0, 0x49, 0xEF, 0x13, 0x73, 0xDC}; //DIYMall 3.5" w/capacitive touch
+const uint8_t           aucDIYMall3dot5MAC[]      = {0xC0, 0x49, 0xEF, 0x13, 0x73, 0xDC}; //DIYMall 3.5"
+
+const uint8_t           aucWaveShareAMAC[]        = {0x66, 0x5C, 0x4D, 0xB8, 0x87, 0x45}; //Waveshare 4.3"
 
 uint8_t                 aucReceiverMACAddress[6];
 uint8_t                 aucMyMACAddress[6];
@@ -167,6 +171,9 @@ void SelectReceiverMAC(enum eBoardPinColor ePinColor){
         break;
       case eBoardPinColor::eDIYMall3dot5NoPin:
         aucReceiverMACAddress[wMACByteNum]= aucDIYMall3dot5MAC[wMACByteNum];
+        break;
+      case eBoardPinColor::eWaveshare4dot3A:
+        aucReceiverMACAddress[wMACByteNum]= aucWaveShareAMAC[wMACByteNum];
         break;
       default: 
         Serial << "SelectReceiverMAC(): Bad switch= " << (int)ePinColor << endl;

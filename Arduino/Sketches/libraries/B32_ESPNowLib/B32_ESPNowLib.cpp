@@ -27,11 +27,11 @@ long                    lNextMsec      = 0;
 //Variable to store if sending data was successful
 String                  szSuccess;
 
-//Create a stMessageStructure to hold incoming sensor readings
-stMessageStructure      stIncomingReadings;
-stMessageStructure      stOutgoingReadings;
-stMessageStructure      stErrorReadings;
-stMessageStructure      stLastReadings;
+//Create a stMessageStruct to hold incoming sensor readings
+stMessageStruct         stIncomingReadings;
+stMessageStruct         stOutgoingReadings;
+stMessageStruct         stErrorReadings;
+stMessageStruct         stLastReadings;
 
 esp_now_peer_info_t     stPeerInfo;
 
@@ -69,8 +69,8 @@ void SetupESPNow(void){
   esp_now_register_recv_cb(OnDataRecv);
 
   //Create error readings displayed when new readings have not been received
-  for(int wReading= 0; wReading < wNumDataPoints; wReading++){
-    stErrorReadings.adTCoupleDegF[wReading]= -99.99;
+  for(int wReading= 0; wReading < wNumReadings; wReading++){
+    stErrorReadings.adReading[wReading]= -99.99;
   } //for(int wReading=0;...
   return;
 }   //SetupESPNow
@@ -85,7 +85,7 @@ void OnDataRecv(const uint8_t *pucMACAddress, const uint8_t *pucIncomingData, in
 } //OnDataRecv
 
 
-void SendDataToDisplayBoard(stMessageStructure stReadings){
+void SendDataToDisplayBoard(stMessageStruct stReadings){
    esp_err_t wResult= esp_now_send(aucReceiverMACAddress,
                                   (uint8_t *)&stReadings,
                                   sizeof(stReadings));
@@ -134,4 +134,17 @@ void ResetTimer(void){
   lNextMsec= (millis() + lAliveMsec);
   return;
 } //ResetTimer
+
+
+void PrintReadings(stMessageStruct stReadings){
+  for (int wReadingNum=0; (wReadingNum < wNumReadings); wReadingNum++) {
+    Serial << "D" << wReadingNum << "= " << stReadings.adReading[wReadingNum];
+    //PrintDataPoint(stReadings.adDataPoint[wReadingNum]);
+    if (wReadingNum < (wNumReadings - 1)){  //Put a comma after all but last
+      Serial << ", ";
+    }
+  } //for(int wReadingNum=0;wReadingNum<8;wReadingNum++)
+  Serial << endl;
+  return;
+} //PrintReadings
 //Last line.

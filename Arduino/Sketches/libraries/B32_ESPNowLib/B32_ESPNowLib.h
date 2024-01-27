@@ -1,15 +1,17 @@
-//B32_ESPNowLib.h, 1/27/24b
+//B32_ESPNowLib.h, 1/27/24d
 #pragma once
 #pragma message("B32_ESPNowLib.h, Begin, include esp_now.h")
 #include <esp_now.h>
 #include <WiFi.h>
 #include <Streaming.h>
 
-const int                 wNumDataPoints=  8;
+//const int                 wNumDataPoints=  8;
+const int                 wNumReadings=  8;
 
 //Message Structure that is used to pass data back an forth
 typedef struct stMessageStruct {
-  double      adTCoupleDegF[wNumDataPoints];
+  //double      adTCoupleDegF[wNumDataPoints];
+  double      adReading[wNumReadings];
 } stMessageStruct;
 
 enum class eBoardPinColor {
@@ -22,20 +24,15 @@ enum class eBoardPinColor {
   eLastPin
 }; //eBoardPinColor
 
-extern enum eBoardPinColor   eReceiverBoardPinColor;
-
-//Message Structure that is used to pass data back an forth
-typedef struct stMessageStructure {
-  double      adTCoupleDegF[wNumDataPoints];
-} stMessageStructure;
+extern enum eBoardPinColor  eReceiverBoardPinColor;
 
 extern uint8_t              aucMyMACAddress[];
 
 //Create stMessageStructure structures to hold readings
-extern stMessageStructure   stIncomingReadings;
-extern stMessageStructure   stOutgoingReadings;
-extern stMessageStructure   stErrorReadings;
-extern stMessageStructure   stLastReadings;
+extern stMessageStruct      stIncomingReadings;
+extern stMessageStruct      stOutgoingReadings;
+extern stMessageStruct      stErrorReadings;
+extern stMessageStruct      stLastReadings;
 
 //Define variables to store temperature readings to be sent
 extern double               dTCouple0_DegF;
@@ -55,6 +52,7 @@ void  OnDataRecv                  (const uint8_t *pucMACAddress,
                                    const uint8_t *pucIncomingData, int wNumBytes);
 void  OnDataSent                  (const uint8_t *mac_addr, esp_now_send_status_t status);
 void  HandleDataReceived          (void);
-void  SendDataToDisplayBoard      (stMessageStructure stReadings);
+void  SendDataToDisplayBoard      (stMessageStruct stReadings);
+void  PrintReadings               (stMessageStruct stReadings);
 void  ResetTimer                  (void);
 //Last line

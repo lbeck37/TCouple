@@ -1,17 +1,9 @@
-//B32_GFXLib.h, 1/27/24e
+//B32_GFXLib.h, 1/27/24f
 #pragma once
 #include <Arduino_GFX_Library.h>
 #include <B32_ESPNowLib.h>
 
 #define GFX_BL DF_GFX_BL // default backlight pin, you may replace DF_GFX_BL to actual backlight pin
-
-/*
-const int                 wNumTCouples=  8;
-//Message Structure that is used to pass data back an forth
-typedef struct stMessageStruct {
-  double      adTCoupleDegF[wNumTCouples];
-} stMessageStruct;
-*/
 
 extern const char           szSketchName[];
 extern const char           szFileDate[];
@@ -58,19 +50,14 @@ class RGBScreen{
     const int16_t   sLeftLabelX           =  0;
     const int16_t   sLeftLabelFirstY      = 100;
 
-    //const int16_t   sLeftDataX            = 120;
-    //const int16_t   sLeftDataX            = 180;
     const int16_t   sLeftDataX            = 200;
     const int16_t   sLeftDataFirstY       = sLeftLabelFirstY;
 
-    //const int16_t   sRightLabelX          = 300;
     const int16_t   sRightLabelX          = 400;
     const int16_t   sRightLabelFirstY     = sLeftLabelFirstY;
 
 
-    //const int16_t   sRightDataX           = 440;
     const int16_t   sRightDataX           = 600;
-    //const int16_t   sRightDataX           = 590;
     const int16_t   sRightDataFirstY      = sLeftDataFirstY;
 
     //Following from https://github.com/dronecz/ESP32_S3_HMI

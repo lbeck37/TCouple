@@ -1,4 +1,4 @@
-//B32_GFXLib.cpp, 1/27/24b
+//B32_GFXLib.cpp, 1/27/24d
 #include <B32_GFXLib.h>
 #include <Streaming.h>
 
@@ -21,7 +21,6 @@ RGBScreen::RGBScreen(uint16_t usWidthPixels, uint16_t usHeightPixels){
           usPclkActiveNeg, uwPreferSpeed    , bUseBigEndian    , usDEIdleHigh    , usPclkIdleHigh);
 
   pRGBDisplay = new Arduino_RGB_Display(usScreenWidth, usScreenHeight, pRGBPanel);
-
 } //RGBScreen constructor
 
 
@@ -43,7 +42,6 @@ void RGBScreen::ShowMyMAC(void){
   pRGBDisplay->setTextSize    (ucXscale, ucYscale);
   pRGBDisplay->setCursor      (sStartX      , sStartY);
 
-  //*pRGBDisplay << szSketchName[] << ", " << szFileDate[] << ", MAC-";
   *pRGBDisplay << szSketchName << "," << szFileDate << ",MAC-";
   for (int wByteNum= 0; wByteNum < wNumBytesInMAC; wByteNum++){
     //Add a leading 0 if necessary
@@ -78,18 +76,18 @@ void RGBScreen::CreateData(void){
   static double   dDummyAddDegF= 0.00;
 
   dDummyAddDegF += 0.10;
-  for (int wTCoupleNum=0; (wTCoupleNum < wNumDataPoints); wTCoupleNum++) {
-    stReadings.adTCoupleDegF[wTCoupleNum]= (100.00 + (wTCoupleNum * 10.00) + dDummyAddDegF);
-  } //for(int wTCoupleNum=0;...
+  for (int wReadingNum= 0; (wReadingNum < wNumReadings); wReadingNum++) {
+    stReadings.adReading[wReadingNum]= (100.00 + (wReadingNum * 10.00) + dDummyAddDegF);
+  } //for(int wReadingNum=0;...
   return;
 }   //CreateData
 
 
 void RGBScreen::SetupDisplay(void){
   //Initialize the last displayed values.
-  for (int wTCoupleNum=0; (wTCoupleNum < wNumDataPoints); wTCoupleNum++) {
-    stLastReadings.adTCoupleDegF[wTCoupleNum]= 0.00;
-  } //for(int wTCoupleNum=0;...
+  for (int wReadingNum=0; (wReadingNum < wNumReadings); wReadingNum++) {
+    stLastReadings.adReading[wReadingNum]= 0.00;
+  } //for(int wReadingNum=0;...
 
   Serial << BLOG << " SetupDisplay(): Call pRGBDisplay->begin()" << endl;
   if (!pRGBDisplay->begin()){
@@ -113,7 +111,6 @@ void RGBScreen::DisplayLabels(void){
 
   uint8_t   ucLabelXscale       = 5;
   uint8_t   ucLabelYscale       = 5;
-  //uint8_t   ucPixelMargin       = 2;
 
   pRGBDisplay->setTextColor   (uwTitleColor , uwBGColor);
   pRGBDisplay->setTextSize    (ucTitleXscale, ucTitleYscale);
@@ -141,33 +138,32 @@ void RGBScreen::DisplayData(void){
  for (int wLineNum= 0; wLineNum < 4; wLineNum++) {
    int wLeftIndex   = wLineNum;
    int wRightIndex  = wLineNum + 4;
-   if (stLastReadings.adTCoupleDegF[wLeftIndex] != stReadings.adTCoupleDegF[wLeftIndex]){
+   if (stLastReadings.adReading[wLeftIndex] != stReadings.adReading[wLeftIndex]){
      pRGBDisplay->setCursor(sLeftDataX, (sLeftDataFirstY + (wLineNum * sLineSpacing)));
      pRGBDisplay->setTextColor(uwBGColor, uwBGColor);
-     sprintf(ac100ByteBuffer, "%3.0ff", stLastReadings.adTCoupleDegF[wLeftIndex]);
+     sprintf(ac100ByteBuffer, "%3.0ff", stLastReadings.adReading[wLeftIndex]);
      *pRGBDisplay << ac100ByteBuffer;
 
      pRGBDisplay->setCursor(sLeftDataX, (sLeftDataFirstY + (wLineNum * sLineSpacing)));
      pRGBDisplay->setTextColor(uwDataColor, uwBGColor);
-     sprintf(ac100ByteBuffer, "%3.0ff", stReadings.adTCoupleDegF[wLeftIndex]);
+     sprintf(ac100ByteBuffer, "%3.0ff", stReadings.adReading[wLeftIndex]);
      *pRGBDisplay << ac100ByteBuffer;
    }
 
-   if (stLastReadings.adTCoupleDegF[wRightIndex] != stReadings.adTCoupleDegF[wRightIndex]){
-     //Screen.setCursor(sRightDataX, ((sLeftLabelFirstY + 2 * sLineSpacing) + (wLineNum * sLineSpacing)));
+   if (stLastReadings.adReading[wRightIndex] != stReadings.adReading[wRightIndex]){
      pRGBDisplay->setCursor(sRightDataX, (sRightDataFirstY + (wLineNum * sLineSpacing)));
      pRGBDisplay->setTextColor(uwBGColor, uwBGColor);
-     sprintf(ac100ByteBuffer, "%5.0ff", stLastReadings.adTCoupleDegF[wRightIndex]);
+     sprintf(ac100ByteBuffer, "%5.0ff", stLastReadings.adReading[wRightIndex]);
      *pRGBDisplay << ac100ByteBuffer;
 
      pRGBDisplay->setCursor(sRightDataX, (sRightDataFirstY + (wLineNum * sLineSpacing)));
      pRGBDisplay->setTextColor(uwDataColor, uwBGColor);
-     sprintf(ac100ByteBuffer, "%5.0ff", stReadings.adTCoupleDegF[wRightIndex]);
+     sprintf(ac100ByteBuffer, "%5.0ff", stReadings.adReading[wRightIndex]);
      *pRGBDisplay << ac100ByteBuffer;
    }
  } //for(int wLineNum= 0...
- for (int wTCoupleNum= 0; wTCoupleNum < wNumDataPoints; wTCoupleNum++) {
-   stLastReadings.adTCoupleDegF[wTCoupleNum]= stReadings.adTCoupleDegF[wTCoupleNum];
+ for (int wReadingNum= 0; wReadingNum < wNumReadings; wReadingNum++) {
+   stLastReadings.adReading[wReadingNum]= stReadings.adReading[wReadingNum];
  }
  return;
 }   //DisplayData
@@ -195,42 +191,4 @@ void RGBScreen::RandomDisplay(void){
   pRGBDisplay->println        ("Hello World!");
   return;
 } //RandomDisplay
-
-
-/*
-void ShowMyMAC(bool bDisplay){
-  const int   wNumBytesInMAC= 6;
-
-  if (bDisplay){
-    Screen << "My MAC- ";
-    for (int wByteNum= 0; wByteNum < wNumBytesInMAC; wByteNum++){
-      Screen << _HEX(aucMyMACAddress[wByteNum]);
-      if (wByteNum != 5){
-        Screen << " ";
-      } //if (wByteNum!=5)
-    } //for(int wByteNum=0;...
-    Screen << endl;
-  } //if(bDisplay)
-  else{
-    Serial << "My MAC- ";
-    for (int wByteNum= 0; wByteNum < wNumBytesInMAC; wByteNum++){
-      Serial << _HEX(aucMyMACAddress[wByteNum]);
-      if (wByteNum != 5){
-        Serial << ":";
-      } //if (wByteNum!=5)
-    } //for(int wByteNum=0;...
-    Serial << endl;
-  } //if(bDisplay)else
-
-  return;
-} //ShowMyMAC
-
-
-void PrintMyMAC(void){
-  bool bOnDisplay= false;
-  ShowMyMAC(bOnDisplay);
-
-  return;
-} //PrintMyMAC
-*/
 //Last line

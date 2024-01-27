@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_GFX_Display.ino";
-const char szFileDate[]    = "1/27/24F";
+const char szFileDate[]    = "1/27/24K";
 
 #include <B32_GFXLib.h>
 #include <B32_ESPNowLib.h>
@@ -34,11 +34,20 @@ void setup(void){
 
 
 void loop(){
-  //pScreen->RandomDisplay();
+/*
   pScreen->DisplayLabels();
   pScreen->CreateData();
   pScreen->DisplayData();
   delay(1000); //Milliseconds
+*/
+  //Loop doesn't do anything to get data but check the no-data timer, it's all driven by receiving data
+  if (millis() > lNextMsec){
+    Serial << "loop(): We haven't seen any data for over " <<
+              (lAliveMsec/1000) << " seconds" << endl;
+    ResetTimer();
+    //DisplayData(stErrorReadings);
+    pScreen->DisplayData();
+  }
   return;
 } //loop
 
@@ -47,6 +56,8 @@ void loop(){
 void HandleDataReceived(void) {
   ResetTimer();
 
+  pScreen->DisplayLabels();
+  pScreen->DisplayData();
   //PrintTemperatures(stIncomingReadings);
   //DisplayData(stIncomingReadings);
   return;

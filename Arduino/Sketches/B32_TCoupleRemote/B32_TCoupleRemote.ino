@@ -77,9 +77,9 @@ void loop() {
   ReadTCouples            (stOutgoingReadings);
   PrintTemperatures       (stOutgoingReadings);
   SendDataToDisplayBoard  (stOutgoingReadings);
-  //UpdateScreen            (stOutgoingReadings);
-  DisplayLabels           ();
-  DisplayData             (stOutgoingReadings);
+  UpdateTTGOScreen        (stOutgoingReadings);
+  //DisplayLabels           ();
+  //DisplayData             (stOutgoingReadings);
   //No delay except for 125mSec between each tcouple reading
   return;
 }   //loop

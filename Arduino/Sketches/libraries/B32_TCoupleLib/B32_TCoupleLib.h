@@ -1,4 +1,4 @@
-//B32_TCoupleLib.h, 12/27/23b
+//B32_TCoupleLib.h, 1/26/24b, was 12/27/23b
 #pragma once
 #pragma message("B32_TCoupleLib.h, Begin, include TFT_eSPI.h, if not already included")
 //#define TOUCH_CS
@@ -83,7 +83,7 @@ void  SendDataToDisplayBoard      (stMessageStructure stReadings);
 bool  bCheckTouch                 (uint16_t *pusXCoordParam, uint16_t *pusYCoordParam);
 void  SetupScreen                 (uint8_t ucRotation);
 void  DisplayLabels               (void);
-//void  UpdateScreen                (stMessageStructure stReadings);
+void  UpdateTTGOScreen            (stMessageStructure stReadings);
 void  DisplayData                 (stMessageStructure stReadings);
 void  ReadAmbiant                 (void);
 void  ReadTCouples                (stMessageStructure& stReadings);

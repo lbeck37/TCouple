@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 12/29/23b";
+//const char szFileDate[]  = 1/26/24b was 12/29/23b";
 #include <B32_TCoupleLib.h>
 #include <Free_Fonts.h>
 #include <Targa15pt7b.h>
@@ -242,6 +242,27 @@ void SetupScreen(uint8_t ucRotation){
   ShowMyMAC(true);
   return;
 }//SetupScreen
+
+
+void UpdateTTGOScreen(stMessageStructure stReadings){
+ Screen.fillScreen     (TFT_BLACK);
+ //Screen.setTextColor   (TFT_GREEN,TFT_BLACK);
+ Screen.setTextColor   (TFT_YELLOW,TFT_BLACK);
+ Screen.setTextFont    (3);
+ //Screen.setTextFont    (5);
+ //Screen.setTextFont    (4);
+ Screen.setTextSize    (1);
+ Screen.setCursor      (0, 0, 2);
+
+ Screen << szSketchName << " " << szFileDate << endl;
+ ShowMyMAC(true);
+
+ for (int wTCoupleNum=0; (wTCoupleNum < 5); wTCoupleNum++) {
+   Screen << "T" << wTCoupleNum << "= " << stReadings.adTCoupleDegF[wTCoupleNum] << "F, T"
+       << (wTCoupleNum + 3)  << "= " << stReadings.adTCoupleDegF[wTCoupleNum +3] << "F" << endl;
+ } //for(int wTCoupleNum=0;(wTCoupleNum<5);wTCoupleNum++)
+ return;
+}   //UpdateTTGOScreen
 
 
 void DisplayLabels(void){

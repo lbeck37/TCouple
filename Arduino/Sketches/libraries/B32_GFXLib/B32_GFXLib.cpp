@@ -131,7 +131,7 @@ void RGBScreen::DisplayLabels(void){
 } //DisplayLabels
 
 
-void RGBScreen::DisplayData(void){
+void RGBScreen::DisplayReadings(stMessageStruct stReadings){
   char      ac100ByteBuffer[100];
 
  //pRGBDisplay->setFreeFont  (&Monofonto15pt7b);
@@ -166,7 +166,7 @@ void RGBScreen::DisplayData(void){
    stLastReadings.adReading[wReadingNum]= stReadings.adReading[wReadingNum];
  }
  return;
-}   //DisplayData
+}   //DisplayReadings
 
 
 void RGBScreen::RandomDisplay(void){

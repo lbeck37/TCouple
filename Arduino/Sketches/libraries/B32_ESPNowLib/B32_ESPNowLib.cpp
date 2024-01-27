@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_ESPNowLib.cpp";
-//const char szFileDate[]  = 1/27/24b";
+//const char szFileDate[]  = 1/27/24c";
 #include <B32_ESPNowLib.h>
 
 //TTGO boards with different color pin headers
@@ -68,9 +68,12 @@ void SetupESPNow(void){
   // Register for a callback function that will be called when data is received
   esp_now_register_recv_cb(OnDataRecv);
 
-  //Create error readings displayed when new readings have not been received
+  //Initialize structs & create error readings for no new readings
   for(int wReading= 0; wReading < wNumReadings; wReading++){
-    stErrorReadings.adReading[wReading]= -99.99;
+    stIncomingReadings.adReading[wReading]=    0.00;
+    stOutgoingReadings.adReading[wReading]=    0.00;
+    stLastReadings    .adReading[wReading]=    0.00;
+    stErrorReadings   .adReading[wReading]= -999.0;
   } //for(int wReading=0;...
   return;
 }   //SetupESPNow

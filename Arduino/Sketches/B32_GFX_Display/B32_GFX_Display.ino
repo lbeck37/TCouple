@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_GFX_Display.ino";
-const char szFileDate[]    = "1/27/24K";
+const char szFileDate[]    = "1/27/24N";
 
 #include <B32_GFXLib.h>
 #include <B32_ESPNowLib.h>
@@ -9,9 +9,9 @@ const char szFileDate[]    = "1/27/24K";
   #define BLOG          millis()    //Used in logging
 #endif
 
-eBoardPinColor    eReceiverBoardPinColor    {eBoardPinColor::eWhitePin};  //Display does not send anything
+eBoardPinColor  eReceiverBoardPinColor  {eBoardPinColor::eWhitePin};  //Display sends nothing
 
-RGBScreen             *pScreen;
+RGBScreen       *pScreen;
 
 //Function prototypes for compiler
 void  setup           (void);
@@ -34,19 +34,13 @@ void setup(void){
 
 
 void loop(){
-/*
-  pScreen->DisplayLabels();
-  pScreen->CreateData();
-  pScreen->DisplayData();
-  delay(1000); //Milliseconds
-*/
   //Loop doesn't do anything to get data but check the no-data timer, it's all driven by receiving data
   if (millis() > lNextMsec){
     Serial << "loop(): We haven't seen any data for over " <<
               (lAliveMsec/1000) << " seconds" << endl;
     ResetTimer();
-    //DisplayData(stErrorReadings);
-    pScreen->DisplayData();
+    pScreen->DisplayLabels();
+    pScreen->DisplayReadings(stErrorReadings);
   }
   return;
 } //loop
@@ -57,9 +51,7 @@ void HandleDataReceived(void) {
   ResetTimer();
 
   pScreen->DisplayLabels();
-  pScreen->DisplayData();
-  //PrintTemperatures(stIncomingReadings);
-  //DisplayData(stIncomingReadings);
+  pScreen->DisplayReadings(stIncomingReadings);
   return;
 } //OnDataRecv
 //Last line.

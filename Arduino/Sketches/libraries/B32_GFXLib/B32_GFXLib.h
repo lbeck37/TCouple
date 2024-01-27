@@ -16,7 +16,8 @@ class RGBScreen{
     void  CreateData      (void);
     void  SetupDisplay    (void);
     void  DisplayLabels   (void);
-    void  DisplayData     (void);
+    //void  DisplayData     (void);
+    void  DisplayReadings (stMessageStruct stReadings);
     void  RandomDisplay   (void);
   private:
     stMessageStruct       stReadings;

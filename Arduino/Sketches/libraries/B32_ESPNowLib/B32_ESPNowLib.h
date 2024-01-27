@@ -1,16 +1,14 @@
-//B32_ESPNowLib.h, 1/27/24d
+//B32_ESPNowLib.h, 1/27/24e
 #pragma once
 #pragma message("B32_ESPNowLib.h, Begin, include esp_now.h")
 #include <esp_now.h>
 #include <WiFi.h>
 #include <Streaming.h>
 
-//const int                 wNumDataPoints=  8;
 const int                 wNumReadings=  8;
 
 //Message Structure that is used to pass data back an forth
 typedef struct stMessageStruct {
-  //double      adTCoupleDegF[wNumDataPoints];
   double      adReading[wNumReadings];
 } stMessageStruct;
 

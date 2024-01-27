@@ -1,4 +1,4 @@
-//B32_GFXLib.cpp, 1/27/24a
+//B32_GFXLib.cpp, 1/27/24b
 #include <B32_GFXLib.h>
 #include <Streaming.h>
 
@@ -195,4 +195,42 @@ void RGBScreen::RandomDisplay(void){
   pRGBDisplay->println        ("Hello World!");
   return;
 } //RandomDisplay
+
+
+/*
+void ShowMyMAC(bool bDisplay){
+  const int   wNumBytesInMAC= 6;
+
+  if (bDisplay){
+    Screen << "My MAC- ";
+    for (int wByteNum= 0; wByteNum < wNumBytesInMAC; wByteNum++){
+      Screen << _HEX(aucMyMACAddress[wByteNum]);
+      if (wByteNum != 5){
+        Screen << " ";
+      } //if (wByteNum!=5)
+    } //for(int wByteNum=0;...
+    Screen << endl;
+  } //if(bDisplay)
+  else{
+    Serial << "My MAC- ";
+    for (int wByteNum= 0; wByteNum < wNumBytesInMAC; wByteNum++){
+      Serial << _HEX(aucMyMACAddress[wByteNum]);
+      if (wByteNum != 5){
+        Serial << ":";
+      } //if (wByteNum!=5)
+    } //for(int wByteNum=0;...
+    Serial << endl;
+  } //if(bDisplay)else
+
+  return;
+} //ShowMyMAC
+
+
+void PrintMyMAC(void){
+  bool bOnDisplay= false;
+  ShowMyMAC(bOnDisplay);
+
+  return;
+} //PrintMyMAC
+*/
 //Last line

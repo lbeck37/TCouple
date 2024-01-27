@@ -1,7 +1,6 @@
 const char szSketchName[]  = "B32_GFX_Display.ino";
-const char szFileDate[]    = "1/27/24E";
+const char szFileDate[]    = "1/27/24F";
 
-//#include <B32_RGBDisplayLib.h>
 #include <B32_GFXLib.h>
 #include <B32_ESPNowLib.h>
 #include <Streaming.h>
@@ -22,10 +21,6 @@ void setup(void){
   Serial.begin(115200);
   delay(500);
   Serial << endl << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
-/*
-  Serial << BLOG << " setup(): Hello World!" << endl;
-  Serial << BLOG << " setup(): Display Hello World! in random sizes, colors and positions. (Looks crazy :)" << endl;
-*/
 
   SetupESPNow();
 
@@ -56,5 +51,4 @@ void HandleDataReceived(void) {
   //DisplayData(stIncomingReadings);
   return;
 } //OnDataRecv
-
 //Last line.

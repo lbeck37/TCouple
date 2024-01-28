@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_ESPNowLib.cpp";
-//const char szFileDate[]  = 1/27/24c";
+//const char szFileDate[]  = 1/27/24d";
 #include <B32_ESPNowLib.h>
 
 //TTGO boards with different color pin headers
@@ -73,7 +73,7 @@ void SetupESPNow(void){
     stIncomingReadings.adReading[wReading]=    0.00;
     stOutgoingReadings.adReading[wReading]=    0.00;
     stLastReadings    .adReading[wReading]=    0.00;
-    stErrorReadings   .adReading[wReading]= -999.0;
+    stErrorReadings   .adReading[wReading]= -900.00;
   } //for(int wReading=0;...
   return;
 }   //SetupESPNow

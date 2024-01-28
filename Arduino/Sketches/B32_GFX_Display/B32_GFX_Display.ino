@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_GFX_Display.ino";
-const char szFileDate[]    = "1/27/24N";
+const char szFileDate[]    = "1/27/24P";
 
 #include <B32_GFXLib.h>
 #include <B32_ESPNowLib.h>
@@ -40,8 +40,8 @@ void loop(){
               (lAliveMsec/1000) << " seconds" << endl;
     ResetTimer();
     pScreen->DisplayLabels();
-    pScreen->DisplayReadings(stErrorReadings);
-  }
+    pScreen->DisplayErrorReadings(stErrorReadings);
+  } //if (millis()>lNextMsec)
   return;
 } //loop
 

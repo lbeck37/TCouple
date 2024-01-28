@@ -169,6 +169,48 @@ void RGBScreen::DisplayReadings(stMessageStruct stReadings){
 }   //DisplayReadings
 
 
+void RGBScreen::DisplayErrorReadings(stMessageStruct stReadings){
+  char            ac100ByteBuffer[100];
+  static double   dLastErrorValue       = -900.00;
+
+ //pRGBDisplay->setFreeFont  (&Monofonto15pt7b);
+ for (int wLineNum= 0; wLineNum < 4; wLineNum++) {
+   int wLeftIndex   = wLineNum;
+   int wRightIndex  = wLineNum + 4;
+   stReadings.adReading[wLeftIndex] = dLastErrorValue -= 1.00;
+   stReadings.adReading[wRightIndex]= dLastErrorValue -= 1.00;
+
+   if (stLastReadings.adReading[wLeftIndex] != stReadings.adReading[wLeftIndex]){
+     pRGBDisplay->setCursor(sLeftDataX, (sLeftDataFirstY + (wLineNum * sLineSpacing)));
+     pRGBDisplay->setTextColor(uwBGColor, uwBGColor);
+     sprintf(ac100ByteBuffer, "%3.0ff", stLastReadings.adReading[wLeftIndex]);
+     *pRGBDisplay << ac100ByteBuffer;
+
+     pRGBDisplay->setCursor(sLeftDataX, (sLeftDataFirstY + (wLineNum * sLineSpacing)));
+     pRGBDisplay->setTextColor(uwDataColor, uwBGColor);
+     sprintf(ac100ByteBuffer, "%3.0ff", stReadings.adReading[wLeftIndex]);
+     *pRGBDisplay << ac100ByteBuffer;
+   }
+
+   if (stLastReadings.adReading[wRightIndex] != stReadings.adReading[wRightIndex]){
+     pRGBDisplay->setCursor(sRightDataX, (sRightDataFirstY + (wLineNum * sLineSpacing)));
+     pRGBDisplay->setTextColor(uwBGColor, uwBGColor);
+     sprintf(ac100ByteBuffer, "%5.0ff", stLastReadings.adReading[wRightIndex]);
+     *pRGBDisplay << ac100ByteBuffer;
+
+     pRGBDisplay->setCursor(sRightDataX, (sRightDataFirstY + (wLineNum * sLineSpacing)));
+     pRGBDisplay->setTextColor(uwDataColor, uwBGColor);
+     sprintf(ac100ByteBuffer, "%5.0ff", stReadings.adReading[wRightIndex]);
+     *pRGBDisplay << ac100ByteBuffer;
+   }
+ } //for(int wLineNum= 0...
+ for (int wReadingNum= 0; wReadingNum < wNumReadings; wReadingNum++) {
+   stLastReadings.adReading[wReadingNum]= stReadings.adReading[wReadingNum];
+ }
+ return;
+}   //DisplayErrorReadings
+
+
 void RGBScreen::RandomDisplay(void){
   uint16_t  usDisplayWidth   = random(pRGBDisplay->width());
   uint16_t  usDisplayHeight  = random(pRGBDisplay->height());

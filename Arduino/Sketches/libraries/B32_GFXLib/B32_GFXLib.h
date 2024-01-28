@@ -1,4 +1,4 @@
-//B32_GFXLib.h, 1/27/24f
+//B32_GFXLib.h, 1/27/24g
 #pragma once
 #include <Arduino_GFX_Library.h>
 #include <B32_ESPNowLib.h>
@@ -10,15 +10,16 @@ extern const char           szFileDate[];
 
 class RGBScreen{
   public:
-    RGBScreen             (uint16_t usWidthPixels= 800, uint16_t usHeightPixels= 480);
-    ~RGBScreen            (void);   //destructor
-    void  ShowMyMAC       (void);
-    void  CreateData      (void);
-    void  SetupDisplay    (void);
-    void  DisplayLabels   (void);
-    //void  DisplayData     (void);
-    void  DisplayReadings (stMessageStruct stReadings);
-    void  RandomDisplay   (void);
+    RGBScreen                   (uint16_t usWidthPixels= 800, uint16_t usHeightPixels= 480);
+    ~RGBScreen                  (void);   //destructor
+    void  ShowMyMAC             (void);
+    void  CreateData            (void);
+    void  SetupDisplay          (void);
+    void  DisplayLabels         (void);
+    //void  DisplayData     (void); DisplayErrorReadings
+    void  DisplayReadings       (stMessageStruct stReadings);
+    void  DisplayErrorReadings  (stMessageStruct stReadings);
+    void  RandomDisplay         (void);
   private:
     stMessageStruct       stReadings;
     stMessageStruct       stLastReadings;

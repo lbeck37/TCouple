@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 1/26/24c was 12/29/23b";
+//const char szFileDate[]  = 1/27/24b was 12/29/23b";
 #include <B32_TCoupleLib.h>
 #include <Free_Fonts.h>
 #include <Targa15pt7b.h>
@@ -25,7 +25,7 @@ const uint8_t           aucBluePinMAC[]           = {0x3C, 0x61, 0x05, 0x0B, 0xC
 const uint8_t           auc3dot2MAC[]             = {0xE0, 0x5A, 0x1B, 0xA2, 0x74, 0x1C}; //Walmart 3.2"
 const uint8_t           aucDIYMall3dot5MAC[]      = {0xC0, 0x49, 0xEF, 0x13, 0x73, 0xDC}; //DIYMall 3.5"
 
-const uint8_t           aucWaveShareAMAC[]        = {0x66, 0x5C, 0x4D, 0xB8, 0x87, 0x45}; //Waveshare 4.3"
+const uint8_t           aucWaveShareAMAC[]        = {0x34, 0x85, 0x18, 0x76, 0xCF, 0x9C}; //Waveshare 4.3"
 
 uint8_t                 aucReceiverMACAddress[6];
 uint8_t                 aucMyMACAddress[6];

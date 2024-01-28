@@ -1,4 +1,4 @@
-//B32_GFXLib.h, 1/27/24g
+//B32_GFXLib.h, 1/27/24h
 #pragma once
 #include <Arduino_GFX_Library.h>
 #include <B32_ESPNowLib.h>
@@ -16,7 +16,6 @@ class RGBScreen{
     void  CreateData            (void);
     void  SetupDisplay          (void);
     void  DisplayLabels         (void);
-    //void  DisplayData     (void); DisplayErrorReadings
     void  DisplayReadings       (stMessageStruct stReadings);
     void  DisplayErrorReadings  (stMessageStruct stReadings);
     void  RandomDisplay         (void);

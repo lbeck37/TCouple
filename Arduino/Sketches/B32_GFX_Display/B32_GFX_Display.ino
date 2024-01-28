@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_GFX_Display.ino";
-const char szFileDate[]    = "1/27/24P";
+const char szFileDate[]    = "1/27/24Q";
 
 #include <B32_GFXLib.h>
 #include <B32_ESPNowLib.h>

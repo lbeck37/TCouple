@@ -1,4 +1,4 @@
-//B32_GFXLib.cpp, 1/27/24d
+//B32_GFXLib.cpp, 1/27/24e
 #include <B32_GFXLib.h>
 #include <Streaming.h>
 
@@ -37,6 +37,9 @@ void RGBScreen::ShowMyMAC(void){
   uint8_t     ucYscale            = 2;
   int16_t     sStartX             = 0;
   int16_t     sStartY             = (usScreenHeight - 20);
+  uint8_t     aucMyMACAddress[6];
+
+  WiFi.macAddress(aucMyMACAddress);
 
   pRGBDisplay->setTextColor   (uwMACColor , uwBGColor);
   pRGBDisplay->setTextSize    (ucXscale, ucYscale);
@@ -54,7 +57,7 @@ void RGBScreen::ShowMyMAC(void){
     } //if (wByteNum!=5)
   } //for(int wByteNum=0;...
 
-    Serial << "My MAC- ";
+    Serial << BLOG << "ShowMyMAC(): My MAC- ";
     for (int wByteNum= 0; wByteNum < wNumBytesInMAC; wByteNum++){
       //Add a leading 0 if necessary
       if(aucMyMACAddress[wByteNum] <= 0xF){

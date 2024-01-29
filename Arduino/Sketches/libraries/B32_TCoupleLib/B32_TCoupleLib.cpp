@@ -1,5 +1,5 @@
 //const char szFileName[]  = "B32_TCoupleLib.cpp";
-//const char szFileDate[]  = 1/27/24b was 12/29/23b";
+//const char szFileDate[]  = 1/29/24c was 12/29/23b";
 #include <B32_TCoupleLib.h>
 #include <Free_Fonts.h>
 #include <Targa15pt7b.h>
@@ -9,6 +9,10 @@
 //#include <ObliviousFont15pt7b.h>
 #include <string>
 #include <stdio.h>
+
+#ifndef BLOG
+  #define BLOG          millis()    //Used in logging
+#endif
 
 #define DO_TOUCHSCREEN      false
 
@@ -38,7 +42,8 @@ const uint8_t           TCouple_MISO              = 32;
 const uint8_t           TCouple_CS                = 17;
 const uint8_t           TCouple_SCK               = 33;
 
-const bool              bNoTCouples               = true;
+//const bool              bNoTCouples               = true;
+const bool              bNoTCouples               = false;
 double                  dJunctionDegF;
 double                  dDummyJunctionDegF        = 60.00;   //3 ED: L, USB LR/
 double                  dDummyAddDegF             =  0.00;
@@ -426,11 +431,16 @@ void PrintTemperature(double dDegF) {
 
 
 void SetupPins(void){
+  Serial << BLOG << "SetupPins(): TCoupleSelect T0, T1, T2 OUTPUT Pins= " << TCoupleSelect0 << ", "
+                 << TCoupleSelect1 << ", " << TCoupleSelect2 << endl;
   pinMode(TCoupleSelect0, OUTPUT);
   pinMode(TCoupleSelect1, OUTPUT);
   pinMode(TCoupleSelect2, OUTPUT);
 
+  Serial << BLOG << "SetupPins(): TCouple MISO (DO on 8x board) INPUT Pin= " << TCouple_MISO << endl;
   pinMode(TCouple_MISO,   INPUT);
+
+  Serial << BLOG << "SetupPins(): TCouple CS, SCK OUTPUT Pins=" << TCouple_CS << ", " << TCouple_SCK << endl;
   pinMode(TCouple_CS,     OUTPUT);
   pinMode(TCouple_SCK,    OUTPUT);
 

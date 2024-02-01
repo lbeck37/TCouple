@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_TCoupleRemote.ino";
-const char szFileDate[]    = "1/26/24E, was 12/22/23D";
+const char szFileDate[]    = "1/29/24B, was 12/22/23D";
 /* MAX31855 library example sketch
  This sample code is designed to be used on the MAX31855x8 breakout board.
  The board has a single MAX31855 IC on it, and uses a multiplexer

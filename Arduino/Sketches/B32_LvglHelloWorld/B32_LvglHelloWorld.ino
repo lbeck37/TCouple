@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_LvglHelloWorld.ino";
-const char szFileDate[]    = "2/2/24B";
+const char szFileDate[]    = "2/2/24C";
 //Use Arduino_GFX as driver for LVGL calls to write to Waveshare 800x480, 4.3" 16-bit 5-6-5 RGB
 
 #include <B32_LVGL_Lib.h>
@@ -33,6 +33,9 @@ void setup(){
 
   Serial << BLOG << " setup(): Sketch: Call DisplayLabel" << endl;
   DisplayLabel();
+
+  Serial << BLOG << " setup(): Call DisplayMeter" << endl;
+  DisplayMeter();
 
   return;
 } //setup

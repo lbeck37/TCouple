@@ -3,7 +3,8 @@ const char szFileDate[]    = "2/1/24C";
 //Use Arduino_GFX as driver for LVGL calls to write to Waveshare 800x480, 4.3" 16-bit 5-6-5 RGB
 
 #include <lvgl.h>
-#include <Arduino_GFX_Library.h>
+#include <B32_LVGL_Lib.h>
+//#include <Arduino_GFX_Library.h>
 //#include <B32_GFXLib.h>
 #include <Streaming.h>
 
@@ -24,9 +25,12 @@ static lv_color_t           *disp_draw_buf;
 static lv_disp_drv_t        disp_drv;
 
 //RGBScreen                   *pScreen;
+/*
 Arduino_ESP32RGBPanel       *pRGBPanel;
 Arduino_RGB_Display         *pDisplay;
+*/
 
+/*
 const int8_t    cDE_Pin               =  5;
 const int8_t    cVsyncPin             =  3;
 const int8_t    cHsyncPin             = 46;
@@ -58,6 +62,7 @@ const bool      bUseBigEndian     = false;
 
 const uint16_t  usDEIdleHigh      = 0;
 const uint16_t  usPclkIdleHigh    = 0;
+*/
 
 //Protos
 void  SetupDisplayStuff     (void);
@@ -111,7 +116,7 @@ void setup()
   digitalWrite(GFX_BL, HIGH);
 #endif
 
-  SetupDisplayStuff();
+  SetupDisplay();
 
   lv_init();
 
@@ -168,6 +173,7 @@ void loop()
 } //loop
 
 
+/*
 void SetupDisplayStuff(void){
   pRGBPanel = new Arduino_ESP32RGBPanel(
           cDE_Pin      , cVsyncPin    , cHsyncPin    , cPclkPin,
@@ -192,4 +198,5 @@ void SetupDisplayStuff(void){
   delay(1000);
   return;
 } //SetupDisplayStuff
+*/
 //Last line.

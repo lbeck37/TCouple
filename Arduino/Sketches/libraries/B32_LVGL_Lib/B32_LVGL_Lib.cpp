@@ -1,4 +1,4 @@
-//B32_LVGL_Lib.cpp, 2/1/24b
+//B32_LVGL_Lib.cpp, 2/1/24c
 #include <B32_LVGL_Lib.h>
 #include <Streaming.h>
 
@@ -131,10 +131,12 @@ void SetupLVGL(void){
     indev_drv.type          = LV_INDEV_TYPE_POINTER;
     lv_indev_drv_register   (&indev_drv);
 
-    /* Create simple label */
+/*
+     Create simple label
     lv_obj_t *label         = lv_label_create(lv_scr_act());
     lv_label_set_text(label, "Hello Arduino! (V" GFX_STR(LVGL_VERSION_MAJOR) "." GFX_STR(LVGL_VERSION_MINOR) "." GFX_STR(LVGL_VERSION_PATCH) ")");
     lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
+*/
 
     Serial.println("Setup done");
   } //if(!disp_draw_buf)else

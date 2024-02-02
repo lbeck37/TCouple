@@ -1,8 +1,8 @@
 const char szSketchName[]  = "B32_LvglHelloWorld.ino";
-const char szFileDate[]    = "2/1/24C";
+const char szFileDate[]    = "2/1/24D";
 //Use Arduino_GFX as driver for LVGL calls to write to Waveshare 800x480, 4.3" 16-bit 5-6-5 RGB
 
-#include <lvgl.h>
+//#include <lvgl.h>
 #include <B32_LVGL_Lib.h>
 //#include <Arduino_GFX_Library.h>
 //#include <B32_GFXLib.h>
@@ -18,11 +18,13 @@ const char szFileDate[]    = "2/1/24C";
 static uint32_t             screenWidth     = 800;
 static uint32_t             screenHeight    = 480;
 */
+/*
 static uint32_t             screenWidth;
 static uint32_t             screenHeight;
 static lv_disp_draw_buf_t   draw_buf;
 static lv_color_t           *disp_draw_buf;
 static lv_disp_drv_t        disp_drv;
+*/
 
 //RGBScreen                   *pScreen;
 /*
@@ -65,6 +67,7 @@ const uint16_t  usPclkIdleHigh    = 0;
 */
 
 //Protos
+/*
 void  SetupDisplayStuff     (void);
 void  my_disp_flush         (lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p);
 
@@ -82,6 +85,7 @@ void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color
 
   lv_disp_flush_ready(disp);
 }
+*/
 
 void setup()
 {
@@ -116,8 +120,13 @@ void setup()
   digitalWrite(GFX_BL, HIGH);
 #endif
 
+  Serial << BLOG << " setup(): Sketch: Call SetupDisplay" << endl;
   SetupDisplay();
 
+  Serial << BLOG << " setup(): Sketch: Call SetupLVGL" << endl;
+  SetupLVGL();
+
+/*
   lv_init();
 
   screenWidth = pDisplay->width();
@@ -135,7 +144,7 @@ void setup()
   {
     lv_disp_draw_buf_init(&draw_buf, disp_draw_buf, NULL, screenWidth * 40);
 
-    /* Initialize the display */
+     Initialize the display
     lv_disp_drv_init      (&disp_drv);
 
     disp_drv.hor_res      = screenWidth;
@@ -144,20 +153,21 @@ void setup()
     disp_drv.draw_buf     = &draw_buf;
     lv_disp_drv_register  (&disp_drv);
 
-    /* Initialize the (dummy) input device driver */
+     Initialize the (dummy) input device driver
     static lv_indev_drv_t   indev_drv;
 
     lv_indev_drv_init       (&indev_drv);
     indev_drv.type          = LV_INDEV_TYPE_POINTER;
     lv_indev_drv_register   (&indev_drv);
 
-    /* Create simple label */
+     Create simple label
     lv_obj_t *label         = lv_label_create(lv_scr_act());
     lv_label_set_text(label, "Hello Arduino! (V" GFX_STR(LVGL_VERSION_MAJOR) "." GFX_STR(LVGL_VERSION_MINOR) "." GFX_STR(LVGL_VERSION_PATCH) ")");
     lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
 
     Serial.println("Setup done");
   } //if(!disp_draw_buf)else
+*/
   return;
 } //setup
 

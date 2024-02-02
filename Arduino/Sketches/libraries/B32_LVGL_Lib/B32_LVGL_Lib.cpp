@@ -1,4 +1,4 @@
-//B32_LVGL_Lib.cpp, 2/1/24a
+//B32_LVGL_Lib.cpp, 2/1/24b
 #include <B32_LVGL_Lib.h>
 #include <Streaming.h>
 
@@ -41,6 +41,30 @@ const bool      bUseBigEndian     = false;
 const uint16_t  usDEIdleHigh      = 0;
 const uint16_t  usPclkIdleHigh    = 0;
 
+uint32_t             screenWidth;
+uint32_t             screenHeight;
+lv_disp_draw_buf_t   draw_buf;
+lv_color_t           *disp_draw_buf;
+lv_disp_drv_t        disp_drv;
+
+//Protos for functions only used in this file
+void  my_disp_flush   (lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p);
+
+
+void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p)
+{
+  uint32_t w = (area->x2 - area->x1 + 1);
+  uint32_t h = (area->y2 - area->y1 + 1);
+
+#if (LV_COLOR_16_SWAP != 0)
+  pDisplay->draw16bitBeRGBBitmap(area->x1, area->y1, (uint16_t *)&color_p->full, w, h);
+#else
+  pDisplay->draw16bitRGBBitmap(area->x1, area->y1, (uint16_t *)&color_p->full, w, h);
+#endif
+
+  lv_disp_flush_ready(disp);
+  return;
+} //my_disp_flush
 
 void SetupDisplay(void){
   uint16_t    usScreenWidth      = 800;
@@ -68,8 +92,52 @@ void SetupDisplay(void){
     pDisplay->fillScreen(BLACK);
   }
 */
-
   delay(500);
   return;
 } //SetupDisplay
+
+
+void SetupLVGL(void){
+  lv_init();
+
+  screenWidth = pDisplay->width();
+  screenHeight = pDisplay->height();
+#ifdef ESP32
+  disp_draw_buf = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * screenWidth * 40, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
+#else
+  disp_draw_buf = (lv_color_t *)malloc(sizeof(lv_color_t) * screenWidth * 40);
+#endif
+  if (!disp_draw_buf)
+  {
+    Serial.println("LVGL disp_draw_buf allocate failed!");
+  } //if(!disp_draw_buf)
+  else
+  {
+    lv_disp_draw_buf_init(&draw_buf, disp_draw_buf, NULL, screenWidth * 40);
+
+    /* Initialize the display */
+    lv_disp_drv_init      (&disp_drv);
+
+    disp_drv.hor_res      = screenWidth;
+    disp_drv.ver_res      = screenHeight;
+    disp_drv.flush_cb     = my_disp_flush;
+    disp_drv.draw_buf     = &draw_buf;
+    lv_disp_drv_register  (&disp_drv);
+
+    /* Initialize the (dummy) input device driver */
+    static lv_indev_drv_t   indev_drv;
+
+    lv_indev_drv_init       (&indev_drv);
+    indev_drv.type          = LV_INDEV_TYPE_POINTER;
+    lv_indev_drv_register   (&indev_drv);
+
+    /* Create simple label */
+    lv_obj_t *label         = lv_label_create(lv_scr_act());
+    lv_label_set_text(label, "Hello Arduino! (V" GFX_STR(LVGL_VERSION_MAJOR) "." GFX_STR(LVGL_VERSION_MINOR) "." GFX_STR(LVGL_VERSION_PATCH) ")");
+    lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
+
+    Serial.println("Setup done");
+  } //if(!disp_draw_buf)else
+  return;
+} //SetupLVGL
 //Last line

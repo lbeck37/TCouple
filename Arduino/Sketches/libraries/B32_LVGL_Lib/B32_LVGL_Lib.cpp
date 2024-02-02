@@ -66,6 +66,7 @@ void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color
   return;
 } //my_disp_flush
 
+
 void SetupDisplay(void){
   uint16_t    usScreenWidth      = 800;
   uint16_t    usScreenHeight     = 480;
@@ -93,6 +94,7 @@ void SetupDisplay(void){
   }
 */
   delay(500);
+  Serial << BLOG << " SetupDisplay(): Done." << endl;
   return;
 } //SetupDisplay
 
@@ -131,14 +133,7 @@ void SetupLVGL(void){
     indev_drv.type          = LV_INDEV_TYPE_POINTER;
     lv_indev_drv_register   (&indev_drv);
 
-/*
-     Create simple label
-    lv_obj_t *label         = lv_label_create(lv_scr_act());
-    lv_label_set_text(label, "Hello Arduino! (V" GFX_STR(LVGL_VERSION_MAJOR) "." GFX_STR(LVGL_VERSION_MINOR) "." GFX_STR(LVGL_VERSION_PATCH) ")");
-    lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
-*/
-
-    Serial.println("Setup done");
+    Serial << BLOG << " SetupLVGL(): Done." << endl;
   } //if(!disp_draw_buf)else
   return;
 } //SetupLVGL

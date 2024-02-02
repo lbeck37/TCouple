@@ -1,18 +1,13 @@
-//B32_GFXLib.h, 2/1/24b
+//B32_GFXLib.h, 2/1/24c
 #pragma once
 #include <Arduino_GFX_Library.h>
-//#include <B32_ESPNowLib.h>
-//#include <B32_TCoupleLib.h>
+#include <B32_ESPNowLib.h>
+#include <B32_TCoupleLib.h>
 
 #define GFX_BL DF_GFX_BL // default backlight pin, you may replace DF_GFX_BL to actual backlight pin
 
 extern const char           szSketchName[];
 extern const char           szFileDate[];
-
-//Message Structure that is used to pass data back an forth
-typedef struct stMessageStruct {
-  double      adTCoupleDegF[8];
-} stMessageStruct;
 
 class RGBScreen{
   public:

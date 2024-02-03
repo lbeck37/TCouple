@@ -150,21 +150,30 @@ void Display8Meters(void){
   //Arranged in 2 rows of 4
   lv_align_t    ucAlignment     = LV_ALIGN_TOP_LEFT;
   lv_coord_t    sScreenWidth    = pDisplay->width();
-  //lv_coord_t    sSpacingX       = sScreenWidth / 4;
   lv_coord_t    sSpacingX       = (sScreenWidth / 4);
-  //lv_coord_t    sMeterSize      = 150;
   lv_coord_t    sMeterSize      = sSpacingX;
+  lv_coord_t    sSpacingY       = sPercent(sMeterSize, 120);
   lv_coord_t    sOffsetX        =  0;
   lv_coord_t    sOffsetY        =  0;
 
-  Serial << BLOG << " Display8Meters(): Call DisplayMeter 4 times" << endl;
-  for (int wMeterCount= 0; wMeterCount < 4; wMeterCount++){
-    sOffsetX= (wMeterCount * sSpacingX);
-    DisplayMeter(sMeterSize, ucAlignment, sOffsetX, sOffsetY);
-  } //for
+  Serial << BLOG << " Display8Meters(): Call DisplayMeter 8 times" << endl;
+  for (int wRowNum= 0; wRowNum < 2; wRowNum++){
+    sOffsetY= (wRowNum * sSpacingY);   //Work in percentage of meter size
+    for (int wMeterCount= 0; wMeterCount < 4; wMeterCount++){
+      sOffsetX= (wMeterCount * sSpacingX);
+      DisplayMeter(sMeterSize, ucAlignment, sOffsetX, sOffsetY);
+    } //for(int wMeterCount=0;...
+  } //for(int wRowNum=0;...
 
   return;
 } //Display8Meters
+
+
+lv_coord_t sPercent(lv_coord_t sNumber, int16_t sPercent){
+  lv_coord_t sReturn;
+
+  return((sNumber * sPercent) / 100);
+  } //sPercent
 
 
 void DisplayMeter(lv_coord_t sSize, lv_align_t ucAlignment, lv_coord_t sOffsetX, lv_coord_t sOffsetY){

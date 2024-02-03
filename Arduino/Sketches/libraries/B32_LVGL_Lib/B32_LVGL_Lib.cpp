@@ -1,5 +1,6 @@
 //B32_LVGL_Lib.cpp, 2/2/24c
 #include <B32_LVGL_Lib.h>
+#include <WiFi.h>
 #include <Streaming.h>
 
 #ifndef BLOG
@@ -140,25 +141,43 @@ void SetupLVGL(void){
 } //SetupLVGL
 
 
+void DisplayLabel(const char* szText){
+  lv_obj_t    *pParent  = lv_scr_act        ();
+  lv_obj_t    *pLabel   = lv_label_create   (pParent);
+
+  lv_label_set_text(pLabel, szText);
+
+  //lv_obj_align(pLabel, LV_ALIGN_CENTER, 0, 0);
+  lv_obj_align(pLabel, LV_ALIGN_BOTTOM_LEFT, 0, 0);
+
+  return;
+} //DisplayLabel
+
+
 void set_value(void *pIndicator, int wValue){
   lv_meter_set_indicator_value(pMeter, (lv_meter_indicator_t *)pIndicator, wValue);
   return;
 } //set_value
 
 
-void Display8Meters(void){
+void Display8Meters(int wPercentScale){
   //Arranged in 2 rows of 4
-  lv_align_t    ucAlignment     = LV_ALIGN_TOP_LEFT;
-  lv_coord_t    sScreenWidth    = pDisplay->width();
-  lv_coord_t    sSpacingX       = (sScreenWidth / 4);
-  lv_coord_t    sMeterSize      = sSpacingX;
-  lv_coord_t    sSpacingY       = sPercent(sMeterSize, 120);
-  lv_coord_t    sOffsetX        =  0;
-  lv_coord_t    sOffsetY        =  0;
+  lv_align_t    ucAlignment         = LV_ALIGN_TOP_LEFT;
+  lv_coord_t    sScreenWidth        = pDisplay->width();
+  lv_coord_t    sSpacingX           = (sScreenWidth / 4);
+  lv_coord_t    sMeterSize          = sSpacingX;
+  lv_coord_t    sSpacingY           = sPercent(sMeterSize, 120);
+  lv_coord_t    sFirstRowOffsetY    = sPercent(sMeterSize,  10);
+  lv_coord_t    sOffsetX            =  0;
+  lv_coord_t    sOffsetY            =  0;
+
+  sMeterSize        = sPercent(sMeterSize       , wPercentScale);
+  sSpacingY         = sPercent(sSpacingY        , wPercentScale);
+  sFirstRowOffsetY  = sPercent(sFirstRowOffsetY , wPercentScale);
 
   Serial << BLOG << " Display8Meters(): Call DisplayMeter 8 times" << endl;
   for (int wRowNum= 0; wRowNum < 2; wRowNum++){
-    sOffsetY= (wRowNum * sSpacingY);   //Work in percentage of meter size
+    sOffsetY= (sFirstRowOffsetY + (wRowNum * sSpacingY));   //Work in percentage of meter size
     for (int wMeterCount= 0; wMeterCount < 4; wMeterCount++){
       sOffsetX= (wMeterCount * sSpacingX);
       DisplayMeter(sMeterSize, ucAlignment, sOffsetX, sOffsetY);
@@ -167,13 +186,6 @@ void Display8Meters(void){
 
   return;
 } //Display8Meters
-
-
-lv_coord_t sPercent(lv_coord_t sNumber, int16_t sPercent){
-  lv_coord_t sReturn;
-
-  return((sNumber * sPercent) / 100);
-  } //sPercent
 
 
 void DisplayMeter(lv_coord_t sSize, lv_align_t ucAlignment, lv_coord_t sOffsetX, lv_coord_t sOffsetY){
@@ -231,4 +243,21 @@ void DisplayMeter(lv_coord_t sSize, lv_align_t ucAlignment, lv_coord_t sOffsetX,
 
   return;
 } //DisplayMeter
+
+
+char* szGetMyMAC(char* szBuffer){
+  uint8_t     aucMyMACAddress[6];
+
+  WiFi.macAddress(aucMyMACAddress);
+
+  sprintf(szBuffer, "%x %x %x %x %x %x", aucMyMACAddress[0], aucMyMACAddress[1], aucMyMACAddress[2],
+                                         aucMyMACAddress[3], aucMyMACAddress[4], aucMyMACAddress[5]);
+  return szBuffer;
+} //szGetMyMAC
+
+lv_coord_t sPercent(lv_coord_t sNumber, int16_t sPercent){
+  lv_coord_t sReturn;
+
+  return((sNumber * sPercent) / 100);
+  } //sPercent
 //Last line

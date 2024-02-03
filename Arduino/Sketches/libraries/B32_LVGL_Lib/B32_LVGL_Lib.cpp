@@ -1,4 +1,4 @@
-//B32_LVGL_Lib.cpp, 2/2/24b
+//B32_LVGL_Lib.cpp, 2/2/24c
 #include <B32_LVGL_Lib.h>
 #include <Streaming.h>
 
@@ -146,14 +146,36 @@ void set_value(void *pIndicator, int wValue){
 } //set_value
 
 
-void DisplayMeter(void){
+void Display8Meters(void){
+  //Arranged in 2 rows of 4
+  lv_align_t    ucAlignment     = LV_ALIGN_TOP_LEFT;
+  lv_coord_t    sScreenWidth    = pDisplay->width();
+  //lv_coord_t    sSpacingX       = sScreenWidth / 4;
+  lv_coord_t    sSpacingX       = (sScreenWidth / 4);
+  //lv_coord_t    sMeterSize      = 150;
+  lv_coord_t    sMeterSize      = sSpacingX;
+  lv_coord_t    sOffsetX        =  0;
+  lv_coord_t    sOffsetY        =  0;
+
+  Serial << BLOG << " Display8Meters(): Call DisplayMeter 4 times" << endl;
+  for (int wMeterCount= 0; wMeterCount < 4; wMeterCount++){
+    sOffsetX= (wMeterCount * sSpacingX);
+    DisplayMeter(sMeterSize, ucAlignment, sOffsetX, sOffsetY);
+  } //for
+
+  return;
+} //Display8Meters
+
+
+void DisplayMeter(lv_coord_t sSize, lv_align_t ucAlignment, lv_coord_t sOffsetX, lv_coord_t sOffsetY){
   pMeter= lv_meter_create(lv_scr_act());
 
-  lv_obj_center                       (pMeter);
-  lv_obj_set_size                     (pMeter, 200, 200);
+  //lv_obj_center                       (pMeter);
+  lv_obj_align                        (pMeter, ucAlignment, sOffsetX, sOffsetY);
+  lv_obj_set_size                     (pMeter, sSize, sSize);
 
   /*Add a scale first*/
-  lv_meter_scale_t    *pScale= lv_meter_add_scale(pMeter);
+  lv_meter_scale_t    *pScale=        lv_meter_add_scale(pMeter);
 
   lv_meter_set_scale_ticks            (pMeter, pScale, 41, 2, 10, lv_palette_main(LV_PALETTE_GREY));
   lv_meter_set_scale_major_ticks      (pMeter, pScale, 8, 4, 15, lv_color_black(), 10);

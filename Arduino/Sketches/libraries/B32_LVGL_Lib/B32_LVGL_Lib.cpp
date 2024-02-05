@@ -1,4 +1,4 @@
-//B32_LVGL_Lib.cpp, 2/2/24c
+//B32_LVGL_Lib.cpp, 2/5/24c
 #include <B32_LVGL_Lib.h>
 #include <WiFi.h>
 #include <Streaming.h>
@@ -43,30 +43,19 @@ const bool      bUseBigEndian     = false;
 const uint16_t  usDEIdleHigh      = 0;
 const uint16_t  usPclkIdleHigh    = 0;
 
+/*
 uint32_t             screenWidth;
 uint32_t             screenHeight;
-lv_disp_draw_buf_t   draw_buf;
-lv_color_t           *disp_draw_buf;
-lv_disp_drv_t        disp_drv;
+*/
+lv_coord_t              sScreenWidth;
+lv_coord_t              sScreenHeight;
+
+lv_disp_draw_buf_t      draw_buf;
+lv_color_t              *disp_draw_buf;
+lv_disp_drv_t            disp_drv;
 
 //Protos for functions only used in this file
-void  my_disp_flush   (lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p);
-
-
-void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p)
-{
-  uint32_t w = (area->x2 - area->x1 + 1);
-  uint32_t h = (area->y2 - area->y1 + 1);
-
-#if (LV_COLOR_16_SWAP != 0)
-  pDisplay->draw16bitBeRGBBitmap(area->x1, area->y1, (uint16_t *)&color_p->full, w, h);
-#else
-  pDisplay->draw16bitRGBBitmap(area->x1, area->y1, (uint16_t *)&color_p->full, w, h);
-#endif
-
-  lv_disp_flush_ready(disp);
-  return;
-} //my_disp_flush
+void  FlushDataToDisplay   (lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p);
 
 
 void SetupDisplay(void){
@@ -104,12 +93,12 @@ void SetupDisplay(void){
 void SetupLVGL(void){
   lv_init();
 
-  screenWidth = pDisplay->width();
-  screenHeight = pDisplay->height();
+  sScreenWidth  = pDisplay->width();
+  sScreenHeight = pDisplay->height();
 #ifdef ESP32
-  disp_draw_buf = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * screenWidth * 40, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
+  disp_draw_buf = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * sScreenWidth * 40, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
 #else
-  disp_draw_buf = (lv_color_t *)malloc(sizeof(lv_color_t) * screenWidth * 40);
+  disp_draw_buf = (lv_color_t *)malloc(sizeof(lv_color_t) * sScreenWidth * 40);
 #endif
   if (!disp_draw_buf)
   {
@@ -117,14 +106,14 @@ void SetupLVGL(void){
   } //if(!disp_draw_buf)
   else
   {
-    lv_disp_draw_buf_init(&draw_buf, disp_draw_buf, NULL, screenWidth * 40);
+    lv_disp_draw_buf_init(&draw_buf, disp_draw_buf, NULL, sScreenWidth * 40);
 
     /* Initialize the display */
     lv_disp_drv_init      (&disp_drv);
 
-    disp_drv.hor_res      = screenWidth;
-    disp_drv.ver_res      = screenHeight;
-    disp_drv.flush_cb     = my_disp_flush;
+    disp_drv.hor_res      = sScreenWidth;
+    disp_drv.ver_res      = sScreenHeight;
+    disp_drv.flush_cb     = FlushDataToDisplay;
     disp_drv.draw_buf     = &draw_buf;
     lv_disp_drv_register  (&disp_drv);
 
@@ -154,10 +143,10 @@ void DisplayLabel(const char* szText){
 } //DisplayLabel
 
 
-void set_value(void *pIndicator, int wValue){
+void SetIndicatorValue(void *pIndicator, int wValue){
   lv_meter_set_indicator_value(pMeter, (lv_meter_indicator_t *)pIndicator, wValue);
   return;
-} //set_value
+} //SetIndicatorValue
 
 
 void Display8Meters(int wPercentScale){
@@ -231,7 +220,7 @@ void DisplayMeter(lv_coord_t sSize, lv_align_t ucAlignment, lv_coord_t sOffsetX,
   /*Create an animation to set the value*/
   lv_anim_t   stAnimation;
   lv_anim_init                  (&stAnimation);
-  lv_anim_set_exec_cb           (&stAnimation, set_value);
+  lv_anim_set_exec_cb           (&stAnimation, SetIndicatorValue);
   lv_anim_set_var               (&stAnimation, pIndicator);
   lv_anim_set_values            (&stAnimation, 0, 100);
   lv_anim_set_time              (&stAnimation, 2000);
@@ -243,6 +232,22 @@ void DisplayMeter(lv_coord_t sSize, lv_align_t ucAlignment, lv_coord_t sOffsetX,
 
   return;
 } //DisplayMeter
+
+
+void FlushDataToDisplay(lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p)
+{
+  uint32_t uwWidth  = (pArea->x2 - pArea->x1 + 1);
+  uint32_t uwHeight = (pArea->y2 - pArea->y1 + 1);
+
+#if (LV_COLOR_16_SWAP != 0)
+  pDisplay->draw16bitBeRGBBitmap(pArea->x1, pArea->y1, (uint16_t *)&color_p->full, uwWidth, uwHeight);
+#else
+  pDisplay->draw16bitRGBBitmap(pArea->x1, pArea->y1, (uint16_t *)&color_p->full, uwWidth, uwHeight);
+#endif
+
+  lv_disp_flush_ready(pDisplayDriver);
+  return;
+} //FlushDataToDisplay
 
 
 char* szGetMyMAC(char* szBuffer){

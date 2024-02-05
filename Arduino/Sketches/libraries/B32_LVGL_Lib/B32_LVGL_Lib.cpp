@@ -1,4 +1,4 @@
-//B32_LVGL_Lib.cpp, 2/5/24c
+//B32_LVGL_Lib.cpp, 2/5/24e
 #include <B32_LVGL_Lib.h>
 #include <WiFi.h>
 #include <Streaming.h>
@@ -50,9 +50,9 @@ uint32_t             screenHeight;
 lv_coord_t              sScreenWidth;
 lv_coord_t              sScreenHeight;
 
-lv_disp_draw_buf_t      draw_buf;
-lv_color_t              *disp_draw_buf;
-lv_disp_drv_t            disp_drv;
+lv_disp_draw_buf_t      stDrawBuffer;
+lv_color_t              *pDisplayBuffer;
+lv_disp_drv_t            stDisplayDriver;
 
 //Protos for functions only used in this file
 void  FlushDataToDisplay   (lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p);
@@ -78,12 +78,6 @@ void SetupDisplay(void){
   if (!pDisplay->begin()){
     Serial << BLOG << " SetupDisplay(): pDisplay->begin() failed" << endl;
   }
-/*
-  else{
-    Serial << BLOG << " SetupDisplay(): Clear screen with call to pDisplay->fillScreen(BLACK)" << endl;
-    pDisplay->fillScreen(BLACK);
-  }
-*/
   delay(500);
   Serial << BLOG << " SetupDisplay(): Done." << endl;
   return;
@@ -96,26 +90,27 @@ void SetupLVGL(void){
   sScreenWidth  = pDisplay->width();
   sScreenHeight = pDisplay->height();
 #ifdef ESP32
-  disp_draw_buf = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * sScreenWidth * 40, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
+  pDisplayBuffer = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * sScreenWidth * 40, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
 #else
-  disp_draw_buf = (lv_color_t *)malloc(sizeof(lv_color_t) * sScreenWidth * 40);
+  pDisplayBuffer = (lv_color_t *)malloc(sizeof(lv_color_t) * sScreenWidth * 40);
 #endif
-  if (!disp_draw_buf)
+  if (!pDisplayBuffer)
   {
-    Serial.println("LVGL disp_draw_buf allocate failed!");
-  } //if(!disp_draw_buf)
+    Serial.println("LVGL pDisplayBuffer allocate failed!");
+  } //if(!pDisplayBuffer)
   else
   {
-    lv_disp_draw_buf_init(&draw_buf, disp_draw_buf, NULL, sScreenWidth * 40);
+    lv_disp_draw_buf_init(&stDrawBuffer, pDisplayBuffer, NULL, sScreenWidth * 40);
 
     /* Initialize the display */
-    lv_disp_drv_init      (&disp_drv);
+    lv_disp_drv_init      (&stDisplayDriver);
 
-    disp_drv.hor_res      = sScreenWidth;
-    disp_drv.ver_res      = sScreenHeight;
-    disp_drv.flush_cb     = FlushDataToDisplay;
-    disp_drv.draw_buf     = &draw_buf;
-    lv_disp_drv_register  (&disp_drv);
+    stDisplayDriver.hor_res      = sScreenWidth;
+    stDisplayDriver.ver_res      = sScreenHeight;
+    stDisplayDriver.flush_cb     = FlushDataToDisplay;
+    stDisplayDriver.draw_buf     = &stDrawBuffer;
+
+    lv_disp_drv_register  (&stDisplayDriver);
 
     /* Initialize the (dummy) input device driver */
     static lv_indev_drv_t   indev_drv;
@@ -125,7 +120,7 @@ void SetupLVGL(void){
     lv_indev_drv_register   (&indev_drv);
 
     Serial << BLOG << " SetupLVGL(): Done." << endl;
-  } //if(!disp_draw_buf)else
+  } //if(!pDisplayBuffer)else
   return;
 } //SetupLVGL
 
@@ -149,25 +144,28 @@ void SetIndicatorValue(void *pIndicator, int wValue){
 } //SetIndicatorValue
 
 
-void Display8Meters(int wPercentScale){
+//void Display8Meters(int wPercentScale){
+void DisplayMeterArray(uint8_t ucNumColumns, uint8_t ucNumRows, uint16_t usPercentScale){
   //Arranged in 2 rows of 4
   lv_align_t    ucAlignment         = LV_ALIGN_TOP_LEFT;
-  lv_coord_t    sScreenWidth        = pDisplay->width();
-  lv_coord_t    sSpacingX           = (sScreenWidth / 4);
+  //lv_coord_t    sScreenWidth        = pDisplay->width();
+  //lv_coord_t    sDisplayWidth       = pDisplay->width();
+  //lv_coord_t    sSpacingX           = (sDisplayWidth / 4);
+  lv_coord_t    sSpacingX           = (pDisplay->width() / 4);
   lv_coord_t    sMeterSize          = sSpacingX;
   lv_coord_t    sSpacingY           = sPercent(sMeterSize, 120);
   lv_coord_t    sFirstRowOffsetY    = sPercent(sMeterSize,  10);
   lv_coord_t    sOffsetX            =  0;
   lv_coord_t    sOffsetY            =  0;
 
-  sMeterSize        = sPercent(sMeterSize       , wPercentScale);
-  sSpacingY         = sPercent(sSpacingY        , wPercentScale);
-  sFirstRowOffsetY  = sPercent(sFirstRowOffsetY , wPercentScale);
+  sMeterSize        = sPercent(sMeterSize       , usPercentScale);
+  sSpacingY         = sPercent(sSpacingY        , usPercentScale);
+  sFirstRowOffsetY  = sPercent(sFirstRowOffsetY , usPercentScale);
 
   Serial << BLOG << " Display8Meters(): Call DisplayMeter 8 times" << endl;
-  for (int wRowNum= 0; wRowNum < 2; wRowNum++){
+  for (int wRowNum= 0; wRowNum < ucNumRows; wRowNum++){
     sOffsetY= (sFirstRowOffsetY + (wRowNum * sSpacingY));   //Work in percentage of meter size
-    for (int wMeterCount= 0; wMeterCount < 4; wMeterCount++){
+    for (int wMeterCount= 0; wMeterCount < ucNumColumns; wMeterCount++){
       sOffsetX= (wMeterCount * sSpacingX);
       DisplayMeter(sMeterSize, ucAlignment, sOffsetX, sOffsetY);
     } //for(int wMeterCount=0;...

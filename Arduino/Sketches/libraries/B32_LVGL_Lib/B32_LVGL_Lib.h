@@ -1,11 +1,22 @@
-//B32_LVGL_Lib.h, 2/5/24b
+//B32_LVGL_Lib.h, 2/6/24b
 #pragma once
 #include <lvgl.h>
 #include <Arduino_GFX_Library.h>
 
+const int                   wNumTCouples    =    4;
+const int                   wMaxReadings    = 1000;
+
+//Message Structure that is used to pass data back an forth
+typedef struct stMessageStructure {
+  long        lSampleTimeMsec;
+  double      adTCoupleDegF[wNumTCouples];
+} stMessageStruct;
+
+extern stMessageStruct      astReadings[];
 extern Arduino_RGB_Display  *pDisplay;
 
 //Functions protos
+void          SaveReading           (void);
 void          SetupDisplay          (void);
 void          SetupLVGL             (void);
 void          DisplayLabel          (const char* szText);

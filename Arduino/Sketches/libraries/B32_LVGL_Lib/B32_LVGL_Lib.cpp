@@ -1,4 +1,4 @@
-//B32_LVGL_Lib.cpp, 2/5/24j
+//B32_LVGL_Lib.cpp, 2/6/24b
 #include <B32_LVGL_Lib.h>
 #include <WiFi.h>
 #include <Streaming.h>
@@ -7,9 +7,13 @@
   #define BLOG          millis()    //Used in logging
 #endif
 
+stMessageStruct         astReadings[wMaxReadings];
+
 Arduino_ESP32RGBPanel   *pRGBPanel;
 Arduino_RGB_Display     *pDisplay;
 lv_obj_t                *pMeter;
+
+int32_t         wCurrentReading   =  0;
 
 const int8_t    cDE_Pin           =  5;
 const int8_t    cVsyncPin         =  3;
@@ -52,8 +56,40 @@ lv_disp_drv_t   stDisplayDriver;
 lv_disp_draw_buf_t    stDrawBuffer;
 
 //Protos for functions only used in this file
-void  FlushDataToDisplay  (lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p);
-void  SetIndicatorValue   (void *pIndicator, int wValue);
+void    FlushDataToDisplay  (lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p);
+void    SetIndicatorValue   (void *pIndicator, int wValue);
+double  dGetDegF            (int wTCouple);
+
+
+void SaveReading(void){
+  int   wDegreePeriodMsec   = 1000;
+  long  lCurrentMsec        = millis();
+
+  astReadings[wCurrentReading++].lSampleTimeMsec= lCurrentMsec;
+
+  for(int wTCoupleNum= 0; wTCoupleNum < wNumTCouples; wTCoupleNum++){
+    astReadings[wCurrentReading++].adTCoupleDegF[wTCoupleNum]= dGetDegF(wTCoupleNum);
+  }
+  return;
+} //SaveReading
+
+
+double dGetDegF(int wTCouple){
+  //Needles swing back and forth from fMinSwingDegF to fMaxSwingDegF.
+  //Gauge #3 goes at half cycle every sec, #2 every 2 sec, #1 every 5 sec and #0 every 10 sec
+  double  dDegF;
+  double  dMeterPeriodSec[]= {20.00, 10.00, 4.00, 2.00};
+  double  dSwingMinDegF     = 100.00;
+  double  dSwingMaxDegF     = 450.00;
+  double  dRangeDegF        = (dSwingMaxDegF - dSwingMinDegF);
+
+  double  dDegrees            = ((float)((millis() / 1000.00)) / dMeterPeriodSec[wTCouple]);
+  double  dRadians            = (dDegrees / 180) * PI;
+  double  dPercentRange       = ((sin(dRadians) + 1.00) * 100.00);
+
+  dDegF= (dSwingMinDegF + (dRangeDegF *(dPercentRange / 100.00)));
+  return dDegF;
+} //dGetDegF
 
 
 void SetupDisplay(void){

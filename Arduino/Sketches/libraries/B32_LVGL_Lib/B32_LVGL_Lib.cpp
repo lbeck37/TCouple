@@ -1,4 +1,4 @@
-//B32_LVGL_Lib.cpp, 2/5/24e
+//B32_LVGL_Lib.cpp, 2/5/24h
 #include <B32_LVGL_Lib.h>
 #include <WiFi.h>
 #include <Streaming.h>
@@ -43,19 +43,17 @@ const bool      bUseBigEndian     = false;
 const uint16_t  usDEIdleHigh      = 0;
 const uint16_t  usPclkIdleHigh    = 0;
 
-/*
-uint32_t             screenWidth;
-uint32_t             screenHeight;
-*/
-lv_coord_t              sScreenWidth;
-lv_coord_t              sScreenHeight;
+lv_coord_t      sScreenWidth;
+lv_coord_t      sScreenHeight;
 
-lv_disp_draw_buf_t      stDrawBuffer;
-lv_color_t              *pDisplayBuffer;
-lv_disp_drv_t            stDisplayDriver;
+lv_color_t      *pDisplayBuffer;
+lv_disp_drv_t   stDisplayDriver;
+
+lv_disp_draw_buf_t    stDrawBuffer;
 
 //Protos for functions only used in this file
-void  FlushDataToDisplay   (lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p);
+void  FlushDataToDisplay  (lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p);
+void  SetIndicatorValue   (void *pIndicator, int wValue);
 
 
 void SetupDisplay(void){
@@ -85,24 +83,26 @@ void SetupDisplay(void){
 
 
 void SetupLVGL(void){
+  sScreenWidth    = pDisplay->width();
+  sScreenHeight   = pDisplay->height();
+
+  uint32_t    uwMallocNumBytes  = (sizeof(lv_color_t) * sScreenWidth * 40);
+  uint32_t    uwMemoryType      = (MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
+
+  void        *pUnusedBuffer    = NULL;
+
   lv_init();
 
-  sScreenWidth  = pDisplay->width();
-  sScreenHeight = pDisplay->height();
-#ifdef ESP32
-  pDisplayBuffer = (lv_color_t *)heap_caps_malloc(sizeof(lv_color_t) * sScreenWidth * 40, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
-#else
-  pDisplayBuffer = (lv_color_t *)malloc(sizeof(lv_color_t) * sScreenWidth * 40);
-#endif
-  if (!pDisplayBuffer)
-  {
-    Serial.println("LVGL pDisplayBuffer allocate failed!");
+  //pDisplayBuffer  = (lv_color_t *)heap_caps_malloc(uwMallocNumBytes, uwMemoryType);
+  pDisplayBuffer  = (lv_color_t *)heap_caps_malloc((sizeof(lv_color_t) * sScreenWidth * 40), (MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT));
+  if (!pDisplayBuffer){
+    Serial << BLOG << " SetupLVGL(): LVGL pDisplayBuffer allocate failed!" << endl;
   } //if(!pDisplayBuffer)
-  else
-  {
-    lv_disp_draw_buf_init(&stDrawBuffer, pDisplayBuffer, NULL, sScreenWidth * 40);
+  else{
+    uint32_t    uwSizeInPixelCount= (sScreenWidth * 40);
+    lv_disp_draw_buf_init(&stDrawBuffer, pDisplayBuffer, pUnusedBuffer, uwSizeInPixelCount);
 
-    /* Initialize the display */
+    //Initialize the display
     lv_disp_drv_init      (&stDisplayDriver);
 
     stDisplayDriver.hor_res      = sScreenWidth;
@@ -110,14 +110,14 @@ void SetupLVGL(void){
     stDisplayDriver.flush_cb     = FlushDataToDisplay;
     stDisplayDriver.draw_buf     = &stDrawBuffer;
 
-    lv_disp_drv_register  (&stDisplayDriver);
+    lv_disp_drv_register    (&stDisplayDriver);
 
-    /* Initialize the (dummy) input device driver */
-    static lv_indev_drv_t   indev_drv;
+    //Initialize the (dummy) input device driver
+    static lv_indev_drv_t   stInputDeviceDriver;
 
-    lv_indev_drv_init       (&indev_drv);
-    indev_drv.type          = LV_INDEV_TYPE_POINTER;
-    lv_indev_drv_register   (&indev_drv);
+    lv_indev_drv_init       (&stInputDeviceDriver);
+    stInputDeviceDriver.type= LV_INDEV_TYPE_POINTER;
+    lv_indev_drv_register   (&stInputDeviceDriver);
 
     Serial << BLOG << " SetupLVGL(): Done." << endl;
   } //if(!pDisplayBuffer)else
@@ -126,43 +126,37 @@ void SetupLVGL(void){
 
 
 void DisplayLabel(const char* szText){
-  lv_obj_t    *pParent  = lv_scr_act        ();
-  lv_obj_t    *pLabel   = lv_label_create   (pParent);
+  lv_obj_t    *pParent= lv_scr_act      ();
+  lv_obj_t    *pLabel = lv_label_create (pParent);
 
-  lv_label_set_text(pLabel, szText);
-
-  //lv_obj_align(pLabel, LV_ALIGN_CENTER, 0, 0);
-  lv_obj_align(pLabel, LV_ALIGN_BOTTOM_LEFT, 0, 0);
+  lv_label_set_text (pLabel, szText);
+  lv_obj_align      (pLabel, LV_ALIGN_BOTTOM_LEFT, 0, 0);
 
   return;
 } //DisplayLabel
 
 
 void SetIndicatorValue(void *pIndicator, int wValue){
-  lv_meter_set_indicator_value(pMeter, (lv_meter_indicator_t *)pIndicator, wValue);
+  lv_meter_set_indicator_value(pMeter, (lv_meter_indicator_t*)pIndicator, wValue);
   return;
 } //SetIndicatorValue
 
 
-//void Display8Meters(int wPercentScale){
 void DisplayMeterArray(uint8_t ucNumColumns, uint8_t ucNumRows, uint16_t usPercentScale){
-  //Arranged in 2 rows of 4
   lv_align_t    ucAlignment         = LV_ALIGN_TOP_LEFT;
-  //lv_coord_t    sScreenWidth        = pDisplay->width();
-  //lv_coord_t    sDisplayWidth       = pDisplay->width();
-  //lv_coord_t    sSpacingX           = (sDisplayWidth / 4);
   lv_coord_t    sSpacingX           = (pDisplay->width() / 4);
   lv_coord_t    sMeterSize          = sSpacingX;
   lv_coord_t    sSpacingY           = sPercent(sMeterSize, 120);
   lv_coord_t    sFirstRowOffsetY    = sPercent(sMeterSize,  10);
   lv_coord_t    sOffsetX            =  0;
   lv_coord_t    sOffsetY            =  0;
+  int           wNumMeters          = (ucNumColumns * ucNumRows);
 
   sMeterSize        = sPercent(sMeterSize       , usPercentScale);
   sSpacingY         = sPercent(sSpacingY        , usPercentScale);
   sFirstRowOffsetY  = sPercent(sFirstRowOffsetY , usPercentScale);
 
-  Serial << BLOG << " Display8Meters(): Call DisplayMeter 8 times" << endl;
+  Serial << BLOG << " DisplayMeterArray(): Call DisplayMeter " << wNumMeters << " times" << endl;
   for (int wRowNum= 0; wRowNum < ucNumRows; wRowNum++){
     sOffsetY= (sFirstRowOffsetY + (wRowNum * sSpacingY));   //Work in percentage of meter size
     for (int wMeterCount= 0; wMeterCount < ucNumColumns; wMeterCount++){
@@ -172,48 +166,80 @@ void DisplayMeterArray(uint8_t ucNumColumns, uint8_t ucNumRows, uint16_t usPerce
   } //for(int wRowNum=0;...
 
   return;
-} //Display8Meters
+} //DisplayMeterArray
 
 
 void DisplayMeter(lv_coord_t sSize, lv_align_t ucAlignment, lv_coord_t sOffsetX, lv_coord_t sOffsetY){
+  bool                    bMapColorMode       = false;
+  int16_t                 sTickWidthMod       =   0;
+  uint16_t                usNeedleWidth       =   4;
+  int16_t                 sNeedleRadiusMod    = -10;
+
+  uint16_t                usNumTicks          =  41;
+  uint16_t                usTickWidth         =   2;
+  uint16_t                usTickLength        =  10;
+
+  uint16_t                usMajorTickEveryNth =   8;
+  uint16_t                usMajorTickWidth    =   4;
+  uint16_t                usMajorTickLength   =  15;
+  int16_t                 sMajorTickLabelGap  =  10;
+
+  uint16_t                usArcWidth          =   3;
+  int16_t                 sArcRadiusMod       =   0;
+
+  int32_t                 wBlueArcStartValue  =   0;
+  int32_t                 wBlueArcEndValue    =  20;
+
+  int32_t                 wRedArcStartValue   =  80;
+  int32_t                 wRedArcEndValue     = 100;
+
+  lv_color_t              stBlueColor         = lv_palette_main(LV_PALETTE_BLUE);
+  lv_color_t              stRedColor          = lv_palette_main(LV_PALETTE_RED);
+  lv_color_t              stGreyColor         = lv_palette_main(LV_PALETTE_GREY);
+  lv_color_t              stBlackColor        = lv_color_black();
+
+  lv_meter_indicator_t    *pIndicator;
+
   pMeter= lv_meter_create(lv_scr_act());
 
-  //lv_obj_center                       (pMeter);
   lv_obj_align                        (pMeter, ucAlignment, sOffsetX, sOffsetY);
   lv_obj_set_size                     (pMeter, sSize, sSize);
 
-  /*Add a scale first*/
-  lv_meter_scale_t    *pScale=        lv_meter_add_scale(pMeter);
+  //Create the scale
+  lv_meter_scale_t  *pScale= lv_meter_add_scale(pMeter);
 
-  lv_meter_set_scale_ticks            (pMeter, pScale, 41, 2, 10, lv_palette_main(LV_PALETTE_GREY));
-  lv_meter_set_scale_major_ticks      (pMeter, pScale, 8, 4, 15, lv_color_black(), 10);
+  lv_meter_set_scale_ticks            (pMeter, pScale, usNumTicks,
+                                       usTickWidth, usTickLength, stGreyColor);
 
-  lv_meter_indicator_t *pIndicator;
+  lv_meter_set_scale_major_ticks      (pMeter, pScale, usMajorTickEveryNth, usMajorTickWidth,
+                                       usMajorTickLength, stBlackColor, sMajorTickLabelGap);
 
-  /*Add a blue arc to the start*/
-  pIndicator = lv_meter_add_arc(pMeter, pScale, 3, lv_palette_main(LV_PALETTE_BLUE), 0);
-  lv_meter_set_indicator_start_value  (pMeter, pIndicator, 0);
-  lv_meter_set_indicator_end_value    (pMeter, pIndicator, 20);
+  //Add a blue arc to the start of the meter
+  pIndicator = lv_meter_add_arc       (pMeter, pScale, usArcWidth, stBlueColor, sArcRadiusMod);
+
+  lv_meter_set_indicator_start_value  (pMeter, pIndicator, wBlueArcStartValue);
+  lv_meter_set_indicator_end_value    (pMeter, pIndicator, wBlueArcEndValue);
 
   /*Make the tick lines blue at the start of the scale*/
-  pIndicator= lv_meter_add_scale_lines(pMeter, pScale, lv_palette_main(LV_PALETTE_BLUE),
-                                       lv_palette_main(LV_PALETTE_BLUE), false, 0);
-  lv_meter_set_indicator_start_value  (pMeter, pIndicator, 0);
-  lv_meter_set_indicator_end_value    (pMeter, pIndicator, 20);
+  pIndicator= lv_meter_add_scale_lines(pMeter, pScale, stBlueColor, stBlueColor,
+                                       bMapColorMode, sTickWidthMod);
 
-  /*Add a red arc to the end*/
-  pIndicator= lv_meter_add_arc        (pMeter, pScale, 3, lv_palette_main(LV_PALETTE_RED), 0);
-  lv_meter_set_indicator_start_value  (pMeter, pIndicator, 80);
-  lv_meter_set_indicator_end_value    (pMeter, pIndicator, 100);
+  lv_meter_set_indicator_start_value  (pMeter, pIndicator, wBlueArcStartValue);
+  lv_meter_set_indicator_end_value    (pMeter, pIndicator, wBlueArcEndValue);
 
-  /*Make the tick lines red at the end of the pScale*/
-  pIndicator= lv_meter_add_scale_lines(pMeter, pScale, lv_palette_main(LV_PALETTE_RED),
-                                       lv_palette_main(LV_PALETTE_RED), false, 0);
-  lv_meter_set_indicator_start_value  (pMeter, pIndicator, 80);
-  lv_meter_set_indicator_end_value    (pMeter, pIndicator, 100);
+  //Add a red arc to the end of the meter
+  pIndicator= lv_meter_add_arc        (pMeter, pScale, usArcWidth, stRedColor, sArcRadiusMod);
+  lv_meter_set_indicator_start_value  (pMeter, pIndicator, wRedArcStartValue);
+  lv_meter_set_indicator_end_value    (pMeter, pIndicator, wRedArcEndValue);
 
-  /*Add a needle line indicator*/
-  pIndicator= lv_meter_add_needle_line(pMeter, pScale, 4, lv_palette_main(LV_PALETTE_GREY), -10);
+  //Make the tick lines red at the end of the pScale
+  pIndicator= lv_meter_add_scale_lines(pMeter, pScale, stRedColor, stRedColor,
+                                       bMapColorMode, sTickWidthMod);
+  lv_meter_set_indicator_start_value  (pMeter, pIndicator, wRedArcStartValue);
+  lv_meter_set_indicator_end_value    (pMeter, pIndicator, wRedArcEndValue);
+
+  //Add a needle line indicator
+  pIndicator= lv_meter_add_needle_line(pMeter, pScale, usNeedleWidth, stGreyColor, sNeedleRadiusMod);
 
   /*Create an animation to set the value*/
   lv_anim_t   stAnimation;
@@ -252,15 +278,14 @@ char* szGetMyMAC(char* szBuffer){
   uint8_t     aucMyMACAddress[6];
 
   WiFi.macAddress(aucMyMACAddress);
-
   sprintf(szBuffer, "%x %x %x %x %x %x", aucMyMACAddress[0], aucMyMACAddress[1], aucMyMACAddress[2],
                                          aucMyMACAddress[3], aucMyMACAddress[4], aucMyMACAddress[5]);
   return szBuffer;
 } //szGetMyMAC
 
+
 lv_coord_t sPercent(lv_coord_t sNumber, int16_t sPercent){
   lv_coord_t sReturn;
-
   return((sNumber * sPercent) / 100);
   } //sPercent
 //Last line

@@ -9,7 +9,6 @@ extern Arduino_RGB_Display  *pDisplay;
 void          SetupDisplay          (void);
 void          SetupLVGL             (void);
 void          DisplayLabel          (const char* szText);
-//void          Display8Meters        (int wPercentScale);
 void          DisplayMeterArray     (uint8_t ucNumColumns, uint8_t ucNumRows, uint16_t usPercentScale);
 void          DisplayMeter          (lv_coord_t sSize   , lv_align_t ucAlignment,
                                      lv_coord_t sOffsetX, lv_coord_t sOffsetY);

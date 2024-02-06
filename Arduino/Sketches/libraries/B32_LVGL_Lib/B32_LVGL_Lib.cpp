@@ -7,7 +7,7 @@
   #define BLOG          millis()    //Used in logging
 #endif
 
-stMessageStruct         astReadings[wMaxReadings];
+stMessageStruct         astReadings[wMaxReadings + 1];
 
 Arduino_ESP32RGBPanel   *pRGBPanel;
 Arduino_RGB_Display     *pDisplay;
@@ -61,10 +61,20 @@ void    SetIndicatorValue   (void *pIndicator, int wValue);
 double  dGetDegF            (int wTCouple);
 
 
+/*
+void SetMeterNeedles(void){
+  return;
+} //SetMeterNeedles
+*/
+
+
 void SaveReading(void){
   int   wDegreePeriodMsec   = 1000;
   long  lCurrentMsec        = millis();
 
+  if (wCurrentReading >= wMaxReadings){
+    wCurrentReading= 0;
+  }
   astReadings[wCurrentReading++].lSampleTimeMsec= lCurrentMsec;
 
   for(int wTCoupleNum= 0; wTCoupleNum < wNumTCouples; wTCoupleNum++){
@@ -194,17 +204,17 @@ void DisplayMeterArray(uint8_t ucNumColumns, uint8_t ucNumRows, uint16_t usPerce
   Serial << BLOG << " DisplayMeterArray(): Call DisplayMeter " << wNumMeters << " times" << endl;
   for (int wRowNum= 0; wRowNum < ucNumRows; wRowNum++){
     sOffsetY= (sFirstRowOffsetY + (wRowNum * sSpacingY));   //Work in percentage of meter size
-    for (int wMeterCount= 0; wMeterCount < ucNumColumns; wMeterCount++){
-      sOffsetX= (wMeterCount * sSpacingX);
-      DisplayMeter(sMeterSize, ucAlignment, sOffsetX, sOffsetY);
-    } //for(int wMeterCount=0;...
+    for (int wMeterNumber= 0; wMeterNumber < ucNumColumns; wMeterNumber++){
+      sOffsetX= (wMeterNumber * sSpacingX);
+      DisplayMeter(wMeterNumber, sMeterSize, ucAlignment, sOffsetX, sOffsetY);
+    } //for(int wMeterNumber=0;...
   } //for(int wRowNum=0;...
 
   return;
 } //DisplayMeterArray
 
 
-void DisplayMeter(lv_coord_t sSize, lv_align_t ucAlignment, lv_coord_t sOffsetX, lv_coord_t sOffsetY){
+void DisplayMeter(int wMeterNumber, lv_coord_t sSize, lv_align_t ucAlignment, lv_coord_t sOffsetX, lv_coord_t sOffsetY){
   lv_color_t              stBlueColor         = lv_palette_main(LV_PALETTE_BLUE);
   lv_color_t              stRedColor          = lv_palette_main(LV_PALETTE_RED);
   lv_color_t              stGreyColor         = lv_palette_main(LV_PALETTE_GREY);
@@ -285,6 +295,7 @@ void DisplayMeter(lv_coord_t sSize, lv_align_t ucAlignment, lv_coord_t sOffsetX,
 
   //Add a needle line indicator
   pIndicator= lv_meter_add_needle_line(pMeter, pScale, usNeedleWidth, stGreyColor, sNeedleRadiusMod);
+  lv_meter_set_indicator_value(pMeter, pIndicator, astReadings[wCurrentReading].adTCoupleDegF[wMeterNumber]);
 
   /*Create an animation to set the value*/
   lv_anim_t   stAnimation;

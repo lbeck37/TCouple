@@ -1,4 +1,4 @@
-//B32_LVGL_Lib.cpp, 2/6/24b
+//B32_LVGL_Lib.cpp, 2/6/24c
 #include <B32_LVGL_Lib.h>
 #include <WiFi.h>
 #include <Streaming.h>
@@ -7,13 +7,28 @@
   #define BLOG          millis()    //Used in logging
 #endif
 
+/*
+const double  dMeterPeriodSec[]= {20.00, 10.00, 4.00, 2.00};
+const double  dSwingMinDegF     = 100.00;
+const double  dSwingMaxDegF     = 450.00;
+*/
+
 stMessageStruct         astReadings[wMaxReadings + 1];
+
+/*
+astReadings[0].lSampleTimeMsec= 0;
+
+for (int wMeter= 0; wMeter < wNumTCouples; wMeter++){
+  astReadings[0].adTCoupleDegF[wMeter]= dSwingMinDegF;
+}
+*/
 
 Arduino_ESP32RGBPanel   *pRGBPanel;
 Arduino_RGB_Display     *pDisplay;
 lv_obj_t                *pMeter;
 
-int32_t         wCurrentReading   =  0;
+int32_t         wCurrentReadingNum=  0;
+//int32_t         wLastReadingNum   =  0;
 
 const int8_t    cDE_Pin           =  5;
 const int8_t    cVsyncPin         =  3;
@@ -61,24 +76,17 @@ void    SetIndicatorValue   (void *pIndicator, int wValue);
 double  dGetDegF            (int wTCouple);
 
 
-/*
-void SetMeterNeedles(void){
-  return;
-} //SetMeterNeedles
-*/
-
-
 void SaveReading(void){
   int   wDegreePeriodMsec   = 1000;
   long  lCurrentMsec        = millis();
 
-  if (wCurrentReading >= wMaxReadings){
-    wCurrentReading= 0;
+  if (++wCurrentReadingNum >= wMaxReadings){
+    wCurrentReadingNum= 0;
   }
-  astReadings[wCurrentReading++].lSampleTimeMsec= lCurrentMsec;
+  astReadings[wCurrentReadingNum].lSampleTimeMsec= lCurrentMsec;
 
   for(int wTCoupleNum= 0; wTCoupleNum < wNumTCouples; wTCoupleNum++){
-    astReadings[wCurrentReading++].adTCoupleDegF[wTCoupleNum]= dGetDegF(wTCoupleNum);
+    astReadings[wCurrentReadingNum++].adTCoupleDegF[wTCoupleNum]= dGetDegF(wTCoupleNum);
   }
   return;
 } //SaveReading
@@ -88,9 +96,11 @@ double dGetDegF(int wTCouple){
   //Needles swing back and forth from fMinSwingDegF to fMaxSwingDegF.
   //Gauge #3 goes at half cycle every sec, #2 every 2 sec, #1 every 5 sec and #0 every 10 sec
   double  dDegF;
+/*
   double  dMeterPeriodSec[]= {20.00, 10.00, 4.00, 2.00};
   double  dSwingMinDegF     = 100.00;
   double  dSwingMaxDegF     = 450.00;
+*/
   double  dRangeDegF        = (dSwingMaxDegF - dSwingMinDegF);
 
   double  dDegrees            = ((float)((millis() / 1000.00)) / dMeterPeriodSec[wTCouple]);
@@ -251,6 +261,7 @@ void DisplayMeter(int wMeterNumber, lv_coord_t sSize, lv_align_t ucAlignment, lv
   int32_t                 wRedArcEndValue     = 500;
 
   lv_meter_indicator_t    *pIndicator;
+  lv_meter_indicator_t    *pNeedleIndicator[wNumTCouples];
 
   pMeter= lv_meter_create(lv_scr_act());
 
@@ -294,8 +305,10 @@ void DisplayMeter(int wMeterNumber, lv_coord_t sSize, lv_align_t ucAlignment, lv
   lv_meter_set_indicator_end_value    (pMeter, pIndicator, wRedArcEndValue);
 
   //Add a needle line indicator
-  pIndicator= lv_meter_add_needle_line(pMeter, pScale, usNeedleWidth, stGreyColor, sNeedleRadiusMod);
-  lv_meter_set_indicator_value(pMeter, pIndicator, astReadings[wCurrentReading].adTCoupleDegF[wMeterNumber]);
+  pNeedleIndicator[wMeterNumber]= lv_meter_add_needle_line(pMeter, pScale, usNeedleWidth, stGreyColor, sNeedleRadiusMod);
+
+  int32_t   wNeedleValue= astReadings[wCurrentReadingNum].adTCoupleDegF[wMeterNumber];
+  lv_meter_set_indicator_value(pMeter, pIndicator, wNeedleValue);
 
   /*Create an animation to set the value*/
   lv_anim_t   stAnimation;

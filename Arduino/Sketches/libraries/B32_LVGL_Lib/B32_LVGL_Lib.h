@@ -1,10 +1,13 @@
-//B32_LVGL_Lib.h, 2/6/24c
+//B32_LVGL_Lib.h, 2/6/24d
 #pragma once
 #include <lvgl.h>
 #include <Arduino_GFX_Library.h>
 
-const int                   wNumTCouples    =    4;
-const int                   wMaxReadings    = 1000;
+const int     wNumTCouples      =    4;
+const int     wMaxReadings      = 1000;
+const double  dMeterPeriodSec[] = {20.00, 10.00, 4.00, 2.00};
+const double  dSwingMinDegF     = 100.00;
+const double  dSwingMaxDegF     = 450.00;
 
 //Message Structure that is used to pass data back an forth
 typedef struct stMessageStructure {

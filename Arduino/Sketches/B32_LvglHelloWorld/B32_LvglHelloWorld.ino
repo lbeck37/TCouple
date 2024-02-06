@@ -26,6 +26,12 @@ void setup(){
   delay(500);
   Serial << endl << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
+  //Initialize values for 0 element
+  astReadings[0].lSampleTimeMsec= 0;
+  for (int wMeter= 0; wMeter < wNumTCouples; wMeter++){
+    astReadings[0].adTCoupleDegF[wMeter]= dSwingMinDegF;
+  }
+
   Serial << BLOG << " setup(): Call SetupDisplay" << endl;
   SetupDisplay();
 

@@ -1,4 +1,4 @@
-//B32_LVGL_Lib.cpp, 2/5/24h
+//B32_LVGL_Lib.cpp, 2/5/24j
 #include <B32_LVGL_Lib.h>
 #include <WiFi.h>
 #include <Streaming.h>
@@ -93,8 +93,7 @@ void SetupLVGL(void){
 
   lv_init();
 
-  //pDisplayBuffer  = (lv_color_t *)heap_caps_malloc(uwMallocNumBytes, uwMemoryType);
-  pDisplayBuffer  = (lv_color_t *)heap_caps_malloc((sizeof(lv_color_t) * sScreenWidth * 40), (MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT));
+  pDisplayBuffer  = (lv_color_t *)heap_caps_malloc(uwMallocNumBytes, uwMemoryType);
   if (!pDisplayBuffer){
     Serial << BLOG << " SetupLVGL(): LVGL pDisplayBuffer allocate failed!" << endl;
   } //if(!pDisplayBuffer)
@@ -170,16 +169,19 @@ void DisplayMeterArray(uint8_t ucNumColumns, uint8_t ucNumRows, uint16_t usPerce
 
 
 void DisplayMeter(lv_coord_t sSize, lv_align_t ucAlignment, lv_coord_t sOffsetX, lv_coord_t sOffsetY){
+  lv_color_t              stBlueColor         = lv_palette_main(LV_PALETTE_BLUE);
+  lv_color_t              stRedColor          = lv_palette_main(LV_PALETTE_RED);
+  lv_color_t              stGreyColor         = lv_palette_main(LV_PALETTE_GREY);
+  lv_color_t              stBlackColor        = lv_color_black();
+
   bool                    bMapColorMode       = false;
   int16_t                 sTickWidthMod       =   0;
   uint16_t                usNeedleWidth       =   4;
   int16_t                 sNeedleRadiusMod    = -10;
 
-  uint16_t                usNumTicks          =  41;
   uint16_t                usTickWidth         =   2;
   uint16_t                usTickLength        =  10;
 
-  uint16_t                usMajorTickEveryNth =   8;
   uint16_t                usMajorTickWidth    =   4;
   uint16_t                usMajorTickLength   =  15;
   int16_t                 sMajorTickLabelGap  =  10;
@@ -187,16 +189,20 @@ void DisplayMeter(lv_coord_t sSize, lv_align_t ucAlignment, lv_coord_t sOffsetX,
   uint16_t                usArcWidth          =   3;
   int16_t                 sArcRadiusMod       =   0;
 
+  uint16_t                usNumTicks          =  51;
+  uint16_t                usMajorTickEveryNth =  10;
+
+  int32_t                 wMeterMin           =   0;
+  int32_t                 wMeterMax           = 500;
+
+  uint32_t                uwAngleRange        = 315;
+  uint32_t                uwRotation          =  90;
+
   int32_t                 wBlueArcStartValue  =   0;
-  int32_t                 wBlueArcEndValue    =  20;
+  int32_t                 wBlueArcEndValue    = 150;
 
-  int32_t                 wRedArcStartValue   =  80;
-  int32_t                 wRedArcEndValue     = 100;
-
-  lv_color_t              stBlueColor         = lv_palette_main(LV_PALETTE_BLUE);
-  lv_color_t              stRedColor          = lv_palette_main(LV_PALETTE_RED);
-  lv_color_t              stGreyColor         = lv_palette_main(LV_PALETTE_GREY);
-  lv_color_t              stBlackColor        = lv_color_black();
+  int32_t                 wRedArcStartValue   = 350;
+  int32_t                 wRedArcEndValue     = 500;
 
   lv_meter_indicator_t    *pIndicator;
 
@@ -207,6 +213,8 @@ void DisplayMeter(lv_coord_t sSize, lv_align_t ucAlignment, lv_coord_t sOffsetX,
 
   //Create the scale
   lv_meter_scale_t  *pScale= lv_meter_add_scale(pMeter);
+
+  lv_meter_set_scale_range(pMeter, pScale, wMeterMin, wMeterMax, uwAngleRange, uwRotation);
 
   lv_meter_set_scale_ticks            (pMeter, pScale, usNumTicks,
                                        usTickWidth, usTickLength, stGreyColor);
@@ -235,6 +243,7 @@ void DisplayMeter(lv_coord_t sSize, lv_align_t ucAlignment, lv_coord_t sOffsetX,
   //Make the tick lines red at the end of the pScale
   pIndicator= lv_meter_add_scale_lines(pMeter, pScale, stRedColor, stRedColor,
                                        bMapColorMode, sTickWidthMod);
+
   lv_meter_set_indicator_start_value  (pMeter, pIndicator, wRedArcStartValue);
   lv_meter_set_indicator_end_value    (pMeter, pIndicator, wRedArcEndValue);
 

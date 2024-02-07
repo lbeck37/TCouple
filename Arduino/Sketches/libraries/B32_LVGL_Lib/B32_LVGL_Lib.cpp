@@ -86,8 +86,11 @@ void SaveReading(void){
   astReadings[wCurrentReadingNum].lSampleTimeMsec= lCurrentMsec;
 
   for(int wTCoupleNum= 0; wTCoupleNum < wNumTCouples; wTCoupleNum++){
-    astReadings[wCurrentReadingNum++].adTCoupleDegF[wTCoupleNum]= dGetDegF(wTCoupleNum);
-  }
+    double dDegF= dGetDegF(wTCoupleNum);
+    Serial << BLOG << " SaveReading():Set astReadings[" << wCurrentReadingNum << "].adTCoupleDegF[" << wTCoupleNum << "]= " << dDegF << endl;
+    astReadings[wCurrentReadingNum].adTCoupleDegF[wTCoupleNum]= dDegF;
+  } //for(int wTCoupleNum=0;...
+
   return;
 } //SaveReading
 
@@ -96,12 +99,7 @@ double dGetDegF(int wTCouple){
   //Needles swing back and forth from fMinSwingDegF to fMaxSwingDegF.
   //Gauge #3 goes at half cycle every sec, #2 every 2 sec, #1 every 5 sec and #0 every 10 sec
   double  dDegF;
-/*
-  double  dMeterPeriodSec[]= {20.00, 10.00, 4.00, 2.00};
-  double  dSwingMinDegF     = 100.00;
-  double  dSwingMaxDegF     = 450.00;
-*/
-  double  dRangeDegF        = (dSwingMaxDegF - dSwingMinDegF);
+  double  dRangeDegF          = (dSwingMaxDegF - dSwingMinDegF);
 
   double  dDegrees            = ((float)((millis() / 1000.00)) / dMeterPeriodSec[wTCouple]);
   double  dRadians            = (dDegrees / 180) * PI;
@@ -314,12 +312,14 @@ void DisplayMeter(int wMeterNumber, lv_coord_t sSize, lv_align_t ucAlignment, lv
   Serial << BLOG << " DisplayMeter(): Call SetNeedleValue, wMeterNumber= " << wMeterNumber << ", dNeedleValue= " << dNeedleValue << endl;
   SetNeedleValue(pMeter, pNeedleIndicator[wMeterNumber], dNeedleValue);
 
+/*
   if(wMeterNumber == 0){
     delay(2000);
     dNeedleValue= 250.00;
     Serial << BLOG << " DisplayMeter(): Call SetNeedleValue, wMeterNumber= " << wMeterNumber << ", dNeedleValue= " << dNeedleValue << endl;
     SetNeedleValue(pMeter, pNeedleIndicator[wMeterNumber], dNeedleValue);
   }
+*/
 
   return;
 } //DisplayMeter

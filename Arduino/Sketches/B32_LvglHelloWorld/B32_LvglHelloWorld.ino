@@ -1,5 +1,6 @@
 const char szSketchName[]  = "B32_LvglHelloWorld.ino";
-const char szFileDate[]    = "2/6/24X";
+const char szFileDate[]    = "2/6/24aB"
+    "";
 //Use Arduino_GFX as driver for LVGL calls to write to Waveshare 800x480, 4.3" 16-bit 5-6-5 RGB
 
 #include <B32_LVGL_Lib.h>
@@ -51,7 +52,7 @@ void setup(){
 
 
 void loop(){
-  lv_timer_handler(); /* let the GUI do its work */
+//  lv_timer_handler(); /* let the GUI do its work */
 /*
 #ifdef CANVAS
   pDisplay->flush();
@@ -61,10 +62,10 @@ void loop(){
   SaveReading();
 
   for (int wMeterNum= 0; wMeterNum < wNumTCouples; wMeterNum++){
-    //double  dNeedleValue= astReadings[0].adTCoupleDegF[wMeterNum];
-    double dNeedleValue= 200.00;
-    Serial << BLOG << " loop(): Call SetNeedleValue, wMeterNum= " << wMeterNum << endl;
+    double  dNeedleValue= astReadings[wCurrentReadingNum].adTCoupleDegF[wMeterNum];
+    //double dNeedleValue= 200.00;
     if (pMeter && pNeedleIndicator[wMeterNum]){
+      Serial << BLOG << " loop():Call SetNeedleValue, wMeterNum= " << wMeterNum << ", dNeedleValue= " << dNeedleValue << endl;
       SetNeedleValue(pMeter, pNeedleIndicator[wMeterNum], dNeedleValue);
     } //if(pMeter&&pNeedleIndicator[wMeterNum])
     else{
@@ -76,6 +77,8 @@ void loop(){
       }
     } //if(pMeter&&pNeedleIndicator[wMeterNum])else
   } //for
+
+  lv_timer_handler(); /* let the GUI do its work */
 
   delay(2000);
   return;

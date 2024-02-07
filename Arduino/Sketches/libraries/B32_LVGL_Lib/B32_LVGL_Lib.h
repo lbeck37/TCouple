@@ -1,4 +1,4 @@
-//B32_LVGL_Lib.h, 2/6/24f
+//B32_LVGL_Lib.h, 2/6/24g
 #pragma once
 #include <lvgl.h>
 #include <Arduino_GFX_Library.h>
@@ -20,6 +20,8 @@ extern stMessageStruct          astReadings[];
 extern lv_obj_t                 *pMeter;
 extern Arduino_RGB_Display      *pDisplay;
 extern lv_meter_indicator_t     *pNeedleIndicator[wNumTCouples];
+
+extern int32_t                  wCurrentReadingNum;
 
 //Functions protos
 void          SaveReading           (void);

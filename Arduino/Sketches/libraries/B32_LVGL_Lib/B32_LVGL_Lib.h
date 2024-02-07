@@ -21,9 +21,11 @@ extern stMessageStruct          astReadings[];
 
 //extern lv_obj_t                 *pMeter;
 //extern lv_obj_t                 *pMeterArray[wNumTCouples];
-extern lv_obj_t                 *pMeterArray[];
+extern lv_obj_t                 *apMeterArray[];
 extern Arduino_RGB_Display      *pDisplay;
-extern lv_meter_indicator_t     *pNeedleIndicator[wNumTCouples];
+//extern lv_meter_indicator_t     *pNeedleIndicator[wNumTCouples];
+//extern lv_meter_indicator_t     *pNeedleIndicator[wNumTCouples];
+extern lv_meter_indicator_t     *apNeedleArray[wNumTCouples];
 
 extern int32_t                  wCurrentReadingNum;
 

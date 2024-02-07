@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_LvglHelloWorld.ino";
-const char szFileDate[]    = "2/7/24N";
+const char szFileDate[]    = "2/7/24S";
 //Use Arduino_GFX as driver for LVGL calls to write to Waveshare 800x480, 4.3" 16-bit 5-6-5 RGB
 
 #include <B32_LVGL_Lib.h>
@@ -54,8 +54,8 @@ void setup(){
 /*
   Serial << endl << BLOG  << " setup(): DEBUGGING: Print pointer addresses:" << endl;
   for (int wMeterNum= 0; wMeterNum < wNumTCouples; wMeterNum++) {
-      Serial << BLOG << " setup():pMeterArray[" << wMeterNum << "]= " << (long)pMeterArray[wMeterNum] <<
-                        ", pNeedleIndicator[" << wMeterNum << "]= " << (long)pNeedleIndicator[wMeterNum] << endl;
+      Serial << BLOG << " setup():apMeterArray[" << wMeterNum << "]= " << (long)apMeterArray[wMeterNum] <<
+                        ", apNeedleArray[" << wMeterNum << "]= " << (long)apNeedleArray[wMeterNum] << endl;
   }
 */
 
@@ -95,22 +95,22 @@ void loop(){
 
   for (int wMeterNum= 0; wMeterNum < wNumTCouples; wMeterNum++){
     double  dNeedleValue= astReadings[wCurrentReadingNum].adTCoupleDegF[wMeterNum];
-    if (pMeterArray[wMeterNum] && pNeedleIndicator[wMeterNum]){
+    if (apMeterArray[wMeterNum] && apNeedleArray[wMeterNum]){
       Serial << BLOG << " loop():Call SetNeedleValue, wMeterNum= " << wMeterNum << ", dNeedleValue= " << dNeedleValue << endl;
 
-      Serial << BLOG << " loop():pMeterArray[" << wMeterNum << "]= " << (long)pMeterArray[wMeterNum] <<
-                        ", pNeedleIndicator[" << wMeterNum << "]= " << (long)pNeedleIndicator[wMeterNum] << endl;
+      Serial << BLOG << " loop():apMeterArray[" << wMeterNum << "]= " << (long)apMeterArray[wMeterNum] <<
+                        ", apNeedleArray[" << wMeterNum << "]= " << (long)apNeedleArray[wMeterNum] << endl;
 
-      SetNeedleValue(pMeterArray[wMeterNum], pNeedleIndicator[wMeterNum], dNeedleValue);
-    } //if(pMeter&&pNeedleIndicator[wMeterNum])
+      SetNeedleValue(apMeterArray[wMeterNum], apNeedleArray[wMeterNum], dNeedleValue);
+    } //if(pMeter&&apNeedleArray[wMeterNum])
     else{
-      if (!pMeterArray[wMeterNum]){
-        Serial << BLOG << " loop(): ERROR: pMeterArray[" << wMeterNum << "] is NULL" << endl;
+      if (!apMeterArray[wMeterNum]){
+        Serial << BLOG << " loop(): ERROR: apMeterArray[" << wMeterNum << "] is NULL" << endl;
       }
-      if (!pNeedleIndicator[wMeterNum]){
-        Serial << BLOG << " loop(): ERROR: pNeedleIndicator[" << wMeterNum << "] is NULL" << endl;
+      if (!apNeedleArray[wMeterNum]){
+        Serial << BLOG << " loop(): ERROR: apNeedleArray[" << wMeterNum << "] is NULL" << endl;
       }
-    } //if(pMeter&&pNeedleIndicator[wMeterNum])else
+    } //if(pMeter&&apNeedleArray[wMeterNum])else
   } //for
 
   //lv_timer_handler(); /* let the GUI do its work */

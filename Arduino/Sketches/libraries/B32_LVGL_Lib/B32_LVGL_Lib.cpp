@@ -19,8 +19,8 @@ lv_disp_draw_buf_t      stDrawBuffer;
 Arduino_ESP32RGBPanel   *pRGBPanel;
 Arduino_RGB_Display     *pDisplay;
 
-lv_obj_t                *pMeterArray[wNumTCouples];
-lv_meter_indicator_t    *pNeedleIndicator[wNumTCouples];
+lv_obj_t                *apMeterArray[wNumTCouples];
+lv_meter_indicator_t    *apNeedleArray[wNumTCouples];
 
 int32_t         wCurrentReadingNum=  0;
 
@@ -63,7 +63,7 @@ lv_coord_t            sScreenHeight;
 lv_color_t            *pDisplayBuffer;
 lv_disp_drv_t         stDisplayDriver;
 lv_disp_draw_buf_t    stDrawBuffer;
-lv_meter_indicator_t  *pNeedleIndicator[wNumTCouples];
+lv_meter_indicator_t  *apNeedleArray[wNumTCouples];
 */
 
 
@@ -134,7 +134,7 @@ void SetupDisplay(void){
   if (!pDisplay->begin()){
     Serial << BLOG << " SetupDisplay(): pDisplay->begin() failed" << endl;
   }
-  delay(500);
+  //delay(500);
   Serial << BLOG << " SetupDisplay(): Done." << endl;
   return;
 } //SetupDisplay
@@ -270,11 +270,11 @@ void DisplayMeter(int wMeterNumber, lv_coord_t sSize, lv_align_t ucAlignment, lv
 
   //= lv_meter_create(lv_scr_act());
 /*
-  pMeterArray[wMeterNumber]= lv_meter_create(lv_scr_act());
-  pMeter= pMeterArray[wMeterNumber];
+  apMeterArray[wMeterNumber]= lv_meter_create(lv_scr_act());
+  pMeter= apMeterArray[wMeterNumber];
 */
   lv_obj_t *pMeter= lv_meter_create(lv_scr_act());
-  pMeterArray[wMeterNumber]= pMeter;
+  apMeterArray[wMeterNumber]= pMeter;
 
   lv_obj_align                        (pMeter, ucAlignment, sOffsetX, sOffsetY);
   lv_obj_set_size                     (pMeter, sSize, sSize);
@@ -316,27 +316,27 @@ void DisplayMeter(int wMeterNumber, lv_coord_t sSize, lv_align_t ucAlignment, lv
   lv_meter_set_indicator_end_value    (pMeter, pIndicator, wRedArcEndValue);
 
   //Add a needle line indicator
-  pNeedleIndicator[wMeterNumber]= lv_meter_add_needle_line(pMeter, pScale, usNeedleWidth, stGreyColor, sNeedleRadiusMod);
+  apNeedleArray[wMeterNumber]= lv_meter_add_needle_line(pMeter, pScale, usNeedleWidth, stGreyColor, sNeedleRadiusMod);
 
 /*
   double  dNeedleValue= astReadings[0].adTCoupleDegF[wMeterNumber];
   //Serial << BLOG << " DisplayMeter(): Call SetNeedleValue, wMeterNumber= " << wMeterNumber << ", dNeedleValue= " << dNeedleValue << endl;
-  SetNeedleValue(pMeter, pNeedleIndicator[wMeterNumber], dNeedleValue);
+  SetNeedleValue(pMeter, apNeedleArray[wMeterNumber], dNeedleValue);
 */
 
   Serial << endl << BLOG  << " DisplayMeter(): DEBUGGING: Before return(): Print pointer addresses:" << endl;
   for (int wMeterNum= 0; wMeterNum < wNumTCouples; wMeterNum++) {
-      Serial << BLOG << " DisplayMeter():pMeterArray[" << wMeterNum << "]= " << (long)pMeterArray[wMeterNum] <<
-                        ", pNeedleIndicator[" << wMeterNum << "]= " << (long)pNeedleIndicator[wMeterNum] << endl;
+      Serial << BLOG << " DisplayMeter():apMeterArray[" << wMeterNum << "]= " << (long)apMeterArray[wMeterNum] <<
+                        ", apNeedleArray[" << wMeterNum << "]= " << (long)apNeedleArray[wMeterNum] << endl;
   }
 
   int   wSetNeedleDelay= 200;
   Serial << endl << BLOG  << " DisplayMeter(): DEBUGGING: Before return(): Change needle position:" << endl;
-  SetNeedleValue(pMeter, pNeedleIndicator[wMeterNumber], dSwingMinDegF);
+  SetNeedleValue(pMeter, apNeedleArray[wMeterNumber], dSwingMinDegF);
   delay(wSetNeedleDelay);
-  SetNeedleValue(pMeter, pNeedleIndicator[wMeterNumber], dSwingMaxDegF);
+  SetNeedleValue(pMeter, apNeedleArray[wMeterNumber], dSwingMaxDegF);
   delay(wSetNeedleDelay);
-  SetNeedleValue(pMeter, pNeedleIndicator[wMeterNumber], dSwingMinDegF);
+  SetNeedleValue(pMeter, apNeedleArray[wMeterNumber], dSwingMinDegF);
   delay(wSetNeedleDelay);
 
   return;

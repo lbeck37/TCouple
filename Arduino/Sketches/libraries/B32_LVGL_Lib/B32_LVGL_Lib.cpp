@@ -1,4 +1,4 @@
-//B32_LVGL_Lib.cpp, 2/7/24e
+//B32_LVGL_Lib.cpp, 2/7/24f
 #include <B32_LVGL_Lib.h>
 #include <WiFi.h>
 #include <Streaming.h>
@@ -330,13 +330,14 @@ void DisplayMeter(int wMeterNumber, lv_coord_t sSize, lv_align_t ucAlignment, lv
                         ", pNeedleIndicator[" << wMeterNum << "]= " << (long)pNeedleIndicator[wMeterNum] << endl;
   }
 
+  int   wSetNeedleDelay= 200;
   Serial << endl << BLOG  << " DisplayMeter(): DEBUGGING: Before return(): Change needle position:" << endl;
   SetNeedleValue(pMeter, pNeedleIndicator[wMeterNumber], dSwingMinDegF);
-  delay(1000);
+  delay(wSetNeedleDelay);
   SetNeedleValue(pMeter, pNeedleIndicator[wMeterNumber], dSwingMaxDegF);
-  delay(1000);
+  delay(wSetNeedleDelay);
   SetNeedleValue(pMeter, pNeedleIndicator[wMeterNumber], dSwingMinDegF);
-  delay(1000);
+  delay(wSetNeedleDelay);
 
   return;
 } //DisplayMeter

@@ -1,4 +1,4 @@
-//B32_LVGL_Lib.h, 2/7/24c
+//B32_LVGL_Lib.h, 2/7/24d
 #pragma once
 #include <lvgl.h>
 #include <Arduino_GFX_Library.h>

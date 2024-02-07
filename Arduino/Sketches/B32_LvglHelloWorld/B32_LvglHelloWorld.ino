@@ -1,24 +1,37 @@
 const char szSketchName[]  = "B32_LvglHelloWorld.ino";
-const char szFileDate[]    = "2/7/24J";
+const char szFileDate[]    = "2/7/24N";
 //Use Arduino_GFX as driver for LVGL calls to write to Waveshare 800x480, 4.3" 16-bit 5-6-5 RGB
 
 #include <B32_LVGL_Lib.h>
 #include <ESP32TimerInterrupt.h>
-//#include <ESP32TimerInterrupt.hpp>
-//#include "ESP32TimerInterrupt.h"
 #include <Streaming.h>
 
 #ifndef BLOG
   #define BLOG          millis()    //Used in logging
 #endif
 
-uint16_t  usMeterPercentScale = 100;
-uint8_t   ucNumColumns        = 2;
-uint8_t   ucNumRows           = 2;
+uint16_t          usMeterPercentScale   = 100;    //Size of meters?
+uint8_t           ucNumColumns          =   2;
+uint8_t           ucNumRows             =   2;
+
+const uint8_t     ucLvgl_TimerNumber    =   0;
+
+//Create the interrupt timer to handle LVGL work.
+ESP32Timer        Lvgl_InterruptTimer   (ucLvgl_TimerNumber);
 
 //Function protos
-void  setup         (void);
-void  loop          (void);
+bool IRAM_ATTR  Lvgl_TimerHandler   (void *pucTimerNumber);
+void            setup               (void);
+void            loop                (void);
+
+
+//bool IRAM_ATTR TimerHandler0(void * timerNo)
+bool IRAM_ATTR Lvgl_TimerHandler(void *pucTimerNumber){
+  Serial << BLOG << " Lvgl_TimerHandler(): Interrupt fired" << endl;
+
+  lv_timer_handler(); /* let the GUI do its work */
+  return true;
+} //TimerHandler0
 
 
 void setup(){
@@ -29,11 +42,22 @@ void setup(){
   delay(500);
   Serial << endl << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
+  // Interval in microsecs
+  const unsigned long   ulOneMsec             = 1000;
+  unsigned long         ulLvgl_TimerInterval  = (100 * ulOneMsec);
+
+  Serial << BLOG << " setup(): Call Lvgl_InterruptTimer.attachInterruptInterval" << endl;
+  if (!Lvgl_InterruptTimer.attachInterruptInterval(ulLvgl_TimerInterval, Lvgl_TimerHandler)){
+    Serial << BLOG << " setup(): ERROR: Call to Lvgl_InterruptTimer.attachInterruptInterval FAILED" << endl;
+  } //if(!Lvgl_InterruptTimer.attachInterruptInterval(...
+
+/*
   Serial << endl << BLOG  << " setup(): DEBUGGING: Print pointer addresses:" << endl;
   for (int wMeterNum= 0; wMeterNum < wNumTCouples; wMeterNum++) {
       Serial << BLOG << " setup():pMeterArray[" << wMeterNum << "]= " << (long)pMeterArray[wMeterNum] <<
                         ", pNeedleIndicator[" << wMeterNum << "]= " << (long)pNeedleIndicator[wMeterNum] << endl;
   }
+*/
 
   //Initialize values for 0 element
   astReadings[0].lSampleTimeMsec= 0;
@@ -89,7 +113,7 @@ void loop(){
     } //if(pMeter&&pNeedleIndicator[wMeterNum])else
   } //for
 
-  lv_timer_handler(); /* let the GUI do its work */
+  //lv_timer_handler(); /* let the GUI do its work */
 
   delay(2000);
   return;

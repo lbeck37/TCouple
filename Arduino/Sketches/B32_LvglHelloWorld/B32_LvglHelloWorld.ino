@@ -1,8 +1,11 @@
 const char szSketchName[]  = "B32_LvglHelloWorld.ino";
-const char szFileDate[]    = "2/6/24aF";
+const char szFileDate[]    = "2/7/24J";
 //Use Arduino_GFX as driver for LVGL calls to write to Waveshare 800x480, 4.3" 16-bit 5-6-5 RGB
 
 #include <B32_LVGL_Lib.h>
+#include <ESP32TimerInterrupt.h>
+//#include <ESP32TimerInterrupt.hpp>
+//#include "ESP32TimerInterrupt.h"
 #include <Streaming.h>
 
 #ifndef BLOG
@@ -25,6 +28,12 @@ void setup(){
   Serial.begin(115200);
   delay(500);
   Serial << endl << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
+
+  Serial << endl << BLOG  << " setup(): DEBUGGING: Print pointer addresses:" << endl;
+  for (int wMeterNum= 0; wMeterNum < wNumTCouples; wMeterNum++) {
+      Serial << BLOG << " setup():pMeterArray[" << wMeterNum << "]= " << (long)pMeterArray[wMeterNum] <<
+                        ", pNeedleIndicator[" << wMeterNum << "]= " << (long)pNeedleIndicator[wMeterNum] << endl;
+  }
 
   //Initialize values for 0 element
   astReadings[0].lSampleTimeMsec= 0;
@@ -64,6 +73,10 @@ void loop(){
     double  dNeedleValue= astReadings[wCurrentReadingNum].adTCoupleDegF[wMeterNum];
     if (pMeterArray[wMeterNum] && pNeedleIndicator[wMeterNum]){
       Serial << BLOG << " loop():Call SetNeedleValue, wMeterNum= " << wMeterNum << ", dNeedleValue= " << dNeedleValue << endl;
+
+      Serial << BLOG << " loop():pMeterArray[" << wMeterNum << "]= " << (long)pMeterArray[wMeterNum] <<
+                        ", pNeedleIndicator[" << wMeterNum << "]= " << (long)pNeedleIndicator[wMeterNum] << endl;
+
       SetNeedleValue(pMeterArray[wMeterNum], pNeedleIndicator[wMeterNum], dNeedleValue);
     } //if(pMeter&&pNeedleIndicator[wMeterNum])
     else{

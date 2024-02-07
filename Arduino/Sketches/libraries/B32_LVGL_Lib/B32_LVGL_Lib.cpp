@@ -1,4 +1,4 @@
-//B32_LVGL_Lib.cpp, 2/6/24g
+//B32_LVGL_Lib.cpp, 2/7/24b
 #include <B32_LVGL_Lib.h>
 #include <WiFi.h>
 #include <Streaming.h>
@@ -11,7 +11,8 @@ stMessageStruct         astReadings[wMaxReadings + 1];
 
 Arduino_ESP32RGBPanel   *pRGBPanel;
 Arduino_RGB_Display     *pDisplay;
-lv_obj_t                *pMeter;
+//lv_obj_t                *pMeter;
+lv_obj_t                *pMeterArray[wNumTCouples];
 
 int32_t         wCurrentReadingNum=  0;
 
@@ -47,8 +48,8 @@ const bool      bUseBigEndian     = false;
 const uint16_t  usDEIdleHigh      = 0;
 const uint16_t  usPclkIdleHigh    = 0;
 
-lv_coord_t      sScreenWidth;
-lv_coord_t      sScreenHeight;
+lv_coord_t            sScreenWidth;
+lv_coord_t            sScreenHeight;
 
 lv_color_t            *pDisplayBuffer;
 lv_disp_drv_t         stDisplayDriver;
@@ -57,9 +58,9 @@ lv_meter_indicator_t  *pNeedleIndicator[wNumTCouples];
 
 
 //Protos for functions only used in this file
-void    FlushDataToDisplay  (lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p);
-void    SetIndicatorValue   (void *pIndicator, int wValue);
-double  dGetDegF            (int wTCouple);
+void    FlushDataToDisplay(lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p);
+void    SetIndicatorValue (void *pIndicator, int wValue);
+double  dGetDegF          (int wTCouple);
 
 
 void SaveReading(void){
@@ -73,7 +74,8 @@ void SaveReading(void){
 
   for(int wTCoupleNum= 0; wTCoupleNum < wNumTCouples; wTCoupleNum++){
     double dDegF= dGetDegF(wTCoupleNum);
-    Serial << BLOG << " SaveReading():Set astReadings[" << wCurrentReadingNum << "].adTCoupleDegF[" << wTCoupleNum << "]= " << dDegF << endl;
+    Serial << BLOG << " SaveReading():Set astReadings[" << wCurrentReadingNum <<
+                      "].adTCoupleDegF[" << wTCoupleNum << "]= " << dDegF << endl;
     astReadings[wCurrentReadingNum].adTCoupleDegF[wTCoupleNum]= dDegF;
   } //for(int wTCoupleNum=0;...
 
@@ -106,7 +108,7 @@ void SetupDisplay(void){
   uint16_t    usScreenWidth      = 800;
   uint16_t    usScreenHeight     = 480;
 
-  Serial << BLOG << " SetupDisplay(): Doing new for Arduino_ESP32RGBPanel & Arduino_RGB_Display" << endl;
+  Serial << BLOG << " SetupDisplay(): Doing new Arduino_ESP32RGBPanel & Arduino_RGB_Display" << endl;
   pRGBPanel = new Arduino_ESP32RGBPanel(
           cDE_Pin      , cVsyncPin    , cHsyncPin    , cPclkPin,
           acRedPin  [0], acRedPin  [1], acRedPin  [2], acRedPin  [3], acRedPin  [4],
@@ -215,7 +217,7 @@ void DisplayMeterArray(uint8_t ucNumColumns, uint8_t ucNumRows, uint16_t usPerce
 } //DisplayMeterArray
 
 
-void DisplayMeter(int wMeterNumber, lv_coord_t sSize, lv_align_t ucAlignment, lv_coord_t sOffsetX, lv_coord_t sOffsetY){
+void DisplayMeter(int wMeterNum, lv_coord_t sSize, lv_align_t ucAlignment, lv_coord_t sOffsetX, lv_coord_t sOffsetY){
   lv_color_t              stBlueColor         = lv_palette_main(LV_PALETTE_BLUE);
   lv_color_t              stRedColor          = lv_palette_main(LV_PALETTE_RED);
   lv_color_t              stGreyColor         = lv_palette_main(LV_PALETTE_GREY);
@@ -254,9 +256,15 @@ void DisplayMeter(int wMeterNumber, lv_coord_t sSize, lv_align_t ucAlignment, lv
   lv_meter_indicator_t    *pIndicator;
   //lv_meter_indicator_t    *pNeedleIndicator[wNumTCouples];
 
-  //Serial << endl << BLOG << " DisplayMeter(): Begin, wMeterNumber= " << wMeterNumber << endl;
+  //Serial << endl << BLOG << " DisplayMeter(): Begin, wMeterNum= " << wMeterNum << endl;
 
-  pMeter= lv_meter_create(lv_scr_act());
+  //= lv_meter_create(lv_scr_act());
+/*
+  pMeterArray[wMeterNum]= lv_meter_create(lv_scr_act());
+  pMeter= pMeterArray[wMeterNum];
+*/
+  lv_obj_t *pMeter= lv_meter_create(lv_scr_act());
+  pMeterArray[wMeterNum]= pMeter;
 
   lv_obj_align                        (pMeter, ucAlignment, sOffsetX, sOffsetY);
   lv_obj_set_size                     (pMeter, sSize, sSize);
@@ -298,11 +306,11 @@ void DisplayMeter(int wMeterNumber, lv_coord_t sSize, lv_align_t ucAlignment, lv
   lv_meter_set_indicator_end_value    (pMeter, pIndicator, wRedArcEndValue);
 
   //Add a needle line indicator
-  pNeedleIndicator[wMeterNumber]= lv_meter_add_needle_line(pMeter, pScale, usNeedleWidth, stGreyColor, sNeedleRadiusMod);
+  pNeedleIndicator[wMeterNum]= lv_meter_add_needle_line(pMeter, pScale, usNeedleWidth, stGreyColor, sNeedleRadiusMod);
 
-  double  dNeedleValue= astReadings[0].adTCoupleDegF[wMeterNumber];
-  //Serial << BLOG << " DisplayMeter(): Call SetNeedleValue, wMeterNumber= " << wMeterNumber << ", dNeedleValue= " << dNeedleValue << endl;
-  SetNeedleValue(pMeter, pNeedleIndicator[wMeterNumber], dNeedleValue);
+  double  dNeedleValue= astReadings[0].adTCoupleDegF[wMeterNum];
+  //Serial << BLOG << " DisplayMeter(): Call SetNeedleValue, wMeterNum= " << wMeterNum << ", dNeedleValue= " << dNeedleValue << endl;
+  SetNeedleValue(pMeter, pNeedleIndicator[wMeterNum], dNeedleValue);
 
   return;
 } //DisplayMeter

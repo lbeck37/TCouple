@@ -62,13 +62,13 @@ void loop(){
 
   for (int wMeterNum= 0; wMeterNum < wNumTCouples; wMeterNum++){
     double  dNeedleValue= astReadings[wCurrentReadingNum].adTCoupleDegF[wMeterNum];
-    if (pMeter && pNeedleIndicator[wMeterNum]){
+    if (pMeterArray[wMeterNum] && pNeedleIndicator[wMeterNum]){
       Serial << BLOG << " loop():Call SetNeedleValue, wMeterNum= " << wMeterNum << ", dNeedleValue= " << dNeedleValue << endl;
-      SetNeedleValue(pMeter, pNeedleIndicator[wMeterNum], dNeedleValue);
+      SetNeedleValue(pMeterArray[wMeterNum], pNeedleIndicator[wMeterNum], dNeedleValue);
     } //if(pMeter&&pNeedleIndicator[wMeterNum])
     else{
-      if (!pMeter){
-        Serial << BLOG << " loop(): ERROR: pMeter is NULL" << endl;
+      if (!pMeterArray[wMeterNum]){
+        Serial << BLOG << " loop(): ERROR: pMeterArray[" << wMeterNum << "] is NULL" << endl;
       }
       if (!pNeedleIndicator[wMeterNum]){
         Serial << BLOG << " loop(): ERROR: pNeedleIndicator[" << wMeterNum << "] is NULL" << endl;

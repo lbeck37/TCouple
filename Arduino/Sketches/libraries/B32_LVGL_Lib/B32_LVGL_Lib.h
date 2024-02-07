@@ -1,4 +1,4 @@
-//B32_LVGL_Lib.h, 2/6/24g
+//B32_LVGL_Lib.h, 2/7/24b
 #pragma once
 #include <lvgl.h>
 #include <Arduino_GFX_Library.h>
@@ -19,7 +19,9 @@ typedef struct stMessageStructure {
 
 extern stMessageStruct          astReadings[];
 
-extern lv_obj_t                 *pMeter;
+//extern lv_obj_t                 *pMeter;
+//extern lv_obj_t                 *pMeterArray[wNumTCouples];
+extern lv_obj_t                 *pMeterArray[];
 extern Arduino_RGB_Display      *pDisplay;
 extern lv_meter_indicator_t     *pNeedleIndicator[wNumTCouples];
 

@@ -1,4 +1,4 @@
-//B32_LVGL_Lib.cpp, 2/6/24f
+//B32_LVGL_Lib.cpp, 2/6/24g
 #include <B32_LVGL_Lib.h>
 #include <WiFi.h>
 #include <Streaming.h>
@@ -7,21 +7,7 @@
   #define BLOG          millis()    //Used in logging
 #endif
 
-/*
-const double  dMeterPeriodSec[]= {20.00, 10.00, 4.00, 2.00};
-const double  dSwingMinDegF     = 100.00;
-const double  dSwingMaxDegF     = 450.00;
-*/
-
 stMessageStruct         astReadings[wMaxReadings + 1];
-
-/*
-astReadings[0].lSampleTimeMsec= 0;
-
-for (int wMeter= 0; wMeter < wNumTCouples; wMeter++){
-  astReadings[0].adTCoupleDegF[wMeter]= dSwingMinDegF;
-}
-*/
 
 Arduino_ESP32RGBPanel   *pRGBPanel;
 Arduino_RGB_Display     *pDisplay;
@@ -101,11 +87,17 @@ double dGetDegF(int wTCouple){
   double  dDegF;
   double  dRangeDegF          = (dSwingMaxDegF - dSwingMinDegF);
 
-  double  dDegrees            = ((float)((millis() / 1000.00)) / dMeterPeriodSec[wTCouple]);
+  //double  dDegrees            = (((float)(millis() / 1000.00)) / dMeterPeriodSec[wTCouple]);
+  double  dDegrees            = (((float)(millis() / 1000.00)) * dMeterDegPerSec[wTCouple]);
   double  dRadians            = (dDegrees / 180) * PI;
-  double  dPercentRange       = ((sin(dRadians) + 1.00) * 100.00);
+  double  dSine               = sin(dRadians);
+  //double  dPercentRange       = ((sin(dRadians) + 1.00) * 50.00);   //Cycles between 0.00 and 100.00
+  double  dPercentRange       = ((dSine + 1.00) * 50.00);   //Cycles between 0.00 and 100.00
 
-  dDegF= (dSwingMinDegF + (dRangeDegF *(dPercentRange / 100.00)));
+  Serial << BLOG << " dGetDegF(): wTCouple= " << wTCouple << ", dDegrees= " << dDegrees <<
+                    ", dSine= " << dSine <<", dPercentRange= " << dPercentRange << endl;
+
+  dDegF= (dSwingMinDegF + (dRangeDegF *(dPercentRange / 100.00)));  //Cycles from dSwingMinDegF to dSwingMaxDegF
   return dDegF;
 } //dGetDegF
 
@@ -262,7 +254,7 @@ void DisplayMeter(int wMeterNumber, lv_coord_t sSize, lv_align_t ucAlignment, lv
   lv_meter_indicator_t    *pIndicator;
   //lv_meter_indicator_t    *pNeedleIndicator[wNumTCouples];
 
-  Serial << endl << BLOG << " DisplayMeter(): Begin, wMeterNumber= " << wMeterNumber << endl;
+  //Serial << endl << BLOG << " DisplayMeter(): Begin, wMeterNumber= " << wMeterNumber << endl;
 
   pMeter= lv_meter_create(lv_scr_act());
 
@@ -309,17 +301,8 @@ void DisplayMeter(int wMeterNumber, lv_coord_t sSize, lv_align_t ucAlignment, lv
   pNeedleIndicator[wMeterNumber]= lv_meter_add_needle_line(pMeter, pScale, usNeedleWidth, stGreyColor, sNeedleRadiusMod);
 
   double  dNeedleValue= astReadings[0].adTCoupleDegF[wMeterNumber];
-  Serial << BLOG << " DisplayMeter(): Call SetNeedleValue, wMeterNumber= " << wMeterNumber << ", dNeedleValue= " << dNeedleValue << endl;
+  //Serial << BLOG << " DisplayMeter(): Call SetNeedleValue, wMeterNumber= " << wMeterNumber << ", dNeedleValue= " << dNeedleValue << endl;
   SetNeedleValue(pMeter, pNeedleIndicator[wMeterNumber], dNeedleValue);
-
-/*
-  if(wMeterNumber == 0){
-    delay(2000);
-    dNeedleValue= 250.00;
-    Serial << BLOG << " DisplayMeter(): Call SetNeedleValue, wMeterNumber= " << wMeterNumber << ", dNeedleValue= " << dNeedleValue << endl;
-    SetNeedleValue(pMeter, pNeedleIndicator[wMeterNumber], dNeedleValue);
-  }
-*/
 
   return;
 } //DisplayMeter

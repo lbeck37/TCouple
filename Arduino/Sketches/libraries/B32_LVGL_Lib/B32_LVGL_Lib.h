@@ -5,7 +5,9 @@
 
 const int     wNumTCouples      =    4;
 const int     wMaxReadings      = 1000;
-const double  dMeterPeriodSec[] = {20.00, 10.00, 4.00, 2.00};
+//const double  dMeterPeriodSec[] = {20.00, 10.00, 4.00, 2.00};
+//const double  dMeterDegPerSec[] = {360.00, 180.00, 90.00, 45.00};
+const double  dMeterDegPerSec[] = {400.00, 200.00, 100.00, 50.00};
 const double  dSwingMinDegF     = 100.00;
 const double  dSwingMaxDegF     = 450.00;
 

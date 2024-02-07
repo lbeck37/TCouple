@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_LvglHelloWorld.ino";
-const char szFileDate[]    = "2/6/24E";
+const char szFileDate[]    = "2/6/24X";
 //Use Arduino_GFX as driver for LVGL calls to write to Waveshare 800x480, 4.3" 16-bit 5-6-5 RGB
 
 #include <B32_LVGL_Lib.h>
@@ -44,6 +44,8 @@ void setup(){
 
   Serial << BLOG << " setup(): Call DisplayMeterArray" << endl;
   DisplayMeterArray(ucNumColumns, ucNumRows, usMeterPercentScale);
+
+  Serial << BLOG << " setup(): Done" << endl;
   return;
 } //setup
 
@@ -55,12 +57,27 @@ void loop(){
   pDisplay->flush();
 #endif
 */
+  Serial << endl;
   SaveReading();
 
-  Serial << BLOG << " loop(): Call DisplayMeterArray" << endl;
-  DisplayMeterArray(ucNumColumns, ucNumRows, usMeterPercentScale);
+  for (int wMeterNum= 0; wMeterNum < wNumTCouples; wMeterNum++){
+    //double  dNeedleValue= astReadings[0].adTCoupleDegF[wMeterNum];
+    double dNeedleValue= 200.00;
+    Serial << BLOG << " loop(): Call SetNeedleValue, wMeterNum= " << wMeterNum << endl;
+    if (pMeter && pNeedleIndicator[wMeterNum]){
+      SetNeedleValue(pMeter, pNeedleIndicator[wMeterNum], dNeedleValue);
+    } //if(pMeter&&pNeedleIndicator[wMeterNum])
+    else{
+      if (!pMeter){
+        Serial << BLOG << " loop(): ERROR: pMeter is NULL" << endl;
+      }
+      if (!pNeedleIndicator[wMeterNum]){
+        Serial << BLOG << " loop(): ERROR: pNeedleIndicator[" << wMeterNum << "] is NULL" << endl;
+      }
+    } //if(pMeter&&pNeedleIndicator[wMeterNum])else
+  } //for
 
-  delay(50);
+  delay(2000);
   return;
 } //loop
 //Last line.

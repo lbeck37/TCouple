@@ -1,4 +1,4 @@
-//B32_LVGL_Lib.h, 2/6/24d
+//B32_LVGL_Lib.h, 2/6/24f
 #pragma once
 #include <lvgl.h>
 #include <Arduino_GFX_Library.h>
@@ -15,8 +15,11 @@ typedef struct stMessageStructure {
   double      adTCoupleDegF[wNumTCouples];
 } stMessageStruct;
 
-extern stMessageStruct      astReadings[];
-extern Arduino_RGB_Display  *pDisplay;
+extern stMessageStruct          astReadings[];
+
+extern lv_obj_t                 *pMeter;
+extern Arduino_RGB_Display      *pDisplay;
+extern lv_meter_indicator_t     *pNeedleIndicator[wNumTCouples];
 
 //Functions protos
 void          SaveReading           (void);
@@ -26,6 +29,7 @@ void          DisplayLabel          (const char* szText);
 void          DisplayMeterArray     (uint8_t ucNumColumns, uint8_t ucNumRows, uint16_t usPercentScale);
 void          DisplayMeter          (int wMeterNumber, lv_coord_t sSize   , lv_align_t ucAlignment,
                                      lv_coord_t sOffsetX, lv_coord_t sOffsetY);
+void          SetNeedleValue        (lv_obj_t *pMeter, lv_meter_indicator_t *pNeedleIndicator, double dValue);
 char*         szGetMyMAC            (char* szBuffer);
 void          set_value             (void *pIndicator, int wValue);
 lv_coord_t    sPercent              (lv_coord_t sNumber, int16_t sPercent);

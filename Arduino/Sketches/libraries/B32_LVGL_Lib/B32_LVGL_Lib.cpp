@@ -1,4 +1,4 @@
-//B32_LVGL_Lib.cpp, 2/6/24c
+//B32_LVGL_Lib.cpp, 2/6/24f
 #include <B32_LVGL_Lib.h>
 #include <WiFi.h>
 #include <Streaming.h>
@@ -28,7 +28,6 @@ Arduino_RGB_Display     *pDisplay;
 lv_obj_t                *pMeter;
 
 int32_t         wCurrentReadingNum=  0;
-//int32_t         wLastReadingNum   =  0;
 
 const int8_t    cDE_Pin           =  5;
 const int8_t    cVsyncPin         =  3;
@@ -65,10 +64,11 @@ const uint16_t  usPclkIdleHigh    = 0;
 lv_coord_t      sScreenWidth;
 lv_coord_t      sScreenHeight;
 
-lv_color_t      *pDisplayBuffer;
-lv_disp_drv_t   stDisplayDriver;
-
+lv_color_t            *pDisplayBuffer;
+lv_disp_drv_t         stDisplayDriver;
 lv_disp_draw_buf_t    stDrawBuffer;
+lv_meter_indicator_t  *pNeedleIndicator[wNumTCouples];
+
 
 //Protos for functions only used in this file
 void    FlushDataToDisplay  (lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p);
@@ -180,6 +180,12 @@ void SetupLVGL(void){
 } //SetupLVGL
 
 
+void SetNeedleValue(lv_obj_t *pMeter, lv_meter_indicator_t *pNeedleIndicator, double dValue){
+  lv_meter_set_indicator_value(pMeter, pNeedleIndicator, dValue);
+  return;
+} //SetNeedleValue
+
+
 void DisplayLabel(const char* szText){
   lv_obj_t    *pParent= lv_scr_act      ();
   lv_obj_t    *pLabel = lv_label_create (pParent);
@@ -189,12 +195,6 @@ void DisplayLabel(const char* szText){
 
   return;
 } //DisplayLabel
-
-
-void SetIndicatorValue(void *pIndicator, int wValue){
-  lv_meter_set_indicator_value(pMeter, (lv_meter_indicator_t*)pIndicator, wValue);
-  return;
-} //SetIndicatorValue
 
 
 void DisplayMeterArray(uint8_t ucNumColumns, uint8_t ucNumRows, uint16_t usPercentScale){
@@ -212,12 +212,13 @@ void DisplayMeterArray(uint8_t ucNumColumns, uint8_t ucNumRows, uint16_t usPerce
   sFirstRowOffsetY  = sPercent(sFirstRowOffsetY , usPercentScale);
 
   Serial << BLOG << " DisplayMeterArray(): Call DisplayMeter " << wNumMeters << " times" << endl;
+  int wMeterNum= 0;
   for (int wRowNum= 0; wRowNum < ucNumRows; wRowNum++){
     sOffsetY= (sFirstRowOffsetY + (wRowNum * sSpacingY));   //Work in percentage of meter size
-    for (int wMeterNumber= 0; wMeterNumber < ucNumColumns; wMeterNumber++){
-      sOffsetX= (wMeterNumber * sSpacingX);
-      DisplayMeter(wMeterNumber, sMeterSize, ucAlignment, sOffsetX, sOffsetY);
-    } //for(int wMeterNumber=0;...
+    for (int wColNum= 0; wColNum < ucNumColumns; wColNum++){
+      sOffsetX= (wColNum * sSpacingX);
+      DisplayMeter(wMeterNum++, sMeterSize, ucAlignment, sOffsetX, sOffsetY);
+    } //for(int wColNum=0;...
   } //for(int wRowNum=0;...
 
   return;
@@ -261,7 +262,9 @@ void DisplayMeter(int wMeterNumber, lv_coord_t sSize, lv_align_t ucAlignment, lv
   int32_t                 wRedArcEndValue     = 500;
 
   lv_meter_indicator_t    *pIndicator;
-  lv_meter_indicator_t    *pNeedleIndicator[wNumTCouples];
+  //lv_meter_indicator_t    *pNeedleIndicator[wNumTCouples];
+
+  Serial << endl << BLOG << " DisplayMeter(): Begin, wMeterNumber= " << wMeterNumber << endl;
 
   pMeter= lv_meter_create(lv_scr_act());
 
@@ -307,21 +310,16 @@ void DisplayMeter(int wMeterNumber, lv_coord_t sSize, lv_align_t ucAlignment, lv
   //Add a needle line indicator
   pNeedleIndicator[wMeterNumber]= lv_meter_add_needle_line(pMeter, pScale, usNeedleWidth, stGreyColor, sNeedleRadiusMod);
 
-  int32_t   wNeedleValue= astReadings[wCurrentReadingNum].adTCoupleDegF[wMeterNumber];
-  lv_meter_set_indicator_value(pMeter, pIndicator, wNeedleValue);
+  double  dNeedleValue= astReadings[0].adTCoupleDegF[wMeterNumber];
+  Serial << BLOG << " DisplayMeter(): Call SetNeedleValue, wMeterNumber= " << wMeterNumber << ", dNeedleValue= " << dNeedleValue << endl;
+  SetNeedleValue(pMeter, pNeedleIndicator[wMeterNumber], dNeedleValue);
 
-  /*Create an animation to set the value*/
-  lv_anim_t   stAnimation;
-  lv_anim_init                  (&stAnimation);
-  lv_anim_set_exec_cb           (&stAnimation, SetIndicatorValue);
-  lv_anim_set_var               (&stAnimation, pIndicator);
-  lv_anim_set_values            (&stAnimation, 0, 100);
-  lv_anim_set_time              (&stAnimation, 2000);
-  lv_anim_set_repeat_delay      (&stAnimation, 100);
-  lv_anim_set_playback_time     (&stAnimation, 500);
-  lv_anim_set_playback_delay    (&stAnimation, 100);
-  lv_anim_set_repeat_count      (&stAnimation, LV_ANIM_REPEAT_INFINITE);
-  lv_anim_start                 (&stAnimation);
+  if(wMeterNumber == 0){
+    delay(2000);
+    dNeedleValue= 250.00;
+    Serial << BLOG << " DisplayMeter(): Call SetNeedleValue, wMeterNumber= " << wMeterNumber << ", dNeedleValue= " << dNeedleValue << endl;
+    SetNeedleValue(pMeter, pNeedleIndicator[wMeterNumber], dNeedleValue);
+  }
 
   return;
 } //DisplayMeter

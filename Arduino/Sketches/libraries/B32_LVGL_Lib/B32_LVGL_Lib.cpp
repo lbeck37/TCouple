@@ -1,4 +1,4 @@
-//B32_LVGL_Lib.cpp, 2/7/24f
+//B32_LVGL_Lib.cpp, 2/7/24g
 #include <B32_LVGL_Lib.h>
 #include <WiFi.h>
 #include <Streaming.h>
@@ -182,12 +182,6 @@ void SetupLVGL(void){
 } //SetupLVGL
 
 
-void SetNeedleValue(lv_obj_t *pMeter, lv_meter_indicator_t *pNeedleIndicator, double dValue){
-  lv_meter_set_indicator_value(pMeter, pNeedleIndicator, dValue);
-  return;
-} //SetNeedleValue
-
-
 void DisplayLabel(const char* szText){
   lv_obj_t    *pParent= lv_scr_act      ();
   lv_obj_t    *pLabel = lv_label_create (pParent);
@@ -273,8 +267,8 @@ void DisplayMeter(int wMeterNumber, lv_coord_t sSize, lv_align_t ucAlignment, lv
   apMeterArray[wMeterNumber]= lv_meter_create(lv_scr_act());
   pMeter= apMeterArray[wMeterNumber];
 */
-  lv_obj_t *pMeter= lv_meter_create(lv_scr_act());
-  apMeterArray[wMeterNumber]= pMeter;
+  lv_obj_t *pMeter            = lv_meter_create(lv_scr_act());
+  apMeterArray[wMeterNumber]  = pMeter;
 
   lv_obj_align                        (pMeter, ucAlignment, sOffsetX, sOffsetY);
   lv_obj_set_size                     (pMeter, sSize, sSize);
@@ -330,6 +324,7 @@ void DisplayMeter(int wMeterNumber, lv_coord_t sSize, lv_align_t ucAlignment, lv
                         ", apNeedleArray[" << wMeterNum << "]= " << (long)apNeedleArray[wMeterNum] << endl;
   }
 
+  /*
   int   wSetNeedleDelay= 200;
   Serial << endl << BLOG  << " DisplayMeter(): DEBUGGING: Before return(): Change needle position:" << endl;
   SetNeedleValue(pMeter, apNeedleArray[wMeterNumber], dSwingMinDegF);
@@ -338,9 +333,27 @@ void DisplayMeter(int wMeterNumber, lv_coord_t sSize, lv_align_t ucAlignment, lv
   delay(wSetNeedleDelay);
   SetNeedleValue(pMeter, apNeedleArray[wMeterNumber], dSwingMinDegF);
   delay(wSetNeedleDelay);
+*/
 
   return;
 } //DisplayMeter
+
+
+void SetNeedleValue(lv_obj_t *pMeter, lv_meter_indicator_t *pNeedleIndicator, double dValue){
+  if(pMeter && pNeedleIndicator){
+    Serial << BLOG  << " SetNeedleValue(): pMeter= " << (long)pMeter << ", pNeedleIndicator= " << (long)pNeedleIndicator << ", Set value to " << dValue << endl;
+    lv_meter_set_indicator_value(pMeter, pNeedleIndicator, dValue);
+  } //if(pMeter&&pNeedleIndicator)
+  else{
+    if(!pMeter){
+      Serial << endl << BLOG  << " SetNeedleValue(): ERROR: pMeter is NULL" << endl;
+    } //if(!pMeter)
+    if(!pNeedleIndicator){
+      Serial << endl << BLOG  << " SetNeedleValue(): ERROR: pNeedleIndicator is NULL" << endl;
+    } //if(!pNeedleIndicator)
+  } //if(pMeter&&pNeedleIndicator)else
+  return;
+} //SetNeedleValue
 
 
 void FlushDataToDisplay(lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p)

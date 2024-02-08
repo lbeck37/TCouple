@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_LvglHelloWorld.ino";
-const char szFileDate[]    = "2/7/24S";
+const char szFileDate[]    = "2/7/24aF";
 //Use Arduino_GFX as driver for LVGL calls to write to Waveshare 800x480, 4.3" 16-bit 5-6-5 RGB
 
 #include <B32_LVGL_Lib.h>
@@ -42,21 +42,17 @@ void setup(){
   delay(500);
   Serial << endl << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
+  long lTime= millis();
+
   // Interval in microsecs
   const unsigned long   ulOneMsec             = 1000;
   unsigned long         ulLvgl_TimerInterval  = (100 * ulOneMsec);
 
+/*
   Serial << BLOG << " setup(): Call Lvgl_InterruptTimer.attachInterruptInterval" << endl;
   if (!Lvgl_InterruptTimer.attachInterruptInterval(ulLvgl_TimerInterval, Lvgl_TimerHandler)){
     Serial << BLOG << " setup(): ERROR: Call to Lvgl_InterruptTimer.attachInterruptInterval FAILED" << endl;
   } //if(!Lvgl_InterruptTimer.attachInterruptInterval(...
-
-/*
-  Serial << endl << BLOG  << " setup(): DEBUGGING: Print pointer addresses:" << endl;
-  for (int wMeterNum= 0; wMeterNum < wNumTCouples; wMeterNum++) {
-      Serial << BLOG << " setup():apMeterArray[" << wMeterNum << "]= " << (long)apMeterArray[wMeterNum] <<
-                        ", apNeedleArray[" << wMeterNum << "]= " << (long)apNeedleArray[wMeterNum] << endl;
-  }
 */
 
   //Initialize values for 0 element
@@ -84,15 +80,31 @@ void setup(){
 
 
 void loop(){
-//  lv_timer_handler(); /* let the GUI do its work */
-/*
-#ifdef CANVAS
-  pDisplay->flush();
-#endif
-*/
-  Serial << endl;
-  SaveReading();
+  unsigned long             ulDrawSpaceMsec   = 1000;
+  static unsigned long      ulNextDrawMsec    = ulDrawSpaceMsec;
 
+  double                    dMeterMaxLevel    = 500.00;
+  double                    dValueInc         =  20.00;
+  static double             adValue[]         = {100.00, 200.00, 300.00, 400.00};
+  static double             adInitialValue[]  = {100.00, 200.00, 300.00, 400.00};
+
+  lv_timer_handler(); /* let the GUI do its work */
+
+  if(millis() > ulNextDrawMsec){
+    ulNextDrawMsec= (millis() + ulDrawSpaceMsec);
+    for (int wMeterNum= 0; wMeterNum < wNumTCouples; wMeterNum++){
+      adValue[wMeterNum]= (adValue[wMeterNum] + dValueInc);
+      if (adValue[wMeterNum] > dMeterMaxLevel){
+        adValue[wMeterNum]= adInitialValue[wMeterNum];
+      }
+      Serial << endl << BLOG << " loop():Call SetNeedleValue, adValue[" << wMeterNum << "]= " << adValue[wMeterNum] << endl;
+
+      SetNeedleValue(apMeterArray[wMeterNum], apNeedleArray[wMeterNum], adValue[wMeterNum]);
+    } //for(int wMeterNum=0;
+  } //if(millis()>ulNextDrawMsec)
+
+/*
+  SaveReading();
   for (int wMeterNum= 0; wMeterNum < wNumTCouples; wMeterNum++){
     double  dNeedleValue= astReadings[wCurrentReadingNum].adTCoupleDegF[wMeterNum];
     if (apMeterArray[wMeterNum] && apNeedleArray[wMeterNum]){
@@ -112,10 +124,10 @@ void loop(){
       }
     } //if(pMeter&&apNeedleArray[wMeterNum])else
   } //for
+*/
+  lv_timer_handler(); /* let the GUI do its work */
 
-  //lv_timer_handler(); /* let the GUI do its work */
-
-  delay(2000);
+  //delay(200);
   return;
 } //loop
 //Last line.

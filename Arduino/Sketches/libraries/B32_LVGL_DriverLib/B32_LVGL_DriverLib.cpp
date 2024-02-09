@@ -1,4 +1,4 @@
-//B32_LVGL_DriverLib.cpp, 2/8/24b
+//B32_LVGL_DriverLib.cpp, 2/8/24c
 #include <B32_LVGL_DriverLib.h>
 #include <WiFi.h>
 #include <Streaming.h>
@@ -59,7 +59,7 @@ void SetupDisplay(void){
   uint16_t    usScreenWidth      = 800;
   uint16_t    usScreenHeight     = 480;
 
-  Serial << BLOG << " SetupDisplay(): Doing new Arduino_ESP32RGBPanel & Arduino_RGB_Display" << endl;
+  Serial << BLOG << " SetupDisplay(): Doing new Arduino_ESP32RGBPanel" << endl;
   pRGBPanel = new Arduino_ESP32RGBPanel(
           cDE_Pin      , cVsyncPin    , cHsyncPin    , cPclkPin,
           acRedPin  [0], acRedPin  [1], acRedPin  [2], acRedPin  [3], acRedPin  [4],
@@ -69,6 +69,7 @@ void SetupDisplay(void){
           usVsyncPolarity, usVsyncFrontPorch, usVsyncPulseWidth, usVsyncBackPorch,
           usPclkActiveNeg, uwPreferSpeed    , bUseBigEndian    , usDEIdleHigh    , usPclkIdleHigh);
 
+  Serial << BLOG << " SetupDisplay(): Doing new Arduino_RGB_Display" << endl;
   pDisplay = new Arduino_RGB_Display(usScreenWidth, usScreenHeight, pRGBPanel);
 
   Serial << BLOG << " SetupDisplay(): Call pDisplay->begin()" << endl;

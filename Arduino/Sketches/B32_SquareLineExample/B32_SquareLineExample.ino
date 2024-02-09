@@ -10,31 +10,22 @@ const char szFileDate[]    = "2/8/24f";
 #endif
 
 //Function protos
-void            setup               (void);
-void            loop                (void);
-
+void  setup           (void);
+void  loop            (void);
+void  DisplayFooter   (void);
 
 void setup(){
   Serial.begin(115200);
   delay(500);
   Serial << endl << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
-  const bool bDoGraphics= true;
-  if(bDoGraphics){
-    Serial << BLOG << " setup(): Call SetupDisplay" << endl;
-    SetupDisplay();
+  Serial << BLOG << " setup(): Call SetupDisplay" << endl;
+  SetupDisplay();
 
-    Serial << BLOG << " setup(): Call SetupLVGL" << endl;
-    SetupLVGL();
+  Serial << BLOG << " setup(): Call SetupLVGL" << endl;
+  SetupLVGL();
 
-    char  szLabelText[90];
-    char  szMACText  [30];
-
-    Serial << BLOG << " setup(): Call DisplayLabel" << endl;
-    sprintf(szLabelText, "%s, %s, MAC=%s", szSketchName, szFileDate, szGetMyMAC(szMACText));
-    DisplayLabel(szLabelText);
-  } //if(bDoGraphics)
-
+  DisplayFooter();
   Serial << BLOG << " setup(): Done" << endl;
   return;
 } //setup
@@ -45,4 +36,15 @@ void loop(){
   //delay(200);
   return;
 } //loop
+
+
+void DisplayFooter(void){
+  char  szLabelText[90];
+  char  szMACText  [30];
+
+  Serial << BLOG << " setup(): Call DisplayLabel" << endl;
+  sprintf(szLabelText, "%s, %s, MAC=%s", szSketchName, szFileDate, szGetMyMAC(szMACText));
+  DisplayLabel(szLabelText);
+  return;
+} //DisplayFooter
 //Last line.

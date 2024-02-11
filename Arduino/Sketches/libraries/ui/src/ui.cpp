@@ -3,8 +3,14 @@
 // LVGL version: 8.3.6
 // Project name: SimpleTest
 
+//#include "Arduino.h"
 #include "ui.h"
 #include "ui_helpers.h"
+#include "Streaming.h"
+
+#ifndef BLOG
+  #define BLOG          millis()    //Used in logging
+#endif
 
 ///////////////////// VARIABLES ////////////////////
 
@@ -33,11 +39,19 @@ const lv_img_dsc_t * ui_imgset_boise[1] = {&ui_img_boise011624_png};
 
 void ui_init(void)
 {
-    lv_disp_t * dispp = lv_disp_get_default();
-    lv_theme_t * theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED),
-                                               false, LV_FONT_DEFAULT);
-    lv_disp_set_theme(dispp, theme);
-    ui_Screen1_screen_init();
-    ui____initial_actions0 = lv_obj_create(NULL);
-    lv_disp_load_scr(ui_Screen1);
+  Serial << BLOG << " ui_init(): Call lv_disp_get_default" << endl;
+  lv_disp_t *dispp= lv_disp_get_default();
+
+  Serial << BLOG << " ui_init(): Call lv_theme_default_init" << endl;
+  lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED),
+                                             false, LV_FONT_DEFAULT);
+  lv_disp_set_theme(dispp, theme);
+
+  Serial << BLOG << " ui_init(): Call ui_Screen1_screen_init" << endl;
+  ui_Screen1_screen_init();
+
+  ui____initial_actions0 = lv_obj_create(NULL);
+
+  Serial << BLOG << " ui_init(): Call lv_disp_load_scr" << endl;
+  lv_disp_load_scr(ui_Screen1);
 }

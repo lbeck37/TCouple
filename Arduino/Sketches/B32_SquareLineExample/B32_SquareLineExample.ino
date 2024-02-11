@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_SquareLineExample.ino";
-const char szFileDate[]    = "2/10/24J";
+const char szFileDate[]    = "2/10/24K";
 //Use Arduino_GFX as driver for LVGL calls to write to Waveshare 800x480, 4.3" 16-bit 5-6-5 RGB
 
 #include <B32_LVGL_DriverLib.h>
@@ -32,11 +32,9 @@ void setup(){
   lv_timer_handler(); /* let the GUI do its work */
   delay(2000);      //Give a chance to read the sketch, date and MAC
 
-/*
   Serial << BLOG << " setup(): Call ui_init" << endl;
   ui_init();
   delay(100);
-*/
 
   Serial << BLOG << " setup(): Done" << endl;
   return;

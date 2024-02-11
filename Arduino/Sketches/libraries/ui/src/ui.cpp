@@ -54,4 +54,7 @@ void ui_init(void)
 
   Serial << BLOG << " ui_init(): Call lv_disp_load_scr" << endl;
   lv_disp_load_scr(ui_Screen1);
-}
+
+  Serial << BLOG << " ui_init(): Done." << endl;
+  return;
+} //ui_init

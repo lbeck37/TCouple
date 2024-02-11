@@ -135,11 +135,11 @@ void DisplayLabel(const char* szText){
 } //DisplayLabel
 
 
-void FlushDataToDisplay(lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p)
-{
+void FlushDataToDisplay(lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p){
   uint32_t uwWidth  = (pArea->x2 - pArea->x1 + 1);
   uint32_t uwHeight = (pArea->y2 - pArea->y1 + 1);
 
+  Serial << "X";
 #if (LV_COLOR_16_SWAP != 0)
   pDisplay->draw16bitBeRGBBitmap(pArea->x1, pArea->y1, (uint16_t *)&color_p->full, uwWidth, uwHeight);
 #else

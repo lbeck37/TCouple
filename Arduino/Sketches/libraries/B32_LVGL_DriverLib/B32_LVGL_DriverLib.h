@@ -1,7 +1,5 @@
-//B32_LVGL_DriverLib.h, 2/8/24c
+//B32_LVGL_DriverLib.h, 2/11/24b
 #pragma once
-#include <lvgl.h>
-#include <Arduino_GFX_Library.h>
 
 //Functions protos
 void          SetupDisplay          (void);

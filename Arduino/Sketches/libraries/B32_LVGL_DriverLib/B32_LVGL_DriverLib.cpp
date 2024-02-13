@@ -1,5 +1,7 @@
-//B32_LVGL_DriverLib.cpp, 2/8/24c
+//B32_LVGL_DriverLib.cpp, 2/12/24b
+#include <lvgl.h>
 #include <B32_LVGL_DriverLib.h>
+#include <Arduino_GFX_Library.h>
 #include <WiFi.h>
 #include <Streaming.h>
 
@@ -11,6 +13,8 @@ lv_coord_t              sScreenWidth;
 lv_coord_t              sScreenHeight;
 
 lv_color_t              *pDisplayBuffer;
+
+//lv_disp_drv_t and lv_disp_draw_buf_t are defined in lv_hal_disp.h
 lv_disp_drv_t           stDisplayDriver;
 lv_disp_draw_buf_t      stDrawBuffer;
 
@@ -55,6 +59,22 @@ const uint16_t  usPclkIdleHigh    = 0;
 void    FlushDataToDisplay(lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p);
 
 
+void FlushDataToDisplay(lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p){
+  uint32_t uwWidth  = (pArea->x2 - pArea->x1 + 1);
+  uint32_t uwHeight = (pArea->y2 - pArea->y1 + 1);
+
+  Serial << "X";
+#if (LV_COLOR_16_SWAP != 0)
+  pDisplay->draw16bitBeRGBBitmap(pArea->x1, pArea->y1, (uint16_t *)&color_p->full, uwWidth, uwHeight);
+#else
+  pDisplay->draw16bitRGBBitmap(pArea->x1, pArea->y1, (uint16_t *)&color_p->full, uwWidth, uwHeight);
+#endif
+
+  lv_disp_flush_ready(pDisplayDriver);
+  return;
+} //FlushDataToDisplay
+
+
 void SetupDisplay(void){
   uint16_t    usScreenWidth      = 800;
   uint16_t    usScreenHeight     = 480;
@@ -93,30 +113,36 @@ void SetupLVGL(void){
 
   lv_init();
 
+  Serial << BLOG << " SetupLVGL(): Do new heap_caps_malloc() for pDisplayBuffer" << endl;
   pDisplayBuffer  = (lv_color_t *)heap_caps_malloc(uwMallocNumBytes, uwMemoryType);
   if (!pDisplayBuffer){
     Serial << BLOG << " SetupLVGL(): LVGL pDisplayBuffer allocate failed!" << endl;
   } //if(!pDisplayBuffer)
   else{
     uint32_t    uwSizeInPixelCount= (sScreenWidth * 40);
+    Serial << BLOG << " SetupLVGL(): Call lv_disp_draw_buf_init(&stDrawBuffer, pDisplayBuffer,..." << endl;
     lv_disp_draw_buf_init(&stDrawBuffer, pDisplayBuffer, pUnusedBuffer, uwSizeInPixelCount);
 
     //Initialize the display
-    lv_disp_drv_init      (&stDisplayDriver);
+    Serial << BLOG << " SetupLVGL(): Call lv_disp_drv_init(&stDisplayDriver)" << endl;
+    lv_disp_drv_init(&stDisplayDriver);
 
     stDisplayDriver.hor_res      = sScreenWidth;
     stDisplayDriver.ver_res      = sScreenHeight;
     stDisplayDriver.flush_cb     = FlushDataToDisplay;
     stDisplayDriver.draw_buf     = &stDrawBuffer;
 
-    lv_disp_drv_register    (&stDisplayDriver);
+    Serial << BLOG << " SetupLVGL(): Call lv_disp_drv_register(&stDisplayDriver)" << endl;
+    lv_disp_drv_register(&stDisplayDriver);
 
+/*
     //Initialize the (dummy) input device driver
     static lv_indev_drv_t   stInputDeviceDriver;
 
     lv_indev_drv_init       (&stInputDeviceDriver);
     stInputDeviceDriver.type= LV_INDEV_TYPE_POINTER;
     lv_indev_drv_register   (&stInputDeviceDriver);
+*/
 
     Serial << BLOG << " SetupLVGL(): Done." << endl;
   } //if(!pDisplayBuffer)else
@@ -133,22 +159,6 @@ void DisplayLabel(const char* szText){
 
   return;
 } //DisplayLabel
-
-
-void FlushDataToDisplay(lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p){
-  uint32_t uwWidth  = (pArea->x2 - pArea->x1 + 1);
-  uint32_t uwHeight = (pArea->y2 - pArea->y1 + 1);
-
-  Serial << "X";
-#if (LV_COLOR_16_SWAP != 0)
-  pDisplay->draw16bitBeRGBBitmap(pArea->x1, pArea->y1, (uint16_t *)&color_p->full, uwWidth, uwHeight);
-#else
-  pDisplay->draw16bitRGBBitmap(pArea->x1, pArea->y1, (uint16_t *)&color_p->full, uwWidth, uwHeight);
-#endif
-
-  lv_disp_flush_ready(pDisplayDriver);
-  return;
-} //FlushDataToDisplay
 
 
 char* szGetMyMAC(char* szBuffer){

@@ -5,6 +5,11 @@
 #include <lgfx/v1/platforms/esp32s3/Panel_RGB.hpp>
 #include <lgfx/v1/platforms/esp32s3/Bus_RGB.hpp>
 
+#define BLACK   0x0000
+#define WHITE   0xFFFF
+#define RED     0xF800
+#define MAGENTA 0xF81F
+
 // Define a class named LGFX, inheriting from the LGFX_Device class.
 class LGFX : public lgfx::LGFX_Device {
 public:

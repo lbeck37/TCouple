@@ -1,3 +1,4 @@
+//Beck, lv_demo_widgets.c, 2/14/24b
 /**
  * @file lv_demo_widgets.c
  *
@@ -210,12 +211,14 @@ static void profile_create(lv_obj_t * parent)
     lv_img_set_src(avatar, &img_demo_widgets_avatar);
 
     lv_obj_t * name = lv_label_create(panel1);
-    lv_label_set_text(name, "Elena Smith");
+    //lv_label_set_text(name, "Elena Smith");
+    lv_label_set_text(name, "The Dude");
     lv_obj_add_style(name, &style_title, 0);
 
     lv_obj_t * dsc = lv_label_create(panel1);
     lv_obj_add_style(dsc, &style_text_muted, 0);
-    lv_label_set_text(dsc, "This is a short description of me. Take a look at my profile!");
+    //lv_label_set_text(dsc, "This is a short description of me. Take a look at my profile!");
+    lv_label_set_text(dsc, "I be the man!");
     lv_label_set_long_mode(dsc, LV_LABEL_LONG_WRAP);
 
     lv_obj_t * email_icn = lv_label_create(panel1);
@@ -223,14 +226,14 @@ static void profile_create(lv_obj_t * parent)
     lv_label_set_text(email_icn, LV_SYMBOL_ENVELOPE);
 
     lv_obj_t * email_label = lv_label_create(panel1);
-    lv_label_set_text(email_label, "elena@smith.com");
+    lv_label_set_text(email_label, "LBeck37@gmail.com");
 
     lv_obj_t * call_icn = lv_label_create(panel1);
     lv_obj_add_style(call_icn, &style_icon, 0);
     lv_label_set_text(call_icn, LV_SYMBOL_CALL);
 
     lv_obj_t * call_label = lv_label_create(panel1);
-    lv_label_set_text(call_label, "+79 246 123 4567");
+    lv_label_set_text(call_label, "(208) 336-9800");
 
     lv_obj_t * log_out_btn = lv_btn_create(panel1);
     lv_obj_set_height(log_out_btn, LV_SIZE_CONTENT);

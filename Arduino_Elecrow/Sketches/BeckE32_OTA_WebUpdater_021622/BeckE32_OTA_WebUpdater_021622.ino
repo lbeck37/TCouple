@@ -1,7 +1,7 @@
 // LastMinuteEngineers.com
 //Works with ESP32 1.0.6, 2/17/22
 const char szSketchName[]  = "BeckE32_OTA_WebUpdater_021622.ino";
-const char szFileDate[]    = "2/15/24m, was 2/20/22x";
+const char szFileDate[]    = "2/15/24n, was 2/20/22x";
 
 #define DO_MAX6675      false
 #define DO_MAX31855     false

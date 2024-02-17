@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_Elecrow_Demo.ino";
-const char szFileDate[]    = "2/15/24c";
+const char szFileDate[]    = "2/16/24c";
 #include <Arduino.h>
 #include <lvgl.h>
 #include <demos/lv_demos.h>
@@ -22,25 +22,6 @@ const char szFileDate[]    = "2/15/24c";
 #define WHITE   0xFFFF
 #define RED     0xF800
 #define MAGENTA 0xF81F
-
-//Function protos
-void setup        (void);
-void loop         (void);
-//void calibrate   (void);
-void      my_disp_flush           (lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p) ;
-void      my_touchpad_read        (lv_indev_drv_t *indev_driver, lv_indev_data_t *data) ;
-void      callback1               (void);
-void      label_xy                (void);
-void      lv_example_bar          (void);
-void      begin_touch_read_write  (void);
-void      end_touch_read_write    (void);
-uint16_t  getTouchRawZ            (void);
-uint8_t   getTouchRaw             (uint16_t *x, uint16_t *y);
-uint8_t   validTouch              (uint16_t *x, uint16_t *y, uint16_t threshold);
-void      calibrateTouch          (uint16_t *parameters, uint32_t color_fg, uint32_t color_bg, uint8_t size);
-void      touch_calibrate         (void);
-void      setTouch                (uint16_t *parameters) ;
-
 
 // Define a class named LGFX, inheriting from the LGFX_Device class.
 class LGFX : public lgfx::LGFX_Device {
@@ -120,10 +101,10 @@ public:
     // Set the RGB bus and panel instances.
     _panel_instance.setBus(&_bus_instance);
     setPanel(&_panel_instance);
-  }
-};
-LGFX lcd;
+  } //LGFX constructor
+};  //class LGFX
 
+LGFX lcd;
 
 #include "touch.h"
 
@@ -160,18 +141,36 @@ int i = 0;
 //#include <Arduino_GFX_Library.h>
 #define TFT_BL 2
 
+//Function protos
+void      setup                   (void);
+void      loop                    (void);
+void      my_disp_flush           (lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p) ;
+void      my_touchpad_read        (lv_indev_drv_t *indev_driver, lv_indev_data_t *data) ;
+void      callback1               (void);
+void      label_xy                (void);
+void      lv_example_bar          (void);
+void      begin_touch_read_write  (void);
+void      end_touch_read_write    (void);
+uint16_t  getTouchRawZ            (void);
+uint8_t   getTouchRaw             (uint16_t *x, uint16_t *y);
+uint8_t   validTouch              (uint16_t *x, uint16_t *y, uint16_t threshold);
+void      calibrateTouch          (uint16_t *parameters, uint32_t color_fg, uint32_t color_bg, uint8_t size);
+void      touch_calibrate         (void);
+void      setTouch                (uint16_t *parameters) ;
 
 
-
-/* Display flushing */
 void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p){
   uint32_t w = (area->x2 - area->x1 + 1);
   uint32_t h = (area->y2 - area->y1 + 1);
 
   //lcd.fillScreen(TFT_WHITE);
 #if (LV_COLOR_16_SWAP != 0)
- lcd.pushImageDMA(area->x1, area->y1, w, h,(lgfx::rgb565_t*)&color_p->full);
+  //Serial << BLOG << " my_disp_flush(): Call pushImageDMA(), LV_COLOR_16_SWAP is 0" << endl;
+  Serial << "x";
+  lcd.pushImageDMA(area->x1, area->y1, w, h,(lgfx::rgb565_t*)&color_p->full);
 #else
+  //Serial << BLOG << " my_disp_flush(): Call pushImageDMA(), LV_COLOR_16_SWAP is not 0" << endl;
+  Serial << "X";
   lcd.pushImageDMA(area->x1, area->y1, w, h,(lgfx::rgb565_t*)&color_p->full);//
 #endif
 
@@ -187,9 +186,14 @@ void setup() {
   Serial << endl << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
   lcd.begin();
+  Serial << BLOG << " setup(): Call lcd.fillScreen(BLACK)" << endl;
   lcd.fillScreen(BLACK);
   lcd.setTextSize(2);
-  delay(200);
+  delay(1000);
+
+  Serial << BLOG << " setup(): Call lcd.fillScreen(WHITE)" << endl;
+  lcd.fillScreen(WHITE);
+  delay(1000);
 
   lv_init();
   touch_init();

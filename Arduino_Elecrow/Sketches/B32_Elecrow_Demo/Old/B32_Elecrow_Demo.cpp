@@ -1,5 +1,5 @@
-const char szSketchName[]  = "B32_Elecrow_Demo.ino";
-const char szFileDate[]    = "2/18/24b";
+const char szSketchName[]  = "B32_Elecrow_Demo.cpp";
+const char szFileDate[]    = "2/14/24e";
 #include <Arduino.h>
 #include <lvgl.h>
 #include <demos/lv_demos.h>
@@ -22,6 +22,25 @@ const char szFileDate[]    = "2/18/24b";
 #define WHITE   0xFFFF
 #define RED     0xF800
 #define MAGENTA 0xF81F
+
+//Function protos
+void setup        (void);
+void loop         (void);
+//void calibrate   (void);
+void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p) ;
+void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data) ;
+void callback1()   ;
+void label_xy() ;
+void lv_example_bar(void) ;
+void begin_touch_read_write(void) ;
+void end_touch_read_write(void) ;
+uint16_t getTouchRawZ(void) ;
+uint8_t getTouchRaw(uint16_t *x, uint16_t *y) ;
+uint8_t validTouch(uint16_t *x, uint16_t *y, uint16_t threshold) ;
+void calibrateTouch(uint16_t *parameters, uint32_t color_fg, uint32_t color_bg, uint8_t size) ;
+void touch_calibrate() ;
+void setTouch(uint16_t *parameters) ;
+
 
 // Define a class named LGFX, inheriting from the LGFX_Device class.
 class LGFX : public lgfx::LGFX_Device {
@@ -101,10 +120,10 @@ public:
     // Set the RGB bus and panel instances.
     _panel_instance.setBus(&_bus_instance);
     setPanel(&_panel_instance);
-  } //LGFX constructor
-};  //class LGFX
-
+  }
+};
 LGFX lcd;
+
 
 #include "touch.h"
 
@@ -141,177 +160,30 @@ int i = 0;
 //#include <Arduino_GFX_Library.h>
 #define TFT_BL 2
 
-//Function protos
-void      setup                   (void);
-void      loop                    (void);
-void      my_disp_flush           (lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p) ;
-void      my_touchpad_read        (lv_indev_drv_t *indev_driver, lv_indev_data_t *data) ;
-void      callback1               (void);
-void      label_xy                (void);
-void      lv_example_bar          (void);
-void      begin_touch_read_write  (void);
-void      end_touch_read_write    (void);
-uint16_t  getTouchRawZ            (void);
-uint8_t   getTouchRaw             (uint16_t *x, uint16_t *y);
-uint8_t   validTouch              (uint16_t *x, uint16_t *y, uint16_t threshold);
-void      calibrateTouch          (uint16_t *parameters, uint32_t color_fg, uint32_t color_bg, uint8_t size);
-void      touch_calibrate         (void);
-void      setTouch                (uint16_t *parameters) ;
 
 
-void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p){
+
+/* Display flushing */
+void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p)
+{
+
   uint32_t w = (area->x2 - area->x1 + 1);
   uint32_t h = (area->y2 - area->y1 + 1);
+  
 
   //lcd.fillScreen(TFT_WHITE);
 #if (LV_COLOR_16_SWAP != 0)
-  //Serial << BLOG << " my_disp_flush(): Call pushImageDMA(), LV_COLOR_16_SWAP is 0" << endl;
-  Serial << "x";
-  lcd.pushImageDMA(area->x1, area->y1, w, h,(lgfx::rgb565_t*)&color_p->full);
+ lcd.pushImageDMA(area->x1, area->y1, w, h,(lgfx::rgb565_t*)&color_p->full);
 #else
-  //Serial << BLOG << " my_disp_flush(): Call pushImageDMA(), LV_COLOR_16_SWAP is not 0" << endl;
-  Serial << "X";
   lcd.pushImageDMA(area->x1, area->y1, w, h,(lgfx::rgb565_t*)&color_p->full);//
 #endif
 
   lv_disp_flush_ready(disp);
-  return;
-} //my_disp_flush
 
+}
 
-void setup() {
- // put your setup code here, to run once:
-  Serial.begin(115200); // Init Display
-  delay(500);
-  Serial << endl << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
-
-  lcd.begin();
-  Serial << BLOG << " setup(): Call lcd.fillScreen(BLACK)" << endl;
-  lcd.fillScreen(BLACK);
-  lcd.setTextSize(2);
-  delay(1000);
-
-  Serial << BLOG << " setup(): Call lcd.fillScreen(WHITE)" << endl;
-  lcd.fillScreen(WHITE);
-  delay(1000);
-
-  lv_init();
-  touch_init();
-  screenWidth = lcd.width();
-  screenHeight = lcd.height();
-
-  Serial << BLOG << " setup(): Call lv_disp_draw_buf_init" << endl;
-  lv_disp_draw_buf_init(&draw_buf, disp_draw_buf, NULL, screenWidth * screenHeight / 10);
-
-  //Initialize the display
-  Serial << BLOG << " setup(): Call lv_disp_drv_init" << endl;
-  lv_disp_drv_init(&disp_drv);
-
-  disp_drv.hor_res = screenWidth;
-  disp_drv.ver_res = screenHeight;
-  disp_drv.flush_cb = my_disp_flush;
-  disp_drv.draw_buf = &draw_buf;
-  Serial << BLOG << " setup(): Call lv_disp_drv_register" << endl;
-  lv_disp_drv_register(&disp_drv);
-
-  //Initialize the (dummy) input device driver
-  static lv_indev_drv_t indev_drv;
-
-  Serial << BLOG << " setup(): Call lv_indev_drv_init" << endl;
-  lv_indev_drv_init(&indev_drv);
-  indev_drv.type    = LV_INDEV_TYPE_POINTER;
-  indev_drv.read_cb = my_touchpad_read;
-  Serial << BLOG << " setup(): Call lv_indev_drv_register" << endl;
-  lv_indev_drv_register(&indev_drv);
-#ifdef TFT_BL
-  pinMode(TFT_BL, OUTPUT);
-  digitalWrite(TFT_BL, HIGH);
-#endif
-
-  Serial << BLOG << " setup(): Call ui_init" << endl;
-  ui_init();//Boot UI
-
-  Serial << BLOG << " setup(): Set up ticker and ticker1" << endl;
-  while (1){
-    if (goto_widget_flag == 1){   //Go to widget
-      if (ticker1.active() == true){
-        ticker1.detach();
-      } //if (ticker1.active()==true)
-      goto_widget_flag= 0;
-      delay(300);
-     break;
-    } //if(goto_widget_flag==1)
-
-    if (goto_widget_flag == 3){
-      //Go to the touch screen and close the progress bar thread first
-      bar_flag= 0; //Stop progress bar sign
-      if (ticker1.active() == true){
-        ticker1.detach();
-      }
-      if (first_flag == 0 || first_flag == 1){
-        label_xy();
-        first_flag = 2;
-      }
-      if (zero_clean == 1){
-        touch_last_x = 0;
-        touch_last_y = 0;
-        zero_clean = 0;
-      }
-      Serial << BLOG << " setup(): Call lv_label_set_text(ui_Label, Touch Adjust:)" << endl;
-      lv_label_set_text(ui_Label, "Touch Adjust:");
-      lv_label_set_text_fmt(ui_Label3, "%d  %d", touch_last_x, touch_last_y); //Display touch information
-    } //if(goto_widget_flag==3)
-
-    if (goto_widget_flag == 4){
-      val = 100;
-      delay(100);
-      ticker1.attach_ms(20, callback1);//每20ms调用callback1
-      goto_widget_flag = 0;
-    } //if(goto_widget_flag==4)
-
-    if (goto_widget_flag == 5){
-      //Trigger Calibration Signal
-      Serial << BLOG << " setup(): Call lv_scr_load_anim(ui_touch_calibrate,LV_SCR_LOAD_ANIM_NONE,0,0,false)" << endl;
-      lv_scr_load_anim(ui_touch_calibrate, LV_SCR_LOAD_ANIM_NONE, 0, 0, false);
-      lv_timer_handler();
-      lv_timer_handler();
-      delay(100);
-      touch_calibrate();
-      lv_scr_load_anim(ui_TOUCH, LV_SCR_LOAD_ANIM_NONE, 0, 0, false);
-      lv_timer_handler();
-      goto_widget_flag = 3; //Access to the touch screen logo
-      touch_last_x = 0;
-      touch_last_y = 0;
-    } //if(goto_widget_flag==5)
-
-    if (bar_flag == 6){
-      //Runs the progress bar once when you first boot into the Menu screen, then stops running after that
-      if (first_flag == 0){
-        Serial << BLOG << " setup(): Call lv_example_bar" << endl;
-        lv_example_bar();
-        ticker1.attach_ms(20, callback1);//每20ms调用callback1
-        first_flag = 1;
-      } //if(first_flag==0)
-    } //if(bar_flag==6)
-    lv_timer_handler();
-  }
-
-  lcd.fillScreen(BLACK);
-  Serial << BLOG << " setup(): Call lv_demo_widgets" << endl;
-  lv_demo_widgets();//Main UI
-  Serial.println( "Setup done" );
-  return;
-} //setup
-
-
-void loop() {
-  lv_timer_handler();
-  delay(5);
-  return;
-} //loop
-
-
-void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data){
+void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
+{
   if (touch_has_signal())
   {
     if (touch_touched())
@@ -337,25 +209,28 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data){
   }
 }
 
-void callback1(){
-  if (bar_flag == 6){
-    if (val > 1){
+void callback1()  //Callback function
+{
+  if (bar_flag == 6)
+  {
+    if (val > 1)
+    {
       val--;
       lv_bar_set_value(bar, val, LV_ANIM_OFF);
       lv_label_set_text_fmt(ui_Labe2, "%d %%", val);
-    } //if(val>1)
-    else{
+    }
+    else
+    {
       lv_obj_clear_flag(ui_touch, LV_OBJ_FLAG_CLICKABLE);
       lv_label_set_text(ui_Labe2, "Loading");
       delay(150);
       val = 100;
       bar_flag = 0; //Stop progress bar sign
       goto_widget_flag = 1; //Enter the widget logo
-    } //if(val>1)else
-  } //if(bar_flag==6)
-  return;
-} //callback1
 
+    }
+  }
+}
 
 //Touch Label Controls
 void label_xy()
@@ -381,11 +256,14 @@ void label_xy()
   lv_obj_set_style_text_color(ui_Label3, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_text_opa(ui_Label3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
   lv_obj_set_style_text_font(ui_Label3, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
-} //label_xy
+
+}
 
 
 //Progress bar control
-void lv_example_bar(void){
+void lv_example_bar(void)
+{
+  //////////////////////////////
   bar = lv_bar_create(ui_MENU);
   lv_bar_set_value(bar, 0, LV_ANIM_OFF);
   lv_obj_set_width(bar, 480);
@@ -403,9 +281,7 @@ void lv_example_bar(void){
   lv_obj_set_style_text_color(ui_Labe2, lv_color_hex(0x09BEFB), LV_STATE_DEFAULT);
   lv_label_set_text(ui_Labe2, "0%");
   lv_obj_center(ui_Labe2);
-  return;
-} //lv_example_bar
-
+}
 
 #define Z_THRESHOLD 300 // Touch pressure threshold for validating touches
 #define _RAWERR 20 // Deadband error allowed in successive position samples
@@ -413,18 +289,16 @@ void begin_touch_read_write(void) {
   digitalWrite(38, HIGH); // Just in case it has been left low
   spi.setFrequency(600000);
   digitalWrite(38, LOW);
-  return;
-} //begin_touch_read_write
-
+}
 
 void end_touch_read_write(void) {
   digitalWrite(38, HIGH); // Just in case it has been left low
   spi.setFrequency(600000);
-  return;
-} //end_touch_read_write
 
+}
 
 uint16_t getTouchRawZ(void) {
+
   begin_touch_read_write();
 
   // Z sample request
@@ -436,7 +310,7 @@ uint16_t getTouchRawZ(void) {
   end_touch_read_write();
 
   return (uint16_t)tz;
-} //getTouchRawZ
+}
 
 uint8_t getTouchRaw(uint16_t *x, uint16_t *y) {
   uint16_t tmp;
@@ -512,8 +386,7 @@ uint8_t validTouch(uint16_t *x, uint16_t *y, uint16_t threshold) {
   *y = y_tmp;
 
   return true;
-} //getTouchRaw
-
+}
 
 void calibrateTouch(uint16_t *parameters, uint32_t color_fg, uint32_t color_bg, uint8_t size) {
   int16_t values[] = {0, 0, 0, 0, 0, 0, 0, 0};
@@ -569,10 +442,11 @@ void calibrateTouch(uint16_t *parameters, uint32_t color_fg, uint32_t color_bg, 
       }
     }
   }
-} //calibrateTouch
+}
 
 
-void touch_calibrate(){
+void touch_calibrate()//screen calibration
+{
   uint16_t calData[5];
   uint8_t calDataOK = 0;
   Serial.println("screen calibration");
@@ -594,9 +468,8 @@ void touch_calibrate(){
   }
 
   Serial.println(" };");
-  return;
-} //touch_calibrate
 
+}
 
 void setTouch(uint16_t *parameters) {
   touchCalibration_x0 = parameters[0];
@@ -612,9 +485,7 @@ void setTouch(uint16_t *parameters) {
   touchCalibration_rotate = parameters[4] & 0x01;
   touchCalibration_invert_x = parameters[4] & 0x02;
   touchCalibration_invert_y = parameters[4] & 0x04;
-  return;
-} //setTouch
-/*
+}
 void setup() {
  // put your setup code here, to run once:
   Serial.begin(115200); // Init Display
@@ -633,16 +504,16 @@ void setup() {
 
   lv_disp_draw_buf_init(&draw_buf, disp_draw_buf, NULL, screenWidth * screenHeight / 10);
 
-   Initialize the display
+  /* Initialize the display */
   lv_disp_drv_init(&disp_drv);
-   Change the following line to your display resolution
+  /* Change the following line to your display resolution */
   disp_drv.hor_res = screenWidth;
   disp_drv.ver_res = screenHeight;
   disp_drv.flush_cb = my_disp_flush;
   disp_drv.draw_buf = &draw_buf;
   lv_disp_drv_register(&disp_drv);
 
-   Initialize the (dummy) input device driver
+  /* Initialize the (dummy) input device driver */
   static lv_indev_drv_t indev_drv;
   lv_indev_drv_init(&indev_drv);
  indev_drv.type = LV_INDEV_TYPE_POINTER;
@@ -738,5 +609,3 @@ void loop() {
   lv_timer_handler();
   delay(5);
 }
-*/
-//Last line.

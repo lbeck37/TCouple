@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_Elecrow_Demo.ino";
-const char szFileDate[]    = "2/18/24g";
+const char szFileDate[]    = "2/18/24h";
 #include <Arduino.h>
 #include <lvgl.h>
 #include <demos/lv_demos.h>
@@ -134,7 +134,12 @@ const char szFileDate[]    = "2/18/24g";
         auto cfg = _bus_instance.config();
         cfg.panel = &_panel_instance;
 
+        const int8_t acRedPin[5]  ={GPIO_NUM_14, GPIO_NUM_21, GPIO_NUM_47, GPIO_NUM_48, GPIO_NUM_45};
+        const int8_t acBluePin[5] ={GPIO_NUM_15, GPIO_NUM_7,  GPIO_NUM_6,  GPIO_NUM_5,  GPIO_NUM_4};
+        const int8_t acGreenPin[6]={GPIO_NUM_9 , GPIO_NUM_46, GPIO_NUM_3,  GPIO_NUM_8,  GPIO_NUM_16, GPIO_NUM_1};
+
         // Configure data pins.
+/*
         cfg.pin_d0  = GPIO_NUM_15; // B0
         cfg.pin_d1  = GPIO_NUM_7;  // B1
         cfg.pin_d2  = GPIO_NUM_6;  // B2
@@ -153,6 +158,26 @@ const char szFileDate[]    = "2/18/24g";
         cfg.pin_d13 = GPIO_NUM_47; // R2
         cfg.pin_d14 = GPIO_NUM_48; // R3
         cfg.pin_d15 = GPIO_NUM_45; // R4
+*/
+        // Configure data pins.
+        cfg.pin_d0  = acBluePin[0];   // B0
+        cfg.pin_d1  = acBluePin[1];   // B1
+        cfg.pin_d2  = acBluePin[2];   // B2
+        cfg.pin_d3  = acBluePin[3];   // B3
+        cfg.pin_d4  = acBluePin[4];   // B4
+
+        cfg.pin_d5  = acGreenPin[0];  // G0
+        cfg.pin_d6  = acGreenPin[1];  // G1
+        cfg.pin_d7  = acGreenPin[2];  // G2
+        cfg.pin_d8  = acGreenPin[3];  // G3
+        cfg.pin_d9  = acGreenPin[4];  // G4
+        cfg.pin_d10 = acGreenPin[5];  // G5
+
+        cfg.pin_d11 = acRedPin[0];    // R0
+        cfg.pin_d12 = acRedPin[1];    // R1
+        cfg.pin_d13 = acRedPin[2];    // R2
+        cfg.pin_d14 = acRedPin[3];    // R3
+        cfg.pin_d15 = acRedPin[4];    // R4
 
         // Configure sync and clock pins.
         cfg.pin_henable = GPIO_NUM_41;
@@ -210,7 +235,7 @@ static uint32_t                 screenWidth;
 static uint32_t                 screenHeight;
 static lv_disp_draw_buf_t       draw_buf;
 static lv_color_t               disp_draw_buf[800 * 480 / 10];
-static lv_disp_drv_t disp_drv;
+static lv_disp_drv_t            disp_drv;
 //UI
 //#include <ui.h>
 static int first_flag = 0;

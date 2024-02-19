@@ -45,15 +45,15 @@ const uint16_t  usVsyncPulseWidth =  13;
 const uint16_t  usHsyncBackPorch  =  16;
 const uint16_t  usVsyncBackPorch  =  10;
 
-const uint16_t  usPclkActiveNeg   =   1;
 
 const uint32_t  uw16MHz           = 16000000;
 const uint32_t  uwPreferSpeed     = uw16MHz;
 
 const bool      bUseBigEndian     = false;
 
-const uint16_t  usDEIdleHigh      = 0;
+const uint16_t  usPclkActiveNeg   =   1;
 const uint16_t  usPclkIdleHigh    = 0;
+const uint16_t  usDEIdleHigh      = 0;
 
 //Protos for functions only used in this file
 void    FlushDataToDisplay(lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p);

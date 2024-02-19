@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_Elecrow_Demo.ino";
-const char szFileDate[]    = "2/18/24d";
+const char szFileDate[]    = "2/18/24g";
 #include <Arduino.h>
 #include <lvgl.h>
 #include <demos/lv_demos.h>
@@ -50,10 +50,74 @@ const char szFileDate[]    = "2/18/24d";
   const uint16_t  usVsyncBackPorch  =  10;
 
   const uint16_t  usPclkActiveNeg   =   1;
+  const uint16_t  usPclkIdleHigh    =   0;
+  const uint16_t  usDEIdleHigh      =   0;
 
   const uint32_t  uw16MHz           = 16000000;
   const uint32_t  uwPreferSpeed     = uw16MHz;
-#endif
+
+  // Define a class named LGFX, inheriting from the LGFX_Device class.
+  class LGFX : public lgfx::LGFX_Device {
+  public:
+    // Instances for the RGB bus and panel.
+    lgfx::Bus_RGB     _bus_instance;
+    lgfx::Panel_RGB   _panel_instance;
+
+    // Constructor for the LGFX class.
+    LGFX(void) {
+      // Configure the RGB bus.
+      {
+        auto cfg = _bus_instance.config();
+        cfg.panel = &_panel_instance;
+
+        // Configure data pins.
+        cfg.pin_d0  = acBluePin[0];   // B0
+        cfg.pin_d1  = acBluePin[1];   // B1
+        cfg.pin_d2  = acBluePin[2];   // B2
+        cfg.pin_d3  = acBluePin[3];   // B3
+        cfg.pin_d4  = acBluePin[4];   // B4
+
+        cfg.pin_d5  = acGreenPin[0];  // G0
+        cfg.pin_d6  = acGreenPin[1];  // G1
+        cfg.pin_d7  = acGreenPin[2];  // G2
+        cfg.pin_d8  = acGreenPin[3];  // G3
+        cfg.pin_d9  = acGreenPin[4];  // G4
+        cfg.pin_d10 = acGreenPin[5];  // G5
+
+        cfg.pin_d11 = acRedPin[0];    // R0
+        cfg.pin_d12 = acRedPin[1];    // R1
+        cfg.pin_d13 = acRedPin[2];    // R2
+        cfg.pin_d14 = acRedPin[3];    // R3
+        cfg.pin_d15 = acRedPin[4];    // R4
+
+        // Configure sync and clock pins.
+        cfg.pin_henable       = cDE_Pin;
+        cfg.pin_vsync         = cVsyncPin;
+        cfg.pin_hsync         = cHsyncPin;
+        cfg.pin_pclk          = cPclkPin;
+        cfg.freq_write        = uwPreferSpeed;
+
+
+        // Configure timing parameters for horizontal and vertical sync.
+        cfg.hsync_polarity    = usHsyncPolarity;
+        cfg.hsync_front_porch = usHsyncFrontPorch;
+        cfg.hsync_pulse_width = usHsyncPulseWidth;
+        cfg.hsync_back_porch  = usHsyncBackPorch;
+
+        cfg.vsync_polarity    = usVsyncPolarity;
+        cfg.vsync_front_porch = usVsyncFrontPorch;
+        cfg.vsync_pulse_width = usVsyncPulseWidth;
+        cfg.vsync_back_porch  = usVsyncBackPorch;
+
+        // Configure polarity for clock and data transmission.
+        cfg.pclk_active_neg   = usPclkActiveNeg;
+        cfg.de_idle_high      = usDEIdleHigh;
+        cfg.pclk_idle_high    = usPclkIdleHigh;
+
+        // Apply configuration to the RGB bus instance.
+        _bus_instance.config(cfg);
+      }
+#endif  //WAVESHARE_4DOT3
 
 #if ELECROW_7INCH
   // Define a class named LGFX, inheriting from the LGFX_Device class.
@@ -116,7 +180,8 @@ const char szFileDate[]    = "2/18/24d";
         // Apply configuration to the RGB bus instance.
         _bus_instance.config(cfg);
       }
-#endif
+#endif  //ELECROW_7INCH
+
     // Configure the panel.
     {
       auto cfg = _panel_instance.config();
@@ -141,10 +206,10 @@ LGFX lcd;
 
 #include "touch.h"
 
-static uint32_t screenWidth;
-static uint32_t screenHeight;
-static lv_disp_draw_buf_t draw_buf;
-static lv_color_t disp_draw_buf[800 * 480 / 10];
+static uint32_t                 screenWidth;
+static uint32_t                 screenHeight;
+static lv_disp_draw_buf_t       draw_buf;
+static lv_color_t               disp_draw_buf[800 * 480 / 10];
 static lv_disp_drv_t disp_drv;
 //UI
 //#include <ui.h>

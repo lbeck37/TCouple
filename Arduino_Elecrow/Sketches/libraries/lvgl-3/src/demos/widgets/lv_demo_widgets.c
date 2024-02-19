@@ -1,3 +1,4 @@
+//Beck, lv_demo_widgets.c, 2/18/24b
 /**
  * @file lv_demo_widgets.c
  *
@@ -210,13 +211,14 @@ static void profile_create(lv_obj_t * parent)
     lv_img_set_src(avatar, &img_demo_widgets_avatar);
 
     lv_obj_t * name = lv_label_create(panel1);
-    lv_label_set_text(name, "The Dudette");
+    lv_label_set_text(name, "Ada Lovelace");
     lv_obj_add_style(name, &style_title, 0);
 
     lv_obj_t * dsc = lv_label_create(panel1);
     lv_obj_add_style(dsc, &style_text_muted, 0);
     //lv_label_set_text(dsc, "This is a short description of me. Take a look at my profile!");
-    lv_label_set_text(dsc, "I'm the greatest, check out my profile!");
+    //lv_label_set_text(dsc, "I'm the greatest, check out my profile!");
+    lv_label_set_text(dsc, "B32_Elecrow_Demo.ino, 2/18/24d, lv_demo_widgets.c");
     lv_label_set_long_mode(dsc, LV_LABEL_LONG_WRAP);
 
     lv_obj_t * email_icn = lv_label_create(panel1);
@@ -225,7 +227,8 @@ static void profile_create(lv_obj_t * parent)
 
     lv_obj_t * email_label = lv_label_create(panel1);
     //lv_label_set_text(email_label, "elena@smith.com");
-    lv_label_set_text(email_label, "IamTooCool@gmail.com");
+    //lv_label_set_text(email_label, "IamTooCool@gmail.com");
+    lv_label_set_text(email_label, "Ada@babbage.com");
 
     lv_obj_t * call_icn = lv_label_create(panel1);
     lv_obj_add_style(call_icn, &style_icon, 0);

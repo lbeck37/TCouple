@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_Elecrow_Demo.ino";
-const char szFileDate[]    = "2/18/24b";
+const char szFileDate[]    = "2/18/24d";
 #include <Arduino.h>
 #include <lvgl.h>
 #include <demos/lv_demos.h>
@@ -18,72 +18,105 @@ const char szFileDate[]    = "2/18/24b";
   #define BLOG          millis()    //Used in logging
 #endif
 
-#define BLACK   0x0000
-#define WHITE   0xFFFF
-#define RED     0xF800
-#define MAGENTA 0xF81F
+#define WAVESHARE_4DOT3     false
+#define ELECROW_7INCH       true
 
-// Define a class named LGFX, inheriting from the LGFX_Device class.
-class LGFX : public lgfx::LGFX_Device {
-public:
-  // Instances for the RGB bus and panel.
-  lgfx::Bus_RGB     _bus_instance;
-  lgfx::Panel_RGB   _panel_instance;
+#define BLACK               0x0000
+#define WHITE               0xFFFF
+#define RED                 0xF800
+#define MAGENTA             0xF81F
 
-  // Constructor for the LGFX class.
-  LGFX(void) {
-    // Configure the RGB bus.
-    {
-      auto cfg = _bus_instance.config();
-      cfg.panel = &_panel_instance;
+#if WAVESHARE_4DOT3
+  const int8_t    cDE_Pin           =  5;
+  const int8_t    cVsyncPin         =  3;
+  const int8_t    cHsyncPin         = 46;
+  const int8_t    cPclkPin          =  7;
 
-      // Configure data pins.
-      cfg.pin_d0  = GPIO_NUM_15; // B0
-      cfg.pin_d1  = GPIO_NUM_7;  // B1
-      cfg.pin_d2  = GPIO_NUM_6;  // B2
-      cfg.pin_d3  = GPIO_NUM_5;  // B3
-      cfg.pin_d4  = GPIO_NUM_4;  // B4
-      
-      cfg.pin_d5  = GPIO_NUM_9;  // G0
-      cfg.pin_d6  = GPIO_NUM_46; // G1
-      cfg.pin_d7  = GPIO_NUM_3;  // G2
-      cfg.pin_d8  = GPIO_NUM_8;  // G3
-      cfg.pin_d9  = GPIO_NUM_16; // G4
-      cfg.pin_d10 = GPIO_NUM_1;  // G5
-      
-      cfg.pin_d11 = GPIO_NUM_14; // R0
-      cfg.pin_d12 = GPIO_NUM_21; // R1
-      cfg.pin_d13 = GPIO_NUM_47; // R2
-      cfg.pin_d14 = GPIO_NUM_48; // R3
-      cfg.pin_d15 = GPIO_NUM_45; // R4
+  const int8_t    acRedPin[5]       = { 1,  2, 42, 41, 40};
+  const int8_t    acBluePin[5]      = {14, 38, 18, 17, 10};
+  const int8_t    acGreenPin[6]     = {39,  0, 45, 48, 47, 21};
 
-      // Configure sync and clock pins.
-      cfg.pin_henable = GPIO_NUM_41;
-      cfg.pin_vsync   = GPIO_NUM_40;
-      cfg.pin_hsync   = GPIO_NUM_39;
-      cfg.pin_pclk    = GPIO_NUM_0;
-      cfg.freq_write  = 15000000;
+  //Following from https://github.com/dronecz/ESP32_S3_HMI
+  const uint16_t  usHsyncPolarity   = 0;
+  const uint16_t  usVsyncPolarity   = 0;
 
-      // Configure timing parameters for horizontal and vertical sync.
-      cfg.hsync_polarity    = 0;
-      cfg.hsync_front_porch = 40;
-      cfg.hsync_pulse_width = 48;
-      cfg.hsync_back_porch  = 40;
-      
-      cfg.vsync_polarity    = 0;
-      cfg.vsync_front_porch = 1;
-      cfg.vsync_pulse_width = 31;
-      cfg.vsync_back_porch  = 13;
+  const uint16_t  usHsyncFrontPorch = 210;
+  const uint16_t  usVsyncFrontPorch =  22;
 
-      // Configure polarity for clock and data transmission.
-      cfg.pclk_active_neg   = 1;
-      cfg.de_idle_high      = 0;
-      cfg.pclk_idle_high    = 0;
+  const uint16_t  usHsyncPulseWidth =  30;
+  const uint16_t  usVsyncPulseWidth =  13;
 
-      // Apply configuration to the RGB bus instance.
-      _bus_instance.config(cfg);
-    }
+  const uint16_t  usHsyncBackPorch  =  16;
+  const uint16_t  usVsyncBackPorch  =  10;
 
+  const uint16_t  usPclkActiveNeg   =   1;
+
+  const uint32_t  uw16MHz           = 16000000;
+  const uint32_t  uwPreferSpeed     = uw16MHz;
+#endif
+
+#if ELECROW_7INCH
+  // Define a class named LGFX, inheriting from the LGFX_Device class.
+  class LGFX : public lgfx::LGFX_Device {
+  public:
+    // Instances for the RGB bus and panel.
+    lgfx::Bus_RGB     _bus_instance;
+    lgfx::Panel_RGB   _panel_instance;
+
+    // Constructor for the LGFX class.
+    LGFX(void) {
+      // Configure the RGB bus.
+      {
+        auto cfg = _bus_instance.config();
+        cfg.panel = &_panel_instance;
+
+        // Configure data pins.
+        cfg.pin_d0  = GPIO_NUM_15; // B0
+        cfg.pin_d1  = GPIO_NUM_7;  // B1
+        cfg.pin_d2  = GPIO_NUM_6;  // B2
+        cfg.pin_d3  = GPIO_NUM_5;  // B3
+        cfg.pin_d4  = GPIO_NUM_4;  // B4
+
+        cfg.pin_d5  = GPIO_NUM_9;  // G0
+        cfg.pin_d6  = GPIO_NUM_46; // G1
+        cfg.pin_d7  = GPIO_NUM_3;  // G2
+        cfg.pin_d8  = GPIO_NUM_8;  // G3
+        cfg.pin_d9  = GPIO_NUM_16; // G4
+        cfg.pin_d10 = GPIO_NUM_1;  // G5
+
+        cfg.pin_d11 = GPIO_NUM_14; // R0
+        cfg.pin_d12 = GPIO_NUM_21; // R1
+        cfg.pin_d13 = GPIO_NUM_47; // R2
+        cfg.pin_d14 = GPIO_NUM_48; // R3
+        cfg.pin_d15 = GPIO_NUM_45; // R4
+
+        // Configure sync and clock pins.
+        cfg.pin_henable = GPIO_NUM_41;
+        cfg.pin_vsync   = GPIO_NUM_40;
+        cfg.pin_hsync   = GPIO_NUM_39;
+        cfg.pin_pclk    = GPIO_NUM_0;
+        cfg.freq_write  = 15000000;
+
+        // Configure timing parameters for horizontal and vertical sync.
+        cfg.hsync_polarity    = 0;
+        cfg.hsync_front_porch = 40;
+        cfg.hsync_pulse_width = 48;
+        cfg.hsync_back_porch  = 40;
+
+        cfg.vsync_polarity    = 0;
+        cfg.vsync_front_porch = 1;
+        cfg.vsync_pulse_width = 31;
+        cfg.vsync_back_porch  = 13;
+
+        // Configure polarity for clock and data transmission.
+        cfg.pclk_active_neg   = 1;
+        cfg.de_idle_high      = 0;
+        cfg.pclk_idle_high    = 0;
+
+        // Apply configuration to the RGB bus instance.
+        _bus_instance.config(cfg);
+      }
+#endif
     // Configure the panel.
     {
       auto cfg = _panel_instance.config();

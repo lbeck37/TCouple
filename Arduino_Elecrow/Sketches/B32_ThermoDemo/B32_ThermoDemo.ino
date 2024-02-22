@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_ThermoDemo.ino";
-const char szFileDate[]    = "2/21/24c";
+const char szFileDate[]    = "2/21/24d";
 #include <Arduino.h>
 #include <lvgl.h>
 #include <demos/lv_demos.h>
@@ -138,27 +138,6 @@ const char szFileDate[]    = "2/21/24c";
         const int8_t acBluePin[5] ={GPIO_NUM_15, GPIO_NUM_7,  GPIO_NUM_6,  GPIO_NUM_5,  GPIO_NUM_4};
         const int8_t acGreenPin[6]={GPIO_NUM_9 , GPIO_NUM_46, GPIO_NUM_3,  GPIO_NUM_8,  GPIO_NUM_16, GPIO_NUM_1};
 
-        // Configure data pins.
-/*
-        cfg.pin_d0  = GPIO_NUM_15; // B0
-        cfg.pin_d1  = GPIO_NUM_7;  // B1
-        cfg.pin_d2  = GPIO_NUM_6;  // B2
-        cfg.pin_d3  = GPIO_NUM_5;  // B3
-        cfg.pin_d4  = GPIO_NUM_4;  // B4
-
-        cfg.pin_d5  = GPIO_NUM_9;  // G0
-        cfg.pin_d6  = GPIO_NUM_46; // G1
-        cfg.pin_d7  = GPIO_NUM_3;  // G2
-        cfg.pin_d8  = GPIO_NUM_8;  // G3
-        cfg.pin_d9  = GPIO_NUM_16; // G4
-        cfg.pin_d10 = GPIO_NUM_1;  // G5
-
-        cfg.pin_d11 = GPIO_NUM_14; // R0
-        cfg.pin_d12 = GPIO_NUM_21; // R1
-        cfg.pin_d13 = GPIO_NUM_47; // R2
-        cfg.pin_d14 = GPIO_NUM_48; // R3
-        cfg.pin_d15 = GPIO_NUM_45; // R4
-*/
         // Configure data pins.
         cfg.pin_d0  = acBluePin[0];   // B0
         cfg.pin_d1  = acBluePin[1];   // B1

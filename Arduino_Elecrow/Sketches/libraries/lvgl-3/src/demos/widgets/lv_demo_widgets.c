@@ -1,4 +1,4 @@
-//Beck, lv_demo_widgets.c, 2/21/24c
+//Beck, lv_demo_widgets.c, 2/21/24e
 /**
  * @file lv_demo_widgets.c
  *
@@ -218,7 +218,7 @@ static void profile_create(lv_obj_t * parent)
     lv_obj_add_style(dsc, &style_text_muted, 0);
     //lv_label_set_text(dsc, "This is a short description of me. Take a look at my profile!");
     //lv_label_set_text(dsc, "I'm the greatest, check out my profile!");
-    lv_label_set_text(dsc, "B32_ThermoDemo.ino, 2/21/24c, lv_demo_widgets.c");
+    lv_label_set_text(dsc, "B32_ThermoDemo.ino, 2/21/24e, lv_demo_widgets.c");
     lv_label_set_long_mode(dsc, LV_LABEL_LONG_WRAP);
 
     lv_obj_t * email_icn = lv_label_create(panel1);

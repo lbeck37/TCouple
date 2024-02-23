@@ -1,7 +1,8 @@
-//B32_LVGL_DriverLib.cpp, 2/12/24b
+//B32_LVGL_DriverLib.cpp, 2/22/24b
 #include <lvgl.h>
 #include <B32_LVGL_DriverLib.h>
 #include <Arduino_GFX_Library.h>
+#include "touch.h"
 #include <WiFi.h>
 #include <Streaming.h>
 
@@ -56,10 +57,10 @@ const uint16_t  usPclkIdleHigh    = 0;
 const uint16_t  usDEIdleHigh      = 0;
 
 //Protos for functions only used in this file
-void    FlushDataToDisplay(lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p);
+void FlushToDisplayCallback(lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p);
 
 
-void FlushDataToDisplay(lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p){
+void FlushToDisplayCallback(lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p){
   uint32_t uwWidth  = (pArea->x2 - pArea->x1 + 1);
   uint32_t uwHeight = (pArea->y2 - pArea->y1 + 1);
 
@@ -72,7 +73,32 @@ void FlushDataToDisplay(lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, l
 
   lv_disp_flush_ready(pDisplayDriver);
   return;
-} //FlushDataToDisplay
+} //FlushToDisplayCallback
+
+
+void ReadTouchpadCallback(lv_indev_drv_t *stInputDeviceDriver, lv_indev_data_t *pTouchpadData ){
+  //Based on B32_Elecrow_Demo.ino
+  if (touch_has_signal()){
+    if (touch_touched()){
+      pTouchpadData->state = LV_INDEV_STATE_PR;
+
+      /*Set the coordinates*/
+      pTouchpadData->point.x = uwLastTouchX;
+      pTouchpadData->point.y = uwLastTouchY;
+
+      Serial << BLOG << " ReadTouchpadCallback(): Data X=" << pTouchpadData->point.x << endl;
+      Serial << BLOG << " ReadTouchpadCallback(): Data Y=" << pTouchpadData->point.y << endl;
+    } //if(touch_touched())
+    else if (touch_released()){
+      pTouchpadData->state = LV_INDEV_STATE_REL;
+    } //if(touch_released()
+  } //if(touch_has_signal())
+  else
+  {
+    pTouchpadData->state = LV_INDEV_STATE_REL;
+  } //if(touch_has_signal())else
+  return;
+} //ReadTouchpadCallback
 
 
 void SetupDisplay(void){
@@ -129,18 +155,20 @@ void SetupLVGL(void){
 
     stDisplayDriver.hor_res      = sScreenWidth;
     stDisplayDriver.ver_res      = sScreenHeight;
-    stDisplayDriver.flush_cb     = FlushDataToDisplay;
+    stDisplayDriver.flush_cb     = FlushToDisplayCallback;
     stDisplayDriver.draw_buf     = &stDrawBuffer;
 
     Serial << BLOG << " SetupLVGL(): Call lv_disp_drv_register(&stDisplayDriver)" << endl;
     lv_disp_drv_register(&stDisplayDriver);
 
 /*
-    //Initialize the (dummy) input device driver
+    //Initialize the input device driver
     static lv_indev_drv_t   stInputDeviceDriver;
 
     lv_indev_drv_init       (&stInputDeviceDriver);
     stInputDeviceDriver.type= LV_INDEV_TYPE_POINTER;
+
+    indev_drv.read_cb = ReadTouchpadCallback;
     lv_indev_drv_register   (&stInputDeviceDriver);
 */
 

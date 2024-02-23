@@ -1,4 +1,4 @@
-//Beck, B32_SquareLineExample, touch.h, 2/22/24
+//Beck, C:\_Repos\TCouple\Arduino\Sketches\libraries\B32_LVGL_DriverLib\touch.h, 2/22/24b
 /*******************************************************************************
  * Touch libraries:
  * FT6X36: https://github.com/strange-v/FT6X36.git
@@ -6,6 +6,11 @@
  * XPT2046: https://github.com/PaulStoffregen/XPT2046_Touchscreen.git
  ******************************************************************************/
 #pragma once
+#include <Streaming.h>
+
+#ifndef BLOG
+  #define BLOG          millis()    //Used in logging
+#endif
 
 /* uncomment for FT6X36 */
 // #define TOUCH_FT6X36
@@ -111,8 +116,8 @@ void touch(TPoint p, TEvent e)
 }
 #endif
 
-void touch_init()
-{
+void touch_init(){
+  Serial << BLOG << " touch_init(): Call lcd.fillScreen(BLACK)" << endl;
 #if defined(TOUCH_FT6X36)
   Wire.begin(TOUCH_FT6X36_SDA, TOUCH_FT6X36_SCL);
   ts.begin();

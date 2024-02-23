@@ -1,4 +1,4 @@
-//B32_LVGL_DriverLib.cpp, 2/22/24b
+//B32_LVGL_DriverLib.cpp, 2/22/24d
 #include <lvgl.h>
 #include <B32_LVGL_DriverLib.h>
 #include <Arduino_GFX_Library.h>
@@ -57,8 +57,8 @@ const uint16_t  usPclkIdleHigh    = 0;
 const uint16_t  usDEIdleHigh      = 0;
 
 //Protos for functions only used in this file
-void FlushToDisplayCallback(lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p);
-
+void FlushToDisplayCallback (lv_disp_drv_t  *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p);
+void ReadTouchpadCallback   (lv_indev_drv_t *stInputDeviceDriver, lv_indev_data_t *pTouchpadData);
 
 void FlushToDisplayCallback(lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p){
   uint32_t uwWidth  = (pArea->x2 - pArea->x1 + 1);
@@ -76,7 +76,7 @@ void FlushToDisplayCallback(lv_disp_drv_t *pDisplayDriver, const lv_area_t *pAre
 } //FlushToDisplayCallback
 
 
-void ReadTouchpadCallback(lv_indev_drv_t *stInputDeviceDriver, lv_indev_data_t *pTouchpadData ){
+void ReadTouchpadCallback(lv_indev_drv_t *stInputDeviceDriver, lv_indev_data_t *pTouchpadData){
   //Based on B32_Elecrow_Demo.ino
   if (touch_has_signal()){
     if (touch_touched()){
@@ -122,7 +122,9 @@ void SetupDisplay(void){
   if (!pDisplay->begin()){
     Serial << BLOG << " SetupDisplay(): pDisplay->begin() failed" << endl;
   }
-  //delay(500);
+
+  touch_init();
+
   Serial << BLOG << " SetupDisplay(): Done." << endl;
   return;
 } //SetupDisplay
@@ -161,16 +163,13 @@ void SetupLVGL(void){
     Serial << BLOG << " SetupLVGL(): Call lv_disp_drv_register(&stDisplayDriver)" << endl;
     lv_disp_drv_register(&stDisplayDriver);
 
-/*
     //Initialize the input device driver
     static lv_indev_drv_t   stInputDeviceDriver;
 
-    lv_indev_drv_init       (&stInputDeviceDriver);
-    stInputDeviceDriver.type= LV_INDEV_TYPE_POINTER;
-
-    indev_drv.read_cb = ReadTouchpadCallback;
-    lv_indev_drv_register   (&stInputDeviceDriver);
-*/
+    lv_indev_drv_init     (&stInputDeviceDriver);
+    stInputDeviceDriver.type    = LV_INDEV_TYPE_POINTER;
+    stInputDeviceDriver.read_cb = ReadTouchpadCallback;
+    lv_indev_drv_register (&stInputDeviceDriver);
 
     Serial << BLOG << " SetupLVGL(): Done." << endl;
   } //if(!pDisplayBuffer)else

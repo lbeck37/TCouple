@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_Elecrow_Demo.ino";
-const char szFileDate[]    = "2/21/24b";
+const char szFileDate[]    = "2/23/24b";
 #include <Arduino.h>
 #include <lvgl.h>
 #include <demos/lv_demos.h>
@@ -11,7 +11,6 @@ const char szFileDate[]    = "2/21/24b";
 #include <ui.h>
 #include <SPI.h>
 #include <Ticker.h>          //Call the ticker. H Library
-
 #include <Streaming.h>
 
 #ifndef BLOG

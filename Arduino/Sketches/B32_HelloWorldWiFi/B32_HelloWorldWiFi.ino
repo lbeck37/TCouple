@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_HelloWorldWiFi.ino";
-const char szFileDate[]    = "12/17/23b";
+const char szFileDate[]    = "2/23/24b";
 #include "Arduino.h"
 #include <Streaming.h>
 #include <WiFi.h>

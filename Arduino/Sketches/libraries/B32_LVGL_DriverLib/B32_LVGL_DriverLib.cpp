@@ -1,4 +1,4 @@
-//B32_LVGL_DriverLib.cpp, 2/22/24d
+//B32_LVGL_DriverLib.cpp, 2/23/24c
 #include <lvgl.h>
 #include <B32_LVGL_DriverLib.h>
 #include <Arduino_GFX_Library.h>
@@ -9,6 +9,9 @@
 #ifndef BLOG
   #define BLOG          millis()    //Used in logging
 #endif
+
+#define WAVESHARE_4DOT3     true
+#define ELECROW_7INCH       false
 
 lv_coord_t              sScreenWidth;
 lv_coord_t              sScreenHeight;
@@ -24,37 +27,75 @@ Arduino_RGB_Display     *pDisplay;
 
 int32_t         wCurrentReadingNum=  0;
 
-const int8_t    cDE_Pin           =  5;
-const int8_t    cVsyncPin         =  3;
-const int8_t    cHsyncPin         = 46;
-const int8_t    cPclkPin          =  7;
+#if WAVESHARE_4DOT3
+  const int8_t    cDE_Pin           =  5;
+  const int8_t    cVsyncPin         =  3;
+  const int8_t    cHsyncPin         = 46;
+  const int8_t    cPclkPin          =  7;
 
-const int8_t    acRedPin[5]       = { 1,  2, 42, 41, 40};
-const int8_t    acBluePin[5]      = {14, 38, 18, 17, 10};
-const int8_t    acGreenPin[6]     = {39,  0, 45, 48, 47, 21};
+  const int8_t    acRedPin[5]       = { 1,  2, 42, 41, 40};
+  const int8_t    acBluePin[5]      = {14, 38, 18, 17, 10};
+  const int8_t    acGreenPin[6]     = {39,  0, 45, 48, 47, 21};
 
-//Following from https://github.com/dronecz/ESP32_S3_HMI
-const uint16_t  usHsyncPolarity   = 0;
-const uint16_t  usVsyncPolarity   = 0;
+  //Following from https://github.com/dronecz/ESP32_S3_HMI
+  const uint16_t  usHsyncPolarity   = 0;
+  const uint16_t  usVsyncPolarity   = 0;
 
-const uint16_t  usHsyncFrontPorch = 210;
-const uint16_t  usVsyncFrontPorch =  22;
+  const uint16_t  usHsyncFrontPorch = 210;
+  const uint16_t  usVsyncFrontPorch =  22;
 
-const uint16_t  usHsyncPulseWidth =  30;
-const uint16_t  usVsyncPulseWidth =  13;
+  const uint16_t  usHsyncPulseWidth =  30;
+  const uint16_t  usVsyncPulseWidth =  13;
 
-const uint16_t  usHsyncBackPorch  =  16;
-const uint16_t  usVsyncBackPorch  =  10;
+  const uint16_t  usHsyncBackPorch  =  16;
+  const uint16_t  usVsyncBackPorch  =  10;
 
+  const uint16_t  usPclkActiveNeg   =   1;
+  const uint16_t  usPclkIdleHigh    = 0;
+  const uint16_t  usDEIdleHigh      = 0;
+/*
+  const uint32_t  uw16MHz           = 16000000;
+  const uint32_t  uwPreferSpeed     = uw16MHz;
+  const bool      bUseBigEndian     = false;
+*/
+#endif
 
-const uint32_t  uw16MHz           = 16000000;
-const uint32_t  uwPreferSpeed     = uw16MHz;
+#if ELECROW_7INCH
+  const int8_t    cDE_Pin           = 41;
+  const int8_t    cVsyncPin         = 40;
+  const int8_t    cHsyncPin         = 39;
+  const int8_t    cPclkPin          =  0;
 
-const bool      bUseBigEndian     = false;
+  const int8_t    acRedPin[5]       = {14, 21, 47, 48, 45};
+  const int8_t    acBluePin[5]      = {15,  7,  6,  5,  4};
+  const int8_t    acGreenPin[6]     = { 9, 46,  3,  8, 16, 1};
 
-const uint16_t  usPclkActiveNeg   =   1;
-const uint16_t  usPclkIdleHigh    = 0;
-const uint16_t  usDEIdleHigh      = 0;
+  //Following from https://github.com/dronecz/ESP32_S3_HMI
+  const uint16_t  usHsyncPolarity   = 0;
+  const uint16_t  usVsyncPolarity   = 0;
+
+  const uint16_t  usHsyncFrontPorch =  40;
+  const uint16_t  usVsyncFrontPorch =   1;
+
+  const uint16_t  usHsyncPulseWidth =  48;
+  const uint16_t  usVsyncPulseWidth =  31;
+
+  const uint16_t  usHsyncBackPorch  =  40;
+  const uint16_t  usVsyncBackPorch  =  13;
+
+  const uint16_t  usPclkActiveNeg   = 1;
+  const uint16_t  usPclkIdleHigh    = 0;
+  const uint16_t  usDEIdleHigh      = 0;
+/*
+  const uint32_t  uw16MHz           = 16000000;
+  const uint32_t  uwPreferSpeed     = uw16MHz;
+  const bool      bUseBigEndian     = false;
+*/
+#endif
+
+const uint32_t    uw16MHz           = 16000000;
+const uint32_t    uwPreferSpeed     = uw16MHz;
+const bool        bUseBigEndian     = false;
 
 //Protos for functions only used in this file
 void FlushToDisplayCallback (lv_disp_drv_t  *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p);

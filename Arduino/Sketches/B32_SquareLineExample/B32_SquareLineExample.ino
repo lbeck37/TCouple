@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_SquareLineExample.ino";
-const char szFileDate[]    = "2/22/24B";
+const char szFileDate[]    = "2/23/24c";
 //Use Arduino_GFX as driver for LVGL calls to write to Waveshare 800x480, 4.3" 16-bit 5-6-5 RGB
 
 #include <B32_LVGL_DriverLib.h>
@@ -10,14 +10,17 @@ const char szFileDate[]    = "2/22/24B";
   #define BLOG          millis()    //Used in logging
 #endif
 
+#define DO_SQUARELINE   false
+
 //Function protos
-void  setup           (void);
-void  loop            (void);
-void  DisplayFooter   (void);
+void  setup             (void);
+void  loop              (void);
+void  DisplayFooter     (void);
 
 void setup(){
   Serial.begin(115200);
   delay(500);
+  Serial.println("Hello from Arduino, 2/23/24");
   Serial << endl << endl << BLOG << " setup(): Sketch: " << szSketchName << ", " << szFileDate << endl;
 
   Serial << BLOG << " setup(): Call SetupDisplay" << endl;
@@ -29,12 +32,14 @@ void setup(){
 
   Serial << BLOG << " setup(): Call DisplayFooter" << endl;
   DisplayFooter();
-  lv_timer_handler(); /* let the GUI do its work */
+  lv_timer_handler();  //let the GUI do its work
   delay(2000);      //Give a chance to read the sketch, date and MAC
 
+#if DO_SQUARELINE
   Serial << BLOG << " setup(): Call ui_init" << endl;
   ui_init();
   delay(100);
+#endif  //DO_SQUARELINE
 
   Serial << BLOG << " setup(): Done" << endl;
   return;
@@ -42,7 +47,9 @@ void setup(){
 
 
 void loop(){
+#if true
   lv_timer_handler(); /* let the GUI do its work */
+#endif
   //delay(200);
   return;
 } //loop

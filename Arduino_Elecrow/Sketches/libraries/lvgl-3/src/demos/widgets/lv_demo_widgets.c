@@ -215,10 +215,10 @@ static void profile_create(lv_obj_t * parent)
     lv_obj_add_style(name, &style_title, 0);
 
     lv_obj_t * dsc = lv_label_create(panel1);
-    lv_obj_add_style(dsc, &style_text_muted, 0);
+    //lv_obj_add_style(dsc, &style_text_muted, 0);
     //lv_label_set_text(dsc, "This is a short description of me. Take a look at my profile!");
     //lv_label_set_text(dsc, "I'm the greatest, check out my profile!");
-    lv_label_set_text(dsc, "B32_ThermoDemo.ino, 2/21/24e, lv_demo_widgets.c");
+    lv_label_set_text(dsc, "B32_ThermoDemo.ino, 2/23/24b, see lv_demo_widgets.c");
     lv_label_set_long_mode(dsc, LV_LABEL_LONG_WRAP);
 
     lv_obj_t * email_icn = lv_label_create(panel1);
@@ -236,7 +236,7 @@ static void profile_create(lv_obj_t * parent)
 
     lv_obj_t * call_label = lv_label_create(panel1);
     //lv_label_set_text(call_label, "+79 246 123 4567");
-    lv_label_set_text(call_label, "(208) 336-9805");
+    lv_label_set_text(call_label, "(208) 336-9806");
 
     lv_obj_t * log_out_btn = lv_btn_create(panel1);
     lv_obj_set_height(log_out_btn, LV_SIZE_CONTENT);

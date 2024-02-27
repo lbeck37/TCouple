@@ -127,8 +127,9 @@ void ReadTouchpadCallback(lv_indev_drv_t *stInputDeviceDriver, lv_indev_data_t *
       pTouchpadData->point.x = uwLastTouchX;
       pTouchpadData->point.y = uwLastTouchY;
 
-      Serial << BLOG << " ReadTouchpadCallback(): Data X=" << pTouchpadData->point.x << endl;
-      Serial << BLOG << " ReadTouchpadCallback(): Data Y=" << pTouchpadData->point.y << endl;
+      //Serial << BLOG << " ReadTouchpadCallback(): Data X=" << pTouchpadData->point.x << endl;
+      //Serial << BLOG << " ReadTouchpadCallback(): Data Y=" << pTouchpadData->point.y << endl;
+      //Serial << "Y";
     } //if(touch_touched())
     else if (touch_released()){
       pTouchpadData->state = LV_INDEV_STATE_REL;
@@ -164,6 +165,7 @@ void SetupDisplay(void){
     Serial << BLOG << " SetupDisplay(): pDisplay->begin() failed" << endl;
   }
 
+  Serial << BLOG << " SetupDisplay(): Call touch_init" << endl;
   touch_init();
 
   Serial << BLOG << " SetupDisplay(): Done." << endl;

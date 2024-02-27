@@ -1,4 +1,4 @@
-//Beck, C:\_Repos\TCouple\Arduino\Sketches\libraries\B32_LVGL_DriverLib\touch.h, 2/22/24b
+//Beck, C:\_Repos\TCouple\Arduino\Sketches\libraries\B32_LVGL_DriverLib\touch.h, 2/26/24b
 /*******************************************************************************
  * Touch libraries:
  * FT6X36: https://github.com/strange-v/FT6X36.git
@@ -25,15 +25,23 @@
 
 /* uncomment for GT911 */
  #define TOUCH_GT911
+/*
  #define TOUCH_GT911_SCL 20//20
  #define TOUCH_GT911_SDA 19//19
- #define TOUCH_GT911_INT -1//-1
- #define TOUCH_GT911_RST -1//38
- #define TOUCH_GT911_ROTATION ROTATION_NORMAL
- #define TOUCH_MAP_X1 800//480
- #define TOUCH_MAP_X2 0
- #define TOUCH_MAP_Y1 480//272
- #define TOUCH_MAP_Y2 0
+*/
+/*
+ #define TOUCH_GT911_SCL         8
+ #define TOUCH_GT911_SDA         9
+*/
+ #define TOUCH_GT911_SCL         9
+ #define TOUCH_GT911_SDA         8
+ #define TOUCH_GT911_INT        -1//-1
+ #define TOUCH_GT911_RST        -1//38
+ #define TOUCH_GT911_ROTATION   ROTATION_NORMAL
+ #define TOUCH_MAP_X1           800//480
+ #define TOUCH_MAP_X2           0
+ #define TOUCH_MAP_Y1           480//272
+ #define TOUCH_MAP_Y2           0
 
 /* uncomment for XPT2046 */
 // #define TOUCH_XPT2046
@@ -117,24 +125,28 @@ void touch(TPoint p, TEvent e)
 #endif
 
 void touch_init(){
-  Serial << BLOG << " touch_init(): Call lcd.fillScreen(BLACK)" << endl;
 #if defined(TOUCH_FT6X36)
   Wire.begin(TOUCH_FT6X36_SDA, TOUCH_FT6X36_SCL);
   ts.begin();
   ts.registerTouchHandler(touch);
 
 #elif defined(TOUCH_GT911)
+  Serial << BLOG << " touch_init(): Call Wire.begin(" << TOUCH_GT911_SDA << ", " << TOUCH_GT911_SCL << ")" << endl;
   Wire.begin(TOUCH_GT911_SDA, TOUCH_GT911_SCL);
+
+  Serial << BLOG << " touch_init(): Call ts.begin()" << endl;
   ts.begin();
+  Serial << BLOG << " touch_init(): Call ts.setRotation(TOUCH_GT911_ROTATION)" << endl;
   ts.setRotation(TOUCH_GT911_ROTATION);
 
 #elif defined(TOUCH_XPT2046)
   SPI.begin(TOUCH_XPT2046_SCK, TOUCH_XPT2046_MISO, TOUCH_XPT2046_MOSI, TOUCH_XPT2046_CS);
   ts.begin();
   ts.setRotation(TOUCH_XPT2046_ROTATION);
-
 #endif
-}
+  Serial << BLOG << " touch_init(): Done" << endl;
+  return;
+} //touch_init
 
 bool touch_has_signal()
 {

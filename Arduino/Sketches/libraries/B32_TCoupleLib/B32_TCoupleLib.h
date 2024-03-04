@@ -1,16 +1,15 @@
-//B32_TCoupleLib.h, 2/1/24b, was 12/27/23b
+//B32_TCoupleLib.h, 3/1/24b, was 2/1/24b, was 12/27/23b
 #pragma once
 #pragma message("B32_TCoupleLib.h, Begin, include TFT_eSPI.h, if not already included")
 //#define TOUCH_CS
 
-/*
+
 //#include <lvgl.h>
 #include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
 #include <esp_now.h>
 #include <WiFi.h>
 #include <MAX31855.h>
 #include <Streaming.h>
-*/
 
 enum class eBoardPinColor {
   eBluePin= 1,

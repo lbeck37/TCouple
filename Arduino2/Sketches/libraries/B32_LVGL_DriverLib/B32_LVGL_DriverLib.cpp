@@ -1,5 +1,5 @@
-//B32_LVGL_DriverLib.cpp, 2/23/24c
-#include <lvgl.h>
+//B32_LVGL_DriverLib.cpp, 2/28/24c
+//#include <lvgl.h>
 #include <B32_LVGL_DriverLib.h>
 #include <Arduino_GFX_Library.h>
 #include "touch.h"
@@ -10,8 +10,8 @@
   #define BLOG          millis()    //Used in logging
 #endif
 
-#define WAVESHARE_4DOT3     true
-#define ELECROW_7INCH       false
+#define WAVESHARE_4DOT3     false
+#define ELECROW_7INCH       true
 
 lv_coord_t              sScreenWidth;
 lv_coord_t              sScreenHeight;
@@ -98,7 +98,7 @@ const uint32_t    uwPreferSpeed     = uw16MHz;
 const bool        bUseBigEndian     = false;
 
 //Protos for functions only used in this file
-void FlushToDisplayCallback (lv_disp_drv_t  *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p);
+void FlushToDisplayCallback (lv_disp_drv_t  *pDisplayDriver,const lv_area_t *pArea,lv_color_t *color_p);
 void ReadTouchpadCallback   (lv_indev_drv_t *stInputDeviceDriver, lv_indev_data_t *pTouchpadData);
 
 void FlushToDisplayCallback(lv_disp_drv_t *pDisplayDriver, const lv_area_t *pArea, lv_color_t *color_p){

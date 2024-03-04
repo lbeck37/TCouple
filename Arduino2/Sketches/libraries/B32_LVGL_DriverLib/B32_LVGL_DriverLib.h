@@ -1,5 +1,6 @@
-//B32_LVGL_DriverLib.h, 2/11/24b
+//B32_LVGL_DriverLib.h, 2/28/24b
 #pragma once
+#include <lvgl.h>
 
 //Functions protos
 void          SetupDisplay          (void);

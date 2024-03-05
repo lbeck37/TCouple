@@ -1,0 +1,7 @@
+Beck, 3/4/24a, From "Fixed esp32 problem :MD5 of file does not match..."
+
+//Option 1
+python -m esptool --chip esp32 --port /PORT --baud 115200 --after hard_reset erase_flash
+
+//Option 2
+python -m esptool --port COM6 write_flash_status --non-volatile 0

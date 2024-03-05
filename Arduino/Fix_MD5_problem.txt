@@ -5,3 +5,7 @@ python -m esptool --chip esp32 --port /PORT --baud 115200 --after hard_reset era
 
 //Option 2
 python -m esptool --port COM6 write_flash_status --non-volatile 0
+
+git config --global user.email "lbeck37@gmail.com"
+
+git config --global user.name "Larry Beck"

@@ -1,1 +1,8 @@
 https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+
+python -m esp32 --port COM13 --baud 115200 --after hard_reset erase_flash
+
+python -m esp32 --port COM13 -write_flash_status --no-volatile 0
+
+esptool --chip auto --port COM13 --baud 115200 --before default_reset --no-stub --after hard_reset write_flash -u --flash_mode dio --flash_freq 40m --flash_size 4MB 0x0 factory/factory_WROOM-32.bin
+

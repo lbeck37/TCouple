@@ -1,4 +1,4 @@
-//B32_LVGL_DriverLib.cpp, 3/10/24c, was 2/28/24c
+//B32_LVGL_DriverLib.cpp, 3/11/24b, was 2/28/24c
 //#include <lvgl.h>
 #include <B32_LVGL_DriverLib.h>
 //#include <Arduino_GFX_Library.h>
@@ -14,8 +14,8 @@
   #define BLOG          millis()    //Used in logging
 #endif
 
-#define WAVESHARE_4DOT3     false
-#define ELECROW_7INCH       true
+#define WAVESHARE_4DOT3     true
+#define ELECROW_7INCH       false
 
 lv_coord_t              sScreenWidth;
 lv_coord_t              sScreenHeight;

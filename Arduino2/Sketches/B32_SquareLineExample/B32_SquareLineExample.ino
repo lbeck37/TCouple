@@ -1,5 +1,5 @@
 const char szSketchName[]  = "B32_SquareLineExample.ino";
-const char szFileDate[]    = "3/10/24B";    //Was 2/28/24C
+const char szFileDate[]    = "3/10/24D";    //Was 2/28/24C
 //Use Arduino_GFX as driver for LVGL calls to write to Waveshare 800x480, 4.3" 16-bit 5-6-5 RGB
 
 #include <B32_LVGL_DriverLib.h>

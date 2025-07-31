@@ -1,7 +1,7 @@
 #define INCLUDE_ALL true
 #if INCLUDE_ALL
   const char szSketchName[]  = "B32_HelloWorld.ino";
-  const char szFileDate[]    = "1/5/24G";
+  const char szFileDate[]    = "7/30/25C;   //Was 1/5/24G
 
   #include <Streaming.h>
   #define BLOG          millis()
@@ -9,7 +9,7 @@
   void setup                    (void);
   void loop                     (void);
   void PrintChipInfo            (void);
-#endif
+#endif  //INCLUDE_ALL
 
 #include "Arduino.h"
 
